@@ -59,6 +59,7 @@ public enum ErrorCode {
     // CERTIFICATION
     CERTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 인증입니다."),
     UNAUTHORIZED_CERTIFICATION_WITHDRAWAL(HttpStatus.UNAUTHORIZED, "인증 철회 권한이 없습니다."),
+    CERTIFICATION_BAD_REQUEST(HttpStatus.BAD_REQUEST, "이미 처리한 인증입니다."),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");

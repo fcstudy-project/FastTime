@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -68,5 +69,17 @@ public class CertificationController {
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(ResponseDTO.res(HttpStatus.OK, "내 인증요청 조회가 완료되었습니다.", responseDTO));
+    }
+
+    @PatchMapping("/cancel-withdrawal/{certificationId}")
+    public ResponseEntity<ResponseDTO<CertificationResponseDTO>> cancelWithdrawal(
+        @PathVariable Long certificationId) {
+        Long currentMemberId = securityUtil.getCurrentMemberId();
+        Certification certification = certificationService.cancelWithdrawal(certificationId, currentMemberId);
+
+        CertificationResponseDTO responseDto = CertificationResponseDTO.from(certification);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(ResponseDTO.res(HttpStatus.OK, "철회 취소 요청이 완료되었습니다.", responseDto));
     }
 }

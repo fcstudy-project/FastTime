@@ -3,6 +3,7 @@ package com.fasttime.domain.bootcamp.service;
 import com.fasttime.domain.bootcamp.dto.request.CertificationRequestDTO;
 import com.fasttime.domain.bootcamp.entity.Certification;
 import com.fasttime.domain.bootcamp.entity.CertificationStatus;
+import com.fasttime.domain.bootcamp.exception.CertificationBadRequestException;
 import com.fasttime.domain.bootcamp.exception.CertificationNotFoundException;
 import com.fasttime.domain.bootcamp.exception.CertificationUnAuthException;
 import com.fasttime.domain.bootcamp.repository.CertificationRepository;
@@ -55,5 +56,23 @@ public class CertificationService {
 
     public List<Certification> getCertificationsByMember(Long memberId) {
         return certificationRepository.findByMemberId(memberId);
+    }
+
+    public Certification cancelWithdrawal(Long certificationId, Long currentMemberId) {
+        Certification certification = certificationRepository.findById(certificationId)
+            .orElseThrow(() -> new CertificationNotFoundException());
+
+        if (!certification.getMember().getId().equals(currentMemberId)) {
+            throw new CertificationUnAuthException();
+        }
+
+        if (certification.isDeleted()) {
+            certification.restore();
+            certification.setStatus(CertificationStatus.PENDING);
+            certification.setWithdrawalReason(null);
+            return certificationRepository.save(certification);
+        } else {
+            throw new CertificationBadRequestException();
+        }
     }
 }
