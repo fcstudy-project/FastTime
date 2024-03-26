@@ -1,6 +1,8 @@
 package com.fasttime.global.config;
 
+import com.fasttime.domain.bootcamp.repository.CertificationRepository;
 import com.fasttime.domain.review.repository.ReviewRepository;
+import com.fasttime.global.batch.tasklet.DeleteCertificationsTasklet;
 import com.fasttime.global.batch.tasklet.DeleteOldReviewsTasklet;
 import com.fasttime.global.batch.tasklet.UpdateActivityStatusTasklet;
 import com.fasttime.global.batch.tasklet.UpdateCompetitionStatusTasklet;
@@ -54,7 +56,8 @@ public class BatchConfig {
 
     @Bean
     public Job updateReferenceJob(JobRepository jobRepository, Step updateNewActivityStep,
-        Step updateNewCompetitionStep, Step updateDoneActivityStep, Step updateDoneCompetitionStep) {
+        Step updateNewCompetitionStep, Step updateDoneActivityStep,
+        Step updateDoneCompetitionStep) {
         return new JobBuilder("updateReferenceJob", jobRepository)
             .start(updateNewActivityStep)
             .next(updateNewCompetitionStep)
@@ -65,49 +68,70 @@ public class BatchConfig {
 
     @Bean
     public Step updateActivityStatusStep(JobRepository jobRepository,
-        PlatformTransactionManager transactionManager, UpdateActivityStatusTasklet tasklet){
+        PlatformTransactionManager transactionManager, UpdateActivityStatusTasklet tasklet) {
         return new StepBuilder("updateActivityStatusStep", jobRepository)
-            .tasklet(tasklet,transactionManager)
+            .tasklet(tasklet, transactionManager)
             .build();
     }
 
     @Bean
     public Step updateCompetitionStatusStep(JobRepository jobRepository,
-        PlatformTransactionManager transactionManager, UpdateCompetitionStatusTasklet tasklet){
+        PlatformTransactionManager transactionManager, UpdateCompetitionStatusTasklet tasklet) {
         return new StepBuilder("updateCompetitionStatusStep", jobRepository)
-            .tasklet(tasklet,transactionManager)
+            .tasklet(tasklet, transactionManager)
             .build();
     }
 
     @Bean
     public Step updateNewActivityStep(JobRepository jobRepository,
-        PlatformTransactionManager transactionManager, UpdateNewActivityTasklet tasklet){
+        PlatformTransactionManager transactionManager, UpdateNewActivityTasklet tasklet) {
         return new StepBuilder("updateNewActivityStep", jobRepository)
-            .tasklet(tasklet,transactionManager)
+            .tasklet(tasklet, transactionManager)
             .build();
     }
 
     @Bean
     public Step updateNewCompetitionStep(JobRepository jobRepository,
-        PlatformTransactionManager transactionManager, UpdateNewCompetitionTasklet tasklet){
+        PlatformTransactionManager transactionManager, UpdateNewCompetitionTasklet tasklet) {
         return new StepBuilder("updateNewCompetitionStep", jobRepository)
-            .tasklet(tasklet,transactionManager)
+            .tasklet(tasklet, transactionManager)
             .build();
     }
 
     @Bean
     public Step updateDoneActivityStep(JobRepository jobRepository,
-        PlatformTransactionManager transactionManager, UpdateDoneActivityTasklet tasklet){
+        PlatformTransactionManager transactionManager, UpdateDoneActivityTasklet tasklet) {
         return new StepBuilder("updateDoneActivityStep", jobRepository)
-            .tasklet(tasklet,transactionManager)
+            .tasklet(tasklet, transactionManager)
             .build();
     }
 
     @Bean
     public Step updateDoneCompetitionStep(JobRepository jobRepository,
-        PlatformTransactionManager transactionManager, UpdateDoneCompetitionTasklet tasklet){
+        PlatformTransactionManager transactionManager, UpdateDoneCompetitionTasklet tasklet) {
         return new StepBuilder("updateDoneCompetitionStep", jobRepository)
-            .tasklet(tasklet,transactionManager)
+            .tasklet(tasklet, transactionManager)
+            .build();
+    }
+
+    @Bean
+    public DeleteCertificationsTasklet deleteCertificationsTasklet(
+        CertificationRepository certificationRepository) {
+        return new DeleteCertificationsTasklet(certificationRepository);
+    }
+
+    @Bean
+    public Job deleteCertificationsJob(JobRepository jobRepository, Step deleteCertificationsStep) {
+        return new JobBuilder("deleteCertificationsJob", jobRepository)
+            .start(deleteCertificationsStep)
+            .build();
+    }
+
+    @Bean
+    public Step deleteCertificationsStep(JobRepository jobRepository,
+        PlatformTransactionManager transactionManager, DeleteCertificationsTasklet tasklet) {
+        return new StepBuilder("deleteCertificationsStep", jobRepository)
+            .tasklet(tasklet, transactionManager)
             .build();
     }
 }
