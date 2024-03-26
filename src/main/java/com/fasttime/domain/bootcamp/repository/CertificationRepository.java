@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface CertificationRepository extends JpaRepository<Certification, Long> {
 
+    List<Certification> findByMemberId(Long memberId);
 
 }

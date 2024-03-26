@@ -52,4 +52,8 @@ public class CertificationService {
 
         return certificationRepository.save(certification);
     }
+
+    public List<Certification> getCertificationsByMember(Long memberId) {
+        return certificationRepository.findByMemberId(memberId);
+    }
 }

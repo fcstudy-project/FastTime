@@ -55,4 +55,18 @@ public class CertificationController {
         return ResponseEntity.status(HttpStatus.OK)
             .body(ResponseDTO.res(HttpStatus.OK, "철회 요청이 완료되었습니다.", responseDto));
     }
+
+    @GetMapping("/my-certifications")
+    public ResponseEntity<ResponseDTO<List<MyCertificationResponseDTO>>> getMyCertifications() {
+        Long currentMemberId = securityUtil.getCurrentMemberId();
+        List<Certification> certifications = certificationService.getCertificationsByMember(
+            currentMemberId);
+
+        List<MyCertificationResponseDTO> responseDTO = certifications.stream()
+            .map(MyCertificationResponseDTO::from)
+            .collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(ResponseDTO.res(HttpStatus.OK, "내 인증요청 조회가 완료되었습니다.", responseDTO));
+    }
 }
