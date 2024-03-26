@@ -36,4 +36,20 @@ public class CertificationService {
 
         return certificationRepository.save(certification);
     }
+
+    public Certification withdrawCertification(Long certificationId, Long currentMemberId,
+        String withdrawalReason) {
+        Certification certification = certificationRepository.findById(certificationId)
+            .orElseThrow(() -> new CertificationNotFoundException());
+
+        if (!certification.getMember().getId().equals(currentMemberId)) {
+            throw new CertificationUnAuthException();
+        }
+
+        certification.setWithdrawalReason(withdrawalReason);
+        certification.setStatus(CertificationStatus.WITHDRAW);
+        certification.softDelete();
+
+        return certificationRepository.save(certification);
+    }
 }

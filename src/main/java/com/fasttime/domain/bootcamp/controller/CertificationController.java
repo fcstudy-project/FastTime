@@ -8,6 +8,7 @@ import com.fasttime.domain.bootcamp.entity.Certification;
 import com.fasttime.domain.bootcamp.service.CertificationService;
 import com.fasttime.global.util.ResponseDTO;
 import com.fasttime.global.util.SecurityUtil;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +40,19 @@ public class CertificationController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(ResponseDTO.res(HttpStatus.OK, "인증 요청이 완료되었습니다.", responseDto));
+    }
+
+    @PostMapping("/withdraw/{certificationId}")
+    public ResponseEntity<ResponseDTO<CertificationResponseDTO>> withdrawCertification(
+        @PathVariable Long certificationId,
+        @Valid @RequestBody WithdrawalRequestDTO withdrawalRequestDTO) {
+        Long currentMemberId = securityUtil.getCurrentMemberId();
+        Certification certification = certificationService.withdrawCertification(
+            certificationId, currentMemberId, withdrawalRequestDTO.withdrawalReason());
+
+        CertificationResponseDTO responseDto = CertificationResponseDTO.from(certification);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(ResponseDTO.res(HttpStatus.OK, "철회 요청이 완료되었습니다.", responseDto));
     }
 }

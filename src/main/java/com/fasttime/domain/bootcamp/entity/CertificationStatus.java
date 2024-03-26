@@ -1,5 +1,5 @@
 package com.fasttime.domain.bootcamp.entity;
 
 public enum CertificationStatus {
-    PENDING, APPROVED, REJECTED
+    PENDING, APPROVED, REJECTED, WITHDRAW
 }

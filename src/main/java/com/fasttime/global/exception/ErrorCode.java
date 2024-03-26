@@ -56,8 +56,13 @@ public enum ErrorCode {
     ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 대외활동입니다."),
     COMPETITION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 공모전입니다."),
 
+    // CERTIFICATION
+    CERTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 인증입니다."),
+    UNAUTHORIZED_CERTIFICATION_WITHDRAWAL(HttpStatus.UNAUTHORIZED, "인증 철회 권한이 없습니다."),
+
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
+
 
     private HttpStatus httpStatus;
     private String message;

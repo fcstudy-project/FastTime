@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -56,4 +57,16 @@ public class Certification extends BaseTimeEntity {
 
     @Column(name = "rejection_reason", columnDefinition = "TEXT")
     private String rejectionReason;
+
+    public void setWithdrawalReason(String withdrawalReason) {
+        this.withdrawalReason = withdrawalReason;
+    }
+
+    public void setStatus(CertificationStatus status) {
+        this.status = status;
+    }
+
+    public void softDelete() {
+        delete(LocalDateTime.now());
+    }
 }
