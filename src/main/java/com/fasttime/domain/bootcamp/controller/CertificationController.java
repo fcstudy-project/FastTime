@@ -2,10 +2,12 @@ package com.fasttime.domain.bootcamp.controller;
 
 import com.fasttime.domain.bootcamp.dto.request.CertificationRequestDTO;
 import com.fasttime.domain.bootcamp.dto.request.WithdrawalRequestDTO;
+import com.fasttime.domain.bootcamp.dto.response.ApproveResponseDTO;
 import com.fasttime.domain.bootcamp.dto.response.CertificationResponseDTO;
 import com.fasttime.domain.bootcamp.dto.response.MyCertificationResponseDTO;
 import com.fasttime.domain.bootcamp.entity.Certification;
 import com.fasttime.domain.bootcamp.service.CertificationService;
+import com.fasttime.domain.member.service.AdminService;
 import com.fasttime.global.util.ResponseDTO;
 import com.fasttime.global.util.SecurityUtil;
 import jakarta.validation.Valid;
@@ -75,11 +77,27 @@ public class CertificationController {
     public ResponseEntity<ResponseDTO<CertificationResponseDTO>> cancelWithdrawal(
         @PathVariable Long certificationId) {
         Long currentMemberId = securityUtil.getCurrentMemberId();
-        Certification certification = certificationService.cancelWithdrawal(certificationId, currentMemberId);
+        Certification certification = certificationService.cancelWithdrawal(certificationId,
+            currentMemberId);
 
         CertificationResponseDTO responseDto = CertificationResponseDTO.from(certification);
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(ResponseDTO.res(HttpStatus.OK, "철회 취소 요청이 완료되었습니다.", responseDto));
+    }
+
+    @PatchMapping("/approve/{certificationId}/{bootCampId}")
+    public ResponseEntity<ResponseDTO<Object>> approveCertification(
+        @PathVariable Long certificationId,
+        @PathVariable Long bootCampId) {
+
+        Long currentMemberId = securityUtil.getCurrentMemberId();
+        Certification certification = certificationService.approveCertification(
+            certificationId, bootCampId, currentMemberId);
+
+        ApproveResponseDTO responseDto = ApproveResponseDTO.from(certification);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(ResponseDTO.res(HttpStatus.OK, "인증 요청이 승인되었습니다.", responseDto));
     }
 }

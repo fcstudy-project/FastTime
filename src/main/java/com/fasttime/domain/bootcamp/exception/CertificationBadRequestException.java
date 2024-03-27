@@ -10,4 +10,8 @@ public class CertificationBadRequestException extends ApplicationException {
     public CertificationBadRequestException() {
         super(ERROR_CODE);
     }
+
+    public CertificationBadRequestException(String message) {
+        super(ERROR_CODE, message);
+    }
 }

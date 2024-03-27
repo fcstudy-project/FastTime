@@ -60,6 +60,11 @@ public class Member extends BaseTimeEntity {
 
     }
 
+    public void approveCertification(BootCamp bootCamp) {
+        this.campCrtfc = true;
+        this.bootCamp = bootCamp;
+    }
+
     @Override
     public void restore() {
         super.restore();

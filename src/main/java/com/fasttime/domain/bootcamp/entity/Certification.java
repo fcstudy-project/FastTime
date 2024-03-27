@@ -66,6 +66,10 @@ public class Certification extends BaseTimeEntity {
         this.status = status;
     }
 
+    public void setBootCamp(BootCamp bootCamp) {
+        this.bootCamp = bootCamp;
+    }
+
     public void softDelete() {
         delete(LocalDateTime.now());
     }

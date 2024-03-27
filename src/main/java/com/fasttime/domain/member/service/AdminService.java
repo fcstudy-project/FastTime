@@ -91,4 +91,9 @@ public class AdminService {
             orElseThrow(ArticleNotFoundException::new);
         article.rejectReport();
     }
+    public boolean isAdmin(Long userId) {
+        return memberRepository.findById(userId).map(Member::getEmail)
+            .filter(adminEmailRepository::existsAdminEmailByEmail)
+            .isPresent();
+    }
 }
