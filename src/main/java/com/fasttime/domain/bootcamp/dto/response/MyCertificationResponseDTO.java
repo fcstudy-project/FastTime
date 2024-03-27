@@ -7,7 +7,8 @@ public record MyCertificationResponseDTO(
     Long certificationId,
     String bootcampName,
     CertificationStatus status,
-    String withdrawalReason
+    String withdrawalReason,
+    String rejectionReason
 ) {
 
     public static MyCertificationResponseDTO from(Certification certification) {
@@ -15,7 +16,8 @@ public record MyCertificationResponseDTO(
             certification.getId(),
             certification.getBootcampName(),
             certification.getStatus(),
-            certification.getWithdrawalReason()
+            certification.getWithdrawalReason(),
+            certification.getRejectionReason()
         );
     }
 }

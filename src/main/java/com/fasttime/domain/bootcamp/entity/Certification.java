@@ -62,6 +62,10 @@ public class Certification extends BaseTimeEntity {
         this.withdrawalReason = withdrawalReason;
     }
 
+    public void setRejectionReason(String rejectionReason) {
+        this.rejectionReason = rejectionReason;
+    }
+
     public void setStatus(CertificationStatus status) {
         this.status = status;
     }

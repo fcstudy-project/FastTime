@@ -104,4 +104,18 @@ public class CertificationService {
 
         return certificationRepository.save(certification);
     }
+
+    public Certification rejectCertification(Long certificationId, Long adminId, String rejectionReason) {
+        if (!adminService.isAdmin(adminId)) {
+            throw new CertificationUnAuthException();
+        }
+
+        Certification certification = certificationRepository.findById(certificationId)
+            .orElseThrow(() -> new CertificationNotFoundException());
+
+        certification.setRejectionReason(rejectionReason);
+        certification.setStatus(CertificationStatus.REJECTED);
+
+        return certificationRepository.save(certification);
+    }
 }

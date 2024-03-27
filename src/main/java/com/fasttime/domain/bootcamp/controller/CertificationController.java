@@ -1,13 +1,13 @@
 package com.fasttime.domain.bootcamp.controller;
 
 import com.fasttime.domain.bootcamp.dto.request.CertificationRequestDTO;
+import com.fasttime.domain.bootcamp.dto.request.RejectionRequestDTO;
 import com.fasttime.domain.bootcamp.dto.request.WithdrawalRequestDTO;
 import com.fasttime.domain.bootcamp.dto.response.ApproveResponseDTO;
 import com.fasttime.domain.bootcamp.dto.response.CertificationResponseDTO;
 import com.fasttime.domain.bootcamp.dto.response.MyCertificationResponseDTO;
 import com.fasttime.domain.bootcamp.entity.Certification;
 import com.fasttime.domain.bootcamp.service.CertificationService;
-import com.fasttime.domain.member.service.AdminService;
 import com.fasttime.global.util.ResponseDTO;
 import com.fasttime.global.util.SecurityUtil;
 import jakarta.validation.Valid;
@@ -99,5 +99,20 @@ public class CertificationController {
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(ResponseDTO.res(HttpStatus.OK, "인증 요청이 승인되었습니다.", responseDto));
+    }
+
+    @PatchMapping("/reject/{certificationId}")
+    public ResponseEntity<ResponseDTO<MyCertificationResponseDTO>> rejectCertification(
+        @PathVariable Long certificationId,
+        @Valid @RequestBody RejectionRequestDTO rejectionRequestDTO) {
+
+        Long currentAdminId = securityUtil.getCurrentMemberId();
+        Certification certification = certificationService.rejectCertification(
+            certificationId, currentAdminId, rejectionRequestDTO.rejectionReason());
+
+        MyCertificationResponseDTO responseDto = MyCertificationResponseDTO.from(certification);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(ResponseDTO.res(HttpStatus.OK, "인증 요청이 거절되었습니다.", responseDto));
     }
 }
