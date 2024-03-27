@@ -1,6 +1,6 @@
 package com.fasttime.global.batch.tasklet;
 
-import com.fasttime.domain.bootcamp.repository.CertificationRepository;
+import com.fasttime.domain.certification.repository.CertificationRepository;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.repeat.RepeatStatus;

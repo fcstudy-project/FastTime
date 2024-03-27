@@ -1,6 +1,6 @@
 package com.fasttime.domain.review.service;
 
-import com.fasttime.domain.bootcamp.repository.BootCampRepository;
+import com.fasttime.domain.certification.repository.BootCampRepository;
 import com.fasttime.domain.member.entity.Member;
 import com.fasttime.domain.member.exception.MemberNotFoundException;
 import com.fasttime.domain.member.repository.MemberRepository;

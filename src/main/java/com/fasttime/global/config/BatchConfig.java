@@ -1,6 +1,6 @@
 package com.fasttime.global.config;
 
-import com.fasttime.domain.bootcamp.repository.CertificationRepository;
+import com.fasttime.domain.certification.repository.CertificationRepository;
 import com.fasttime.domain.review.repository.ReviewRepository;
 import com.fasttime.global.batch.tasklet.DeleteCertificationsTasklet;
 import com.fasttime.global.batch.tasklet.DeleteOldReviewsTasklet;

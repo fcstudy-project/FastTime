@@ -3,7 +3,7 @@ package com.fasttime.domain.review.unit.entity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.fasttime.domain.bootcamp.entity.BootCamp;
+import com.fasttime.domain.certification.entity.BootCamp;
 import com.fasttime.domain.review.entity.Review;
 import com.fasttime.domain.review.entity.ReviewTag;
 import com.fasttime.domain.member.entity.Member;
