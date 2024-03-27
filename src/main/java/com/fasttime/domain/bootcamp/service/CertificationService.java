@@ -1,6 +1,7 @@
 package com.fasttime.domain.bootcamp.service;
 
 import com.fasttime.domain.bootcamp.dto.request.CertificationRequestDTO;
+import com.fasttime.domain.bootcamp.dto.response.AllCertificationResponseDTO;
 import com.fasttime.domain.bootcamp.entity.BootCamp;
 import com.fasttime.domain.bootcamp.entity.Certification;
 import com.fasttime.domain.bootcamp.entity.CertificationStatus;
@@ -15,6 +16,7 @@ import com.fasttime.domain.member.repository.MemberRepository;
 import com.fasttime.domain.member.service.AdminService;
 import com.fasttime.domain.review.exception.BootCampNotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,7 +107,8 @@ public class CertificationService {
         return certificationRepository.save(certification);
     }
 
-    public Certification rejectCertification(Long certificationId, Long adminId, String rejectionReason) {
+    public Certification rejectCertification(Long certificationId, Long adminId,
+        String rejectionReason) {
         if (!adminService.isAdmin(adminId)) {
             throw new CertificationUnAuthException();
         }
@@ -117,5 +120,37 @@ public class CertificationService {
         certification.setStatus(CertificationStatus.REJECTED);
 
         return certificationRepository.save(certification);
+    }
+
+    public List<AllCertificationResponseDTO> getAllCertificationsByStatus(
+        CertificationStatus status) {
+        List<Certification> certifications;
+        if (status == null) {
+            certifications = certificationRepository.findAll();
+        } else {
+            certifications = certificationRepository.findByStatus(status);
+        }
+        return certifications.stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+
+    private AllCertificationResponseDTO convertToDTO(Certification certification) {
+        Long memberId =
+            certification.getMember() != null ? certification.getMember().getId() : null;
+        String bootCampName =
+            certification.getBootCamp() != null ? certification.getBootCamp().getName() : null;
+
+        return new AllCertificationResponseDTO(
+            certification.getId(),
+            certification.getStatus(),
+            memberId,
+            certification.getBootcampName(),
+            bootCampName,
+            certification.getImage(),
+            certification.getContent(),
+            certification.getWithdrawalReason(),
+            certification.getRejectionReason()
+        );
     }
 }

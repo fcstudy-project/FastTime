@@ -3,10 +3,12 @@ package com.fasttime.domain.bootcamp.controller;
 import com.fasttime.domain.bootcamp.dto.request.CertificationRequestDTO;
 import com.fasttime.domain.bootcamp.dto.request.RejectionRequestDTO;
 import com.fasttime.domain.bootcamp.dto.request.WithdrawalRequestDTO;
+import com.fasttime.domain.bootcamp.dto.response.AllCertificationResponseDTO;
 import com.fasttime.domain.bootcamp.dto.response.ApproveResponseDTO;
 import com.fasttime.domain.bootcamp.dto.response.CertificationResponseDTO;
 import com.fasttime.domain.bootcamp.dto.response.MyCertificationResponseDTO;
 import com.fasttime.domain.bootcamp.entity.Certification;
+import com.fasttime.domain.bootcamp.entity.CertificationStatus;
 import com.fasttime.domain.bootcamp.service.CertificationService;
 import com.fasttime.global.util.ResponseDTO;
 import com.fasttime.global.util.SecurityUtil;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -114,5 +117,12 @@ public class CertificationController {
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(ResponseDTO.res(HttpStatus.OK, "인증 요청이 거절되었습니다.", responseDto));
+    }
+
+    @GetMapping
+    public ResponseEntity<ResponseDTO<List<AllCertificationResponseDTO>>> getAllCertifications(
+        @RequestParam(required = false) CertificationStatus status) {
+        List<AllCertificationResponseDTO> certifications = certificationService.getAllCertificationsByStatus(status);
+        return ResponseEntity.ok(ResponseDTO.res(HttpStatus.OK, "인증서 조회 성공", certifications));
     }
 }
