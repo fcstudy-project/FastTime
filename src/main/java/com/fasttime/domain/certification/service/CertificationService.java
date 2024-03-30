@@ -16,8 +16,9 @@ import com.fasttime.domain.member.repository.MemberRepository;
 import com.fasttime.domain.member.service.AdminService;
 import com.fasttime.domain.review.exception.BootCampNotFoundException;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -122,17 +123,15 @@ public class CertificationService {
         return certificationRepository.save(certification);
     }
 
-    public List<AllCertificationResponseDTO> getAllCertificationsByStatus(
-        CertificationStatus status) {
-        List<Certification> certifications;
+    public Page<AllCertificationResponseDTO> getAllCertificationsByStatus(
+        CertificationStatus status, Pageable pageable) {
+        Page<Certification> certificationPage;
         if (status == null) {
-            certifications = certificationRepository.findAll();
+            certificationPage = certificationRepository.findAll(pageable);
         } else {
-            certifications = certificationRepository.findByStatus(status);
+            certificationPage = certificationRepository.findByStatus(status, pageable);
         }
-        return certifications.stream()
-            .map(this::convertToDTO)
-            .collect(Collectors.toList());
+        return certificationPage.map(this::convertToDTO);
     }
 
     private AllCertificationResponseDTO convertToDTO(Certification certification) {

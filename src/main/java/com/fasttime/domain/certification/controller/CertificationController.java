@@ -13,9 +13,15 @@ import com.fasttime.domain.certification.service.CertificationService;
 import com.fasttime.global.util.ResponseDTO;
 import com.fasttime.global.util.SecurityUtil;
 import jakarta.validation.Valid;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -120,9 +126,25 @@ public class CertificationController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseDTO<List<AllCertificationResponseDTO>>> getAllCertifications(
-        @RequestParam(required = false) CertificationStatus status) {
-        List<AllCertificationResponseDTO> certifications = certificationService.getAllCertificationsByStatus(status);
-        return ResponseEntity.ok(ResponseDTO.res(HttpStatus.OK, "인증서 조회 성공", certifications));
+    public ResponseEntity<ResponseDTO<Map<String, Object>>> getAllCertifications(
+        @RequestParam(required = false) CertificationStatus status,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "createdAt") String sortBy) {
+
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sortBy).descending());
+        Page<AllCertificationResponseDTO> certifications = certificationService.getAllCertificationsByStatus(
+            status, pageable);
+        Map<String, Object> responseMap = createPaginationResponse(certifications);
+        return ResponseEntity.ok(ResponseDTO.res(HttpStatus.OK, "인증서 조회 성공", responseMap));
+    }
+
+    private Map<String, Object> createPaginationResponse(Page<?> page) {
+        Map<String, Object> responseMap = new LinkedHashMap<>();
+        responseMap.put("currentPage", page.getNumber() + 1);
+        responseMap.put("totalPages", page.getTotalPages());
+        responseMap.put("currentElements", page.getNumberOfElements());
+        responseMap.put("totalElements", page.getTotalElements());
+        responseMap.put("certification", page.getContent());
+        return responseMap;
     }
 }

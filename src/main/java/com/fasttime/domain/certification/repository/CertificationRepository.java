@@ -2,6 +2,8 @@ package com.fasttime.domain.certification.repository;
 
 import com.fasttime.domain.certification.entity.Certification;
 import com.fasttime.domain.certification.entity.CertificationStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
@@ -12,7 +14,7 @@ public interface CertificationRepository extends JpaRepository<Certification, Lo
 
     List<Certification> findByMemberId(Long memberId);
 
-    List<Certification> findByStatus(CertificationStatus status);
+    Page<Certification> findByStatus(CertificationStatus status, Pageable pageable);
 
     @Transactional
     @Modifying
