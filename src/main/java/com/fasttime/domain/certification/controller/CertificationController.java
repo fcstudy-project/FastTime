@@ -128,10 +128,9 @@ public class CertificationController {
     @GetMapping
     public ResponseEntity<ResponseDTO<Map<String, Object>>> getAllCertifications(
         @RequestParam(required = false) CertificationStatus status,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "createdAt") String sortBy) {
+        @RequestParam(defaultValue = "0") int page) {
 
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(sortBy).descending());
+        Pageable pageable = PageRequest.of(page, 10);
         Page<AllCertificationResponseDTO> certifications = certificationService.getAllCertificationsByStatus(
             status, pageable);
         Map<String, Object> responseMap = createPaginationResponse(certifications);
