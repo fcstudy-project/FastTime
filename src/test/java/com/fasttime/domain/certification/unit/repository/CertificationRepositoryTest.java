@@ -11,15 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.context.annotation.Import;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-
 import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -81,13 +81,15 @@ public class CertificationRepositoryTest {
             CertificationStatus.PENDING);
         certificationRepository.save(certification);
 
+        Pageable pageable = Pageable.unpaged();
+
         // when
-        List<Certification> results = certificationRepository.findByStatus(
-            CertificationStatus.PENDING);
+        Page<Certification> results = certificationRepository.findByStatus(
+            CertificationStatus.PENDING, pageable);
 
         // then
         assertThat(results).isNotEmpty();
-        assertThat(results.get(0).getStatus()).isEqualTo(CertificationStatus.PENDING);
+        assertThat(results.getContent().get(0).getStatus()).isEqualTo(CertificationStatus.PENDING);
     }
 
     @DisplayName("삭제된 멤버의 인증서 삭제")
