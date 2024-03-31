@@ -1,0 +1,123 @@
+= Review REST API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+
+[[Certification-Create]]
+== 인증 요청
+
+member가 부트캠프 인증을 요청하는 API 입니다.
+
+
+=== HttpRequest
+
+include::{snippets}/certification-create/http-request.adoc[]
+include::{snippets}/certification-create/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/certification-create/http-response.adoc[]
+include::{snippets}/certification-create/response-fields.adoc[]
+
+[[Certification-Withdraw]]
+== 인증 철회
+
+인증 요청을 철회하는 API 입니다.
+
+* 철회 사유는 필수로 입력해야합니다!
+
+=== HttpRequest
+
+include::{snippets}/certification-withdraw/http-request.adoc[]
+include::{snippets}/certification-withdraw/request-fields.adoc[]
+include::{snippets}/certification-withdrawal/path-parameters.adoc[]
+
+
+=== HttpResponse
+
+include::{snippets}/certification-withdraw/http-response.adoc[]
+include::{snippets}/certification-withdraw/response-fields.adoc[]
+
+[[Certification-CancelWithdrawal]]
+== 인증 철회 취소
+
+철회한 인증을 다시 복구하는 API 입니다.(WITHDRAW -> PENDING)
+
+
+=== HttpRequest
+
+include::{snippets}/certification-cancel-withdrawal/http-request.adoc[]
+include::{snippets}/certification-cancel-withdrawal/path-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/certification-cancel-withdrawal/http-response.adoc[]
+include::{snippets}/certification-cancel-withdrawal/response-fields.adoc[]
+
+[[Certification-Get-My]]
+== 내 인증서 조회
+
+내가 요청한 인증서를 조회하는 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/certification-get-my/http-request.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/certification-get-my/http-response.adoc[]
+include::{snippets}/certification-get-my/response-fields.adoc[]
+
+[[Certification-Approve]]
+== 인증 수락
+
+인증 요청을 수락하는 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/certification-approve/http-request.adoc[]
+include::{snippets}/certification-approve/path-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/certification-approve/http-response.adoc[]
+include::{snippets}/certification-approve/response-fields.adoc[]
+
+[[Certification-Reject]]
+== 인증 거절
+
+인증 요청을 거절하는 API 입니다.
+
+* 거절 사유는 필수로 입력해야합니다!
+
+=== HttpRequest
+
+include::{snippets}/certification-reject/http-request.adoc[]
+include::{snippets}/certification-reject/request-fields.adoc[]
+include::{snippets}/certification-reject/path-parameters.adoc[]
+
+
+=== HttpResponse
+
+include::{snippets}/certification-reject/http-response.adoc[]
+include::{snippets}/certification-reject/response-fields.adoc[]
+
+[[Certification-Get-All]]
+== 인증서 전체 조회
+
+모든 인증 요청을 조회하는 API 입니다.
+
+* 목적 : 관리자 페이지에 사용
+
+=== HttpRequest
+
+include::{snippets}/certifications-get-all/http-request.adoc[]
+include::{snippets}/certifications-get-all/path-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/certifications-get-all/http-response.adoc[]
+include::{snippets}/certifications-get-all/response-fields.adoc[]
