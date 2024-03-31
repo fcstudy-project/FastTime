@@ -66,24 +66,24 @@ public class CertificationServiceTest {
     void setUp() {
         bootCamp1 = BootCamp.builder()
             .id(1L)
-            .name("Bootcamp1")
-            .description("Description1")
+            .name("패스트캠퍼스X야놀자 부트캠프")
+            .description("부트캠프1 설명")
             .image("Image1")
             .governmentFunded(true)
-            .organizer("Organizer1")
+            .organizer("패스트캠퍼스")
             .website("Website1")
-            .course("Course1")
+            .course("백엔드 코스")
             .build();
 
         bootCamp2 = BootCamp.builder()
             .id(2L)
             .name("Bootcamp2")
-            .description("Description2")
+            .description("부트캠프2 설명")
             .image("Image2")
             .governmentFunded(false)
-            .organizer("Organizer2")
+            .organizer("프로그래머스")
             .website("Website2")
-            .course("Course2")
+            .course("프론트엔드 코스")
             .build();
 
         member1 = Member.builder()
