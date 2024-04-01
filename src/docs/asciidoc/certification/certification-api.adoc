@@ -33,7 +33,7 @@ include::{snippets}/certification-create/response-fields.adoc[]
 
 include::{snippets}/certification-withdraw/http-request.adoc[]
 include::{snippets}/certification-withdraw/request-fields.adoc[]
-include::{snippets}/certification-withdrawal/path-parameters.adoc[]
+include::{snippets}/certification-withdraw/path-parameters.adoc[]
 
 
 === HttpResponse

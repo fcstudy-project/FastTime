@@ -28,8 +28,10 @@ import com.fasttime.domain.certification.service.CertificationService;
 import com.fasttime.domain.member.entity.Member;
 import com.fasttime.domain.member.entity.Role;
 import com.fasttime.global.util.SecurityUtil;
+
 import java.util.Collections;
 import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -162,7 +164,7 @@ class CertificationControllerDocsTest extends RestDocsSupport {
 
         when(securityUtil.getCurrentMemberId()).thenReturn(memberId);
 
-        mockMvc.perform(post("/api/v2/certification/withdraw/" + certificationId)
+        mockMvc.perform(post("/api/v2/certification/withdraw/{certificationId}", certificationId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(withdrawalRequestDTO)))
             .andExpect(status().isOk())
@@ -285,7 +287,8 @@ class CertificationControllerDocsTest extends RestDocsSupport {
             "Image URL", true,
             "Organizer1", "Website1", "Course");
         Certification certification = CertificationControllerDocsTest.createCertification(
-            certificationId, member, "Bootcamp", CertificationStatus.APPROVED, "imageURL", "content",
+            certificationId, member, "Bootcamp", CertificationStatus.APPROVED, "imageURL",
+            "content",
             bootCamp, null, null);
 
         when(securityUtil.getCurrentMemberId()).thenReturn(currentMemberId);
