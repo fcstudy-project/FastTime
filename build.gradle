@@ -96,6 +96,7 @@ tasks.named('test') {
 
 test {
     outputs.dir snippetsDir
+//    exclude '**/com.fasttime.global.discord/**'
 }
 
 asciidoctor {
