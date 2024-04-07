@@ -56,6 +56,10 @@ public enum ErrorCode {
     ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 대외활동입니다."),
     COMPETITION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 공모전입니다."),
 
+    // STUDY
+    STUDY_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 스터디게시판입니다."),
+    CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 스터디 분야입니다."),
+    HAS_NO_PERMISSION_WITH_THIS_STUDY(HttpStatus.UNAUTHORIZED, "해당 스터디 게시글에 대한 권한이 없습니다."),
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
 
