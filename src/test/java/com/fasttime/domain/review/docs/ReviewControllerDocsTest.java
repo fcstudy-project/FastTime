@@ -190,7 +190,7 @@ class ReviewControllerDocsTest extends RestDocsSupport {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 queryParameters(
-                    parameterWithName("bootcamp").description("부트캠프 이름"),
+                    parameterWithName("bootcamp").description("부트캠프 이름").optional(),
                     parameterWithName("page").description("페이지 번호"),
                     parameterWithName("size").description("페이지당 항목 수"),
                     parameterWithName("sortBy").description("정렬 기준").optional()
@@ -281,11 +281,17 @@ class ReviewControllerDocsTest extends RestDocsSupport {
         when(reviewService.getBootcampReviewSummaries(pageable)).thenReturn(pagedSummaries);
 
         mockMvc.perform(get("/api/v2/reviews/summary")
+                .queryParam("page", String.valueOf(page))
+                .queryParam("size", String.valueOf(size))
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andDo(document("reviews-get-summary",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                queryParameters(
+                    parameterWithName("page").description("페이지 번호"),
+                    parameterWithName("size").description("페이지당 항목 수")
+                ),
                 responseFields(
                     fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
                     fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
