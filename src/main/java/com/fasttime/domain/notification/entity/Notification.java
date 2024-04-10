@@ -37,6 +37,7 @@ public class Notification extends BaseTimeEntity {
 
     private String url;
 
+    @Column(nullable = false)
     private boolean isRead;
 
     @ManyToOne(fetch = FetchType.LAZY)
