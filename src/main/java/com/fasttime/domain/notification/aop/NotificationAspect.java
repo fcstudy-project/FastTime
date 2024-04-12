@@ -1,6 +1,7 @@
 package com.fasttime.domain.notification.aop;
 
 import com.fasttime.domain.notification.aop.proxy.NotificationInfo;
+import com.fasttime.domain.notification.exception.UnsupportedDataTypeForNotificationSendingException;
 import com.fasttime.domain.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
@@ -36,12 +37,15 @@ public class NotificationAspect {
     @Async
     @AfterReturning(pointcut = "annotationPointcut()", returning = "result")
     public void sendNotification(JoinPoint joinPoint, Object result) {
-        NotificationInfo notificationInfo = (NotificationInfo) result;
-        notificationService.send(
-            notificationInfo.getReceiver(),
-            notificationInfo.getNotificationType(),
-            notificationInfo.getNotificationType().getMessage(),
-            notificationInfo.getUrl()
-        );
+        if (result instanceof NotificationInfo notificationInfo) {
+            notificationService.send(
+                notificationInfo.getReceiver(),
+                notificationInfo.getNotificationType(),
+                notificationInfo.getNotificationType().getMessage(),
+                notificationInfo.getUrl()
+            );
+        } else {
+            throw new UnsupportedDataTypeForNotificationSendingException();
+        }
     }
 }
