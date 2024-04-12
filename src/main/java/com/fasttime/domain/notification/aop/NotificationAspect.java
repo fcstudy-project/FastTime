@@ -19,13 +19,20 @@ public class NotificationAspect {
 
     private final NotificationService notificationService;
 
-    private static final String STUDY_URL = "/api/v1/studies/";
-
+    /**
+     * 부가 기능을 적용할 위치 Pointcut 정의
+     */
     @Pointcut("@annotation(com.fasttime.domain.notification.annotation.NeedNotification)")
     public void annotationPointcut() {
 
     }
 
+    /**
+     * 알림 전송 Advice 정의 메서드
+     *
+     * @param joinPoint 조인 포인트
+     * @param result    메서드 반환 객체
+     */
     @Async
     @AfterReturning(pointcut = "annotationPointcut()", returning = "result")
     public void sendNotification(JoinPoint joinPoint, Object result) {
