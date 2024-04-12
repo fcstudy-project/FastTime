@@ -14,12 +14,15 @@ public class BatchScheduler {
     private final Job deleteOldReviewsJob;
     private final Job updateReferenceJob;
     private final Job updateReferenceStatusJob;
+    private final Job deleteCertificationsJob;
 
-    public BatchScheduler(JobLauncher jobLauncher, Job deleteOldReviewsJob, Job updateReferenceJob) {
+    public BatchScheduler(JobLauncher jobLauncher, Job deleteOldReviewsJob, Job updateReferenceJob,
+        Job deleteCertificationsJob) {
         this.jobLauncher = jobLauncher;
         this.deleteOldReviewsJob = deleteOldReviewsJob;
         this.updateReferenceJob = updateReferenceJob;
         this.updateReferenceStatusJob = updateReferenceJob;
+        this.deleteCertificationsJob = deleteCertificationsJob;
     }
 
     @Scheduled(cron = "0 0 3 * * *")
@@ -35,5 +38,10 @@ public class BatchScheduler {
     @Scheduled(cron = "0 30 2 * * *")
     public void runUpdateReferenceJob() throws JobExecutionException {
         jobLauncher.run(updateReferenceJob, new JobParameters());
+    }
+
+    @Scheduled(cron = "0 0 3 * * *")
+    public void runDeleteCertificationsJob() throws JobExecutionException {
+        jobLauncher.run(deleteCertificationsJob, new JobParameters());
     }
 }
