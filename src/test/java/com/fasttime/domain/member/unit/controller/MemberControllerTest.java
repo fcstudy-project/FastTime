@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasttime.domain.bootcamp.entity.BootCamp;
+import com.fasttime.domain.certification.entity.BootCamp;
 import com.fasttime.domain.member.dto.request.CreateMemberRequest;
 import com.fasttime.domain.member.dto.request.UpdateMemberRequest;
 import com.fasttime.domain.member.dto.request.LoginRequest;

@@ -1,6 +1,6 @@
 package com.fasttime.domain.review.entity;
 
-import com.fasttime.domain.bootcamp.entity.BootCamp;
+import com.fasttime.domain.certification.entity.BootCamp;
 import com.fasttime.domain.member.entity.Member;
 import com.fasttime.global.common.BaseTimeEntity;
 import jakarta.persistence.CascadeType;

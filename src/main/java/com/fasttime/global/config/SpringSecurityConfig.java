@@ -40,7 +40,7 @@ public class SpringSecurityConfig {
         "/api/v1/members",
         "/api/v2/login",
         "/api/v2/refresh",
-        "/api/v1/admin/join",
+        "/api/v1/admin",
         "/api/live/**",
         "/api/dashboards/**",
         "/actuator/**",

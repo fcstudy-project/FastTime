@@ -1,6 +1,8 @@
 package com.fasttime.global.config;
 
+import com.fasttime.domain.certification.repository.CertificationRepository;
 import com.fasttime.domain.review.repository.ReviewRepository;
+import com.fasttime.global.batch.tasklet.DeleteCertificationsTasklet;
 import com.fasttime.global.batch.tasklet.DeleteOldReviewsTasklet;
 import com.fasttime.global.batch.tasklet.UpdateActivityStatusTasklet;
 import com.fasttime.global.batch.tasklet.UpdateCompetitionStatusTasklet;
@@ -60,6 +62,7 @@ public class BatchConfig {
         @Qualifier("updateNewCompetitionStep") Step updateNewCompetitionStep,
         @Qualifier("updateDoneActivityStep") Step updateDoneActivityStep,
         @Qualifier("updateDoneCompetitionStep") Step updateDoneCompetitionStep) {
+
         return new JobBuilder("updateReferenceJob", jobRepository)
             .start(updateNewActivityStep)
             .next(updateNewCompetitionStep)
@@ -112,6 +115,27 @@ public class BatchConfig {
     public Step updateDoneCompetitionStep(JobRepository jobRepository,
         PlatformTransactionManager transactionManager, UpdateDoneCompetitionTasklet tasklet) {
         return new StepBuilder("updateDoneCompetitionStep", jobRepository)
+            .tasklet(tasklet, transactionManager)
+            .build();
+    }
+
+    @Bean
+    public DeleteCertificationsTasklet deleteCertificationsTasklet(
+        CertificationRepository certificationRepository) {
+        return new DeleteCertificationsTasklet(certificationRepository);
+    }
+
+    @Bean
+    public Job deleteCertificationsJob(JobRepository jobRepository, Step deleteCertificationsStep) {
+        return new JobBuilder("deleteCertificationsJob", jobRepository)
+            .start(deleteCertificationsStep)
+            .build();
+    }
+
+    @Bean
+    public Step deleteCertificationsStep(JobRepository jobRepository,
+        PlatformTransactionManager transactionManager, DeleteCertificationsTasklet tasklet) {
+        return new StepBuilder("deleteCertificationsStep", jobRepository)
             .tasklet(tasklet, transactionManager)
             .build();
     }
