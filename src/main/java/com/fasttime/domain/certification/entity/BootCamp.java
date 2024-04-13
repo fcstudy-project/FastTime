@@ -1,4 +1,4 @@
-package com.fasttime.domain.bootcamp.entity;
+package com.fasttime.domain.certification.entity;
 
 import com.fasttime.global.common.BaseTimeEntity;
 import jakarta.persistence.Column;

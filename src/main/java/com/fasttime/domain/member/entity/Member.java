@@ -1,6 +1,6 @@
 package com.fasttime.domain.member.entity;
 
-import com.fasttime.domain.bootcamp.entity.BootCamp;
+import com.fasttime.domain.certification.entity.BootCamp;
 import com.fasttime.global.common.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -58,6 +58,11 @@ public class Member extends BaseTimeEntity {
         this.nickname = nickname;
         this.image = image;
 
+    }
+
+    public void approveCertification(BootCamp bootCamp) {
+        this.campCrtfc = true;
+        this.bootCamp = bootCamp;
     }
 
     @Override

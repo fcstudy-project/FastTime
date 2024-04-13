@@ -56,6 +56,11 @@ public enum ErrorCode {
     ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 대외활동입니다."),
     COMPETITION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 공모전입니다."),
 
+    // CERTIFICATION
+    CERTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 인증입니다."),
+    UNAUTHORIZED_CERTIFICATION(HttpStatus.UNAUTHORIZED, "인증 권한이 없습니다."),
+    CERTIFICATION_BAD_REQUEST(HttpStatus.BAD_REQUEST, "이미 처리한 인증입니다."),
+
     // STUDY
     STUDY_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 스터디게시판입니다."),
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 스터디 분야입니다."),
