@@ -40,10 +40,14 @@ public class SpringSecurityConfig {
         "/api/v1/members",
         "/api/v2/login",
         "/api/v2/refresh",
-        "/api/v1/admin/join",
+        "/api/v1/admin",
         "/api/live/**",
         "/api/dashboards/**",
         "/actuator/**",
+        "/api/v2/activities/**",
+        "/api/v2/competitions/**",
+        "/api/v1/confirm",
+        "/api/v1/verify/**",
     };
     private static final String[] GRAFANA_WHITE_LIST = {
         "/public/**",
@@ -61,7 +65,7 @@ public class SpringSecurityConfig {
             .authorizeHttpRequests(requests -> requests
                 .requestMatchers(PERMIT_URL_ARRAY).permitAll()
                 .requestMatchers(GRAFANA_WHITE_LIST).permitAll()
-                .requestMatchers(HttpMethod.GET, "api/v1/article", "api/v2/articles").permitAll()
+                .requestMatchers(HttpMethod.GET, "api/v1/article", "api/v2/articles", "api/v2/reviews/**").permitAll()
                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .anyRequest().authenticated())
