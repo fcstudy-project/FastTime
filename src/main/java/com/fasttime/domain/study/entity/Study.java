@@ -55,7 +55,7 @@ public class Study extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "study_id",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "study",cascade = CascadeType.ALL)
     private List<StudyCategory> studyCategories;
 
     @Builder
