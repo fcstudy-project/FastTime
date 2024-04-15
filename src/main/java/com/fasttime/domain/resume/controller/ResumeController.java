@@ -46,7 +46,7 @@ public class ResumeController {
                 securityUtil.getCurrentMemberId()
         ));
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ResponseDTO.res(HttpStatus.OK, null, null));
+                .body(ResponseDTO.res(HttpStatus.OK, "정상적으로 삭제되었습니다.", null));
     }
 
     @PutMapping("/{resumeId}")
