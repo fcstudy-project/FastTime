@@ -8,6 +8,7 @@ import com.fasttime.domain.resume.dto.ResumeResponseDto;
 import com.fasttime.domain.resume.dto.ResumeUpdateServiceRequest;
 import com.fasttime.domain.resume.entity.Resume;
 import com.fasttime.domain.resume.exception.NoResumeWriterException;
+import com.fasttime.domain.resume.exception.ResumeAlreadyDeletedException;
 import com.fasttime.domain.resume.exception.ResumeNotFoundException;
 import com.fasttime.domain.resume.repository.ResumeRepository;
 import java.time.LocalDateTime;
@@ -35,6 +36,9 @@ public class ResumeService {
                 .writer(resume.getWriter().getNickname())
                 .likeCount(resume.getLikeCount())
                 .viewCount(resume.getViewCount())
+                .createdAt(resume.getCreatedAt())
+                .lastModifiedAt(resume.getUpdatedAt())
+                .deletedAt(resume.getDeletedAt())
                 .build();
     }
 
@@ -54,6 +58,9 @@ public class ResumeService {
                 .writer(createdResume.getWriter().getNickname())
                 .likeCount(createdResume.getLikeCount())
                 .viewCount(createdResume.getViewCount())
+                .createdAt(createdResume.getCreatedAt())
+                .lastModifiedAt(createdResume.getUpdatedAt())
+                .deletedAt(createdResume.getDeletedAt())
                 .build();
     }
 
@@ -75,6 +82,9 @@ public class ResumeService {
                 .writer(resume.getWriter().getNickname())
                 .likeCount(resume.getLikeCount())
                 .viewCount(resume.getViewCount())
+                .createdAt(resume.getCreatedAt())
+                .lastModifiedAt(resume.getUpdatedAt())
+                .deletedAt(resume.getDeletedAt())
                 .build();
     }
 
