@@ -26,6 +26,7 @@ public class ResumeService {
     public ResumeResponseDto getResume(Long id) {
         Resume resume = resumeRepository.findById(id)
                 .orElseThrow(() -> new ResumeNotFoundException(id));
+        isDeleted(resume);
 
         return ResumeResponseDto.builder()
                 .id(resume.getId())
@@ -61,6 +62,7 @@ public class ResumeService {
                 request.memberId());
         Resume resume = findResumeById(request.resumeId());
 
+        isDeleted(resume);
         isWriter(requestMember, resume);
 
         resume.updateResume(request.title(), request.content());
@@ -80,9 +82,17 @@ public class ResumeService {
         final Member deleteRequestMember = memberService.getMember(
                 deleteRequest.requestUserId());
         final Resume resume = findResumeById(deleteRequest.resumeId());
+
+        isDeleted(resume);
         isWriter(deleteRequestMember, resume);
         resume.delete(LocalDateTime.now());
         resumeRepository.save(resume);
+    }
+
+    private void isDeleted(Resume resume) {
+        if (resume.isDeleted()) {
+            throw new ResumeAlreadyDeletedException();
+        }
     }
 
     private void isWriter(Member requestMember, Resume resume) {
