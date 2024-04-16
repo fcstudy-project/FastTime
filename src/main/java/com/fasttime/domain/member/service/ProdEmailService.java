@@ -2,6 +2,7 @@ package com.fasttime.domain.member.service;
 
 import com.fasttime.domain.member.exception.EmailSendingException;
 import com.fasttime.domain.member.exception.EmailTemplateLoadException;
+import com.fasttime.domain.member.exception.VerificationCodeExpiredException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -9,13 +10,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -29,10 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProdEmailService implements EmailUseCase{
 
     private final JavaMailSender javaMailSender;
-
+    private final RedisTemplate<String, String> redisTemplate;
     private static final String TEST_ID_EMAIL = "fasttime123@naver.com";
-
-    private final Map<String, String> verificationCodes = new ConcurrentHashMap<>();
 
     @Override
     public String sendVerificationEmail(String to)
@@ -41,17 +41,25 @@ public class ProdEmailService implements EmailUseCase{
         MimeMessage message = createMessage(to, authCode);
         try {
             javaMailSender.send(message);
-            verificationCodes.put(to, authCode);
+            saveVerificationCode(to, authCode, 5);
             return authCode;
         } catch (MailException ex) {
             throw new EmailSendingException();
         }
     }
 
+    private void saveVerificationCode(String email, String code, long timeout) {
+        ValueOperations<String, String> ops = redisTemplate.opsForValue();
+        ops.set(email, code, timeout, TimeUnit.MINUTES);
+    }
+
     @Override
     public boolean verifyEmailCode(String email, String code) {
-        String storedCode = verificationCodes.get(email);
-        return storedCode != null && storedCode.equals(code);
+        String storedCode = redisTemplate.opsForValue().get(email);
+        if (storedCode == null) {
+            throw new VerificationCodeExpiredException();
+        }
+        return storedCode.equals(code);
     }
 
     private String generateAuthCode() {

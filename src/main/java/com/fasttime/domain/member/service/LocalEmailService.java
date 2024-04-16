@@ -1,11 +1,14 @@
 package com.fasttime.domain.member.service;
 
 import com.fasttime.domain.member.exception.EmailSendingException;
-import java.util.Map;
+import com.fasttime.domain.member.exception.VerificationCodeExpiredException;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class LocalEmailService implements EmailUseCase {
 
-    private final Map<String, String> verificationCodes = new ConcurrentHashMap<>();
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     @Override
     public String sendVerificationEmail(String to) {
@@ -25,17 +29,25 @@ public class LocalEmailService implements EmailUseCase {
             log.info("send verification email...");
             log.info("target: {}", to);
             log.info("code: {}", authCode);
-            verificationCodes.put(to, authCode);
+            saveVerificationCode(to, authCode, 5);
             return authCode;
         } catch (MailException ex) {
             throw new EmailSendingException();
         }
     }
 
+    private void saveVerificationCode(String email, String code, long timeout) {
+        ValueOperations<String, String> ops = redisTemplate.opsForValue();
+        ops.set(email, code, timeout, TimeUnit.MINUTES);
+    }
+
     @Override
     public boolean verifyEmailCode(String email, String code) {
-        String storedCode = verificationCodes.get(email);
-        return storedCode != null && storedCode.equals(code);
+        String storedCode = redisTemplate.opsForValue().get(email);
+        if (storedCode == null) {
+            throw new VerificationCodeExpiredException();
+        }
+        return storedCode.equals(code);
     }
 
     private String generateAuthCode() {
