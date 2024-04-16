@@ -13,6 +13,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasttime.docs.RestDocsSupport;
@@ -384,7 +385,7 @@ class CertificationControllerDocsTest extends RestDocsSupport {
             .andDo(document("certifications-get-all",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
-                pathParameters(
+                queryParameters(
                     parameterWithName("status").optional().description("인증 진행 상태"),
                     parameterWithName("page").optional().description("페이지 번호")
                 ),

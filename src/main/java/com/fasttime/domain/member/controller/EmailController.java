@@ -39,7 +39,7 @@ public class EmailController {
             return ResponseEntity.ok(ResponseDTO.res(HttpStatus.OK, "이메일 인증 성공.", true));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ResponseDTO.res(HttpStatus.BAD_REQUEST, "이메일 인증 실패.", false));
+                .body(ResponseDTO.res(HttpStatus.BAD_REQUEST, "인증 코드가 일치하지 않습니다.", false));
         }
     }
 }
