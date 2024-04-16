@@ -66,6 +66,10 @@ public enum ErrorCode {
     UNAUTHORIZED_CERTIFICATION(HttpStatus.UNAUTHORIZED, "인증 권한이 없습니다."),
     CERTIFICATION_BAD_REQUEST(HttpStatus.BAD_REQUEST, "이미 처리한 인증입니다."),
 
+    // SSE & NOTIFICATION
+    SSE_CONNECTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SSE 연결에 실패했습니다."),
+    UNSUPPORTED_DATA_TYPE_FOR_NOTIFICATION_SENDING(HttpStatus.INTERNAL_SERVER_ERROR,
+        "알림 전송 기능을 사용할 메서드의 반환값이 알림 전송을 지원하지 않는 자료형입니다."),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
