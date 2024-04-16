@@ -29,17 +29,7 @@ public class ResumeService {
                 .orElseThrow(() -> new ResumeNotFoundException(id));
         isDeleted(resume);
 
-        return ResumeResponseDto.builder()
-                .id(resume.getId())
-                .title(resume.getTitle())
-                .content(resume.getContent())
-                .writer(resume.getWriter().getNickname())
-                .likeCount(resume.getLikeCount())
-                .viewCount(resume.getViewCount())
-                .createdAt(resume.getCreatedAt())
-                .lastModifiedAt(resume.getUpdatedAt())
-                .deletedAt(resume.getDeletedAt())
-                .build();
+        return buildResumeResponse(resume);
     }
 
     public ResumeResponseDto createResume(ResumeRequestDto requestDto, Long memberId) {
@@ -51,17 +41,7 @@ public class ResumeService {
                 .build();
         Resume createdResume = resumeRepository.save(newResume);
 
-        return ResumeResponseDto.builder()
-                .id(createdResume.getId())
-                .title(createdResume.getTitle())
-                .content(createdResume.getContent())
-                .writer(createdResume.getWriter().getNickname())
-                .likeCount(createdResume.getLikeCount())
-                .viewCount(createdResume.getViewCount())
-                .createdAt(createdResume.getCreatedAt())
-                .lastModifiedAt(createdResume.getUpdatedAt())
-                .deletedAt(createdResume.getDeletedAt())
-                .build();
+        return buildResumeResponse(createdResume);
     }
 
     public ResumeResponseDto updateResume(ResumeUpdateServiceRequest request) {
@@ -86,6 +66,9 @@ public class ResumeService {
                 .lastModifiedAt(resume.getUpdatedAt())
                 .deletedAt(resume.getDeletedAt())
                 .build();
+        return buildResumeResponse(resume);
+    }
+
     }
 
     public void delete(ResumeDeleteServiceRequest deleteRequest) {
@@ -116,5 +99,19 @@ public class ResumeService {
     private Resume findResumeById(Long resumeId) {
         return resumeRepository.findById(resumeId)
                 .orElseThrow(() -> new ResumeNotFoundException(resumeId));
+    }
+
+    private ResumeResponseDto buildResumeResponse(Resume resume) {
+        return ResumeResponseDto.builder()
+                .id(resume.getId())
+                .title(resume.getTitle())
+                .content(resume.getContent())
+                .writer(resume.getWriter().getNickname())
+                .likeCount(resume.getLikeCount())
+                .viewCount(resume.getViewCount())
+                .createdAt(resume.getCreatedAt())
+                .lastModifiedAt(resume.getUpdatedAt())
+                .deletedAt(resume.getDeletedAt())
+                .build();
     }
 }
