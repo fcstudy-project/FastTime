@@ -1,0 +1,43 @@
+= Email REST API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+
+[[Email-Send-Verification]]
+== 이메일 인증 코드 전송
+
+이메일로 인증 코드를 전송하는 API 입니다.
+
+* dev, local, test 서버에서는 이메일이 실제로 전송되지 않습니다. (로그로 확인 가능)
+* prod 서버에서만 실제 이메일이 전송됩니다.
+
+
+=== HttpRequest
+
+include::{snippets}/email-send-verification/http-request.adoc[]
+include::{snippets}/email-send-verification/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/email-send-verification/http-response.adoc[]
+include::{snippets}/email-send-verification/response-fields.adoc[]
+
+[[Email-Verify]]
+== 이메일 인증 코드 검증
+
+전송 인증 코드, 입력 인증 코드가 일치하는지 비교하는 API 입니다.
+
+
+=== HttpRequest
+
+include::{snippets}/email-verify-code/http-request.adoc[]
+include::{snippets}/email-verify-code/path-parameters.adoc[]
+include::{snippets}/email-verify-code/query-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/email-verify-code/http-response.adoc[]
+include::{snippets}/email-verify-code/response-fields.adoc[]
