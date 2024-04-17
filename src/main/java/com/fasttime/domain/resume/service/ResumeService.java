@@ -12,6 +12,7 @@ import com.fasttime.domain.resume.exception.NoResumeWriterException;
 import com.fasttime.domain.resume.exception.ResumeAlreadyDeletedException;
 import com.fasttime.domain.resume.exception.ResumeNotFoundException;
 import com.fasttime.domain.resume.repository.ResumeRepository;
+import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ResumeService {
 
     private final ResumeRepository resumeRepository;
@@ -41,9 +43,9 @@ public class ResumeService {
                 .content(requestDto.content())
                 .writer(member)
                 .build();
-        Resume createdResume = resumeRepository.save(newResume);
+        resumeRepository.save(newResume);
 
-        return buildResumeResponse(createdResume);
+        return buildResumeResponse(newResume);
     }
 
     public ResumeResponseDto updateResume(ResumeUpdateServiceRequest request) {
