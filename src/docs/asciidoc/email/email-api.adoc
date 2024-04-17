@@ -30,6 +30,8 @@ include::{snippets}/email-send-verification/response-fields.adoc[]
 
 전송 인증 코드, 입력 인증 코드가 일치하는지 비교하는 API 입니다.
 
+* 전송 받은 인증 코드의 유효시간은 5분입니다.
+
 
 === HttpRequest
 
