@@ -16,7 +16,7 @@ CREATE TABLE study
     progress_start      DATE          NOT NULL,
     progress_end        DATE          NOT NULL,
     contact             VARCHAR(255) NOT NULL,
-    study_state          enum ('DURING','CLOSED') NOT NULL,
+    study_state         ENUM('DURING','CLOSED') NOT NULL,
     CONSTRAINT pk_study PRIMARY KEY (id)
 );
 
