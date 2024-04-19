@@ -5,6 +5,7 @@ CREATE TABLE study
     content             VARCHAR(255) NOT NULL,
     skill               VARCHAR(255) NOT NULL,
     total               INT          NOT NULL,
+    member_id           BIGINT       NULL,
     current             INT          NOT NULL,
     applicant           INT          NOT NULL,
     recruitment_start   DATE          NOT NULL,
