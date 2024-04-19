@@ -15,6 +15,8 @@ import com.fasttime.domain.member.service.EmailUseCase;
 import com.fasttime.domain.member.service.MemberService;
 import com.fasttime.domain.memberArticleLike.controller.MemberArticleLikeRestController;
 import com.fasttime.domain.memberArticleLike.service.MemberArticleLikeService;
+import com.fasttime.domain.notification.controller.NotificationController;
+import com.fasttime.domain.notification.service.NotificationService;
 import com.fasttime.domain.report.contoller.ReportRestController;
 import com.fasttime.domain.report.service.ReportService;
 import com.fasttime.domain.review.controller.ReviewController;
@@ -32,7 +34,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(value = {ArticleController.class, MemberController.class, ReportRestController.class,
     EmailController.class, AdminController.class, MemberArticleLikeRestController.class,
-    CommentRestController.class, ReviewController.class},
+    CommentRestController.class, ReviewController.class, NotificationController.class},
     excludeFilters = {
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {SecurityConfig.class, SpringSecurityConfig.class})},
     excludeAutoConfiguration = SecurityAutoConfiguration.class)
@@ -76,4 +78,7 @@ public abstract class ControllerUnitTestSupporter {
 
     @MockBean
     protected ReviewService reviewService;
+
+    @MockBean
+    protected NotificationService notificationService;
 }

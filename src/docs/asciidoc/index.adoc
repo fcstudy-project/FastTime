@@ -11,6 +11,7 @@ endif::[]
 
 
 == API
+=== link:email/email-api.html[이메일 API, window=blank]
 === link:member/member-api.html[회원 API, window=blank]
 === link:article/article-api.html[게시글 API, window=blank]
 === link:comment/comment-api.html[댓글 API, window=blank]

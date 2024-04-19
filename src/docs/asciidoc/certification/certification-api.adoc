@@ -1,4 +1,4 @@
-= Review REST API Docs
+= Certification REST API Docs
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
@@ -115,7 +115,7 @@ include::{snippets}/certification-reject/response-fields.adoc[]
 === HttpRequest
 
 include::{snippets}/certifications-get-all/http-request.adoc[]
-include::{snippets}/certifications-get-all/path-parameters.adoc[]
+include::{snippets}/certifications-get-all/query-parameters.adoc[]
 
 === HttpResponse
 
