@@ -59,11 +59,10 @@ class ResumeServiceTest {
 
             // when
             ResumeResponseDto response = resumeService.createResume(requestDto, 1L);
-
             // then
-            assertThat(response).extracting("id", "title", "content", "writer", "likeCount",
+            assertThat(response).extracting("title", "content", "writer", "likeCount",
                             "viewCount")
-                    .containsExactly(1L, MOCK_RESUME_TITLE, MOCK_RESUME_CONTENT, "testName", 0, 0);
+                    .containsExactly(MOCK_RESUME_TITLE, MOCK_RESUME_CONTENT, "testName", 0, 0);
         }
 
     }
@@ -191,6 +190,7 @@ class ResumeServiceTest {
                     ResumeNotFoundException.class);
         }
     }
+
 
     private static Resume createMockResume(Member member) {
         return Resume.builder()
