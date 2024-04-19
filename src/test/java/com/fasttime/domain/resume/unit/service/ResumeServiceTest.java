@@ -10,16 +10,20 @@ import static org.mockito.Mockito.verify;
 
 import com.fasttime.domain.member.entity.Member;
 import com.fasttime.domain.member.service.MemberService;
+import com.fasttime.domain.resume.dto.LikeResumeRequest;
 import com.fasttime.domain.resume.dto.ResumeDeleteServiceRequest;
 import com.fasttime.domain.resume.dto.ResumeRequestDto;
 import com.fasttime.domain.resume.dto.ResumeResponseDto;
 import com.fasttime.domain.resume.dto.ResumeUpdateServiceRequest;
 import com.fasttime.domain.resume.entity.Resume;
+import com.fasttime.domain.resume.exception.AlreadyExistsResumeLikeException;
 import com.fasttime.domain.resume.exception.NoResumeWriterException;
 import com.fasttime.domain.resume.exception.ResumeNotFoundException;
+import com.fasttime.domain.resume.repository.LikeRepository;
 import com.fasttime.domain.resume.repository.ResumeRepository;
 import com.fasttime.domain.resume.service.ResumeService;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,6 +33,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
+@Slf4j
 class ResumeServiceTest {
 
     public static final String MOCK_RESUME_TITLE = "Resume test1";
@@ -40,6 +45,8 @@ class ResumeServiceTest {
     private ResumeService resumeService;
     @Mock
     private ResumeRepository resumeRepository;
+    @Mock
+    private LikeRepository likeRepository;
 
     @DisplayName("createResume()는")
     @Nested
@@ -191,6 +198,48 @@ class ResumeServiceTest {
         }
     }
 
+    @DisplayName("likeResume()는")
+    @Nested
+    class Context_likeResume {
+
+        @DisplayName("성공적으로 좋아요를 한다.")
+        @Test
+        void _willSuccess() {
+            // given
+            long memberId = 1L;
+            Member member = Member.builder().id(memberId).nickname("testName").build();
+            Resume mockResume = createMockResume(member);
+
+            // when
+            given(memberService.getMember(memberId)).willReturn(member);
+            given(resumeRepository.findById(anyLong())).willReturn(Optional.of(mockResume));
+            given(likeRepository.existsByMemberAndResume(any(Member.class),
+                    any(Resume.class))).willReturn(Boolean.FALSE);
+
+            resumeService.likeResume(new LikeResumeRequest(MOCK_RESUME_ID, memberId));
+
+            assertThat(mockResume.getLikeCount()).isEqualTo(1);
+        }
+
+        @DisplayName("이미 좋아요를 한 경우 AlreadyExistsResumeLikeException을 던진다.")
+        @Test
+        void like_alreadyExist_throwException() {
+            // given
+            long memberId = 1L;
+            Member member = Member.builder().id(memberId).nickname("testName").build();
+            Resume mockResume = createMockResume(member);
+            given(memberService.getMember(memberId)).willReturn(member);
+            given(resumeRepository.findById(anyLong())).willReturn(Optional.of(mockResume));
+            given(likeRepository.existsByMemberAndResume(any(Member.class),
+                    any(Resume.class))).willReturn(Boolean.TRUE);
+
+            assertThatThrownBy(
+                    () -> resumeService.likeResume(
+                            new LikeResumeRequest(MOCK_RESUME_ID, memberId))).isInstanceOf(
+                    AlreadyExistsResumeLikeException.class);
+
+        }
+    }
 
     private static Resume createMockResume(Member member) {
         return Resume.builder()

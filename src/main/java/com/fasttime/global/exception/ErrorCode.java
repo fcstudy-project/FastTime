@@ -57,6 +57,7 @@ public enum ErrorCode {
     RESUME_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 자기소개서입니다."),
     RESUME_IS_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "이미 삭제한 자기소개서입니다."),
     HAS_NO_PERMISSION_WITH_THIS_RESUME(HttpStatus.UNAUTHORIZED, "해당 자기소개서에 대한 권한이 없습니다."),
+    ALREADY_LIKE_THIS_RESUME(HttpStatus.BAD_REQUEST, "이미 좋아요한 자기소개서입니다."),
 
     // REFERENCE
     ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 대외활동입니다."),
