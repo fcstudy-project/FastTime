@@ -1,6 +1,9 @@
 CREATE TABLE study
 (
     id               BIGINT AUTO_INCREMENT NOT NULL,
+    created_at       datetime              NULL,
+    updated_at       datetime              NULL,
+    deleted_at       datetime              NULL,
     title               VARCHAR(255) NOT NULL,
     content             VARCHAR(255) NOT NULL,
     skill               VARCHAR(255) NOT NULL,
