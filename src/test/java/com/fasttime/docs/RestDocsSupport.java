@@ -5,6 +5,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -29,6 +30,7 @@ public abstract class RestDocsSupport {
             .addFilter(new CharacterEncodingFilter("UTF-8", true))
             .setMessageConverters(getLocalDateTimeConverter())
             .build();
+        objectMapper.registerModule(new JavaTimeModule());
     }
 
     public abstract Object initController();
