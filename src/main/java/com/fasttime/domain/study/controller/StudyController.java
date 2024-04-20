@@ -41,19 +41,19 @@ public class StudyController {
     }
 
     @PutMapping("/{studyId}")
-    public ResponseEntity<ResponseDTO<StudyResponse>> updateStudy(
+    public ResponseEntity<ResponseDTO<Long>> updateStudy(
         @PathVariable Long studyId, @RequestBody @Valid StudyUpdateRequest request) {
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(ResponseDTO.res(HttpStatus.OK,
-                studyService.updateStudy(studyId, securityUtil.getCurrentMemberId(), request)));
+                studyService.updateStudy(studyId, securityUtil.getCurrentMemberId(), request).id()));
     }
 
     @DeleteMapping("/{studyId}")
     public ResponseEntity<ResponseDTO<StudyResponse>> deleteStudy(@PathVariable Long studyId) {
         studyService.deleteStudy(studyId,securityUtil.getCurrentMemberId());
-        return ResponseEntity.status(HttpStatus.OK)
-            .body(ResponseDTO.res(HttpStatus.OK, null, null));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+            .body(ResponseDTO.res(HttpStatus.NO_CONTENT, null, null));
     }
 
     @GetMapping("/{studyId}")
