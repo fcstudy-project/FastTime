@@ -8,6 +8,7 @@ import com.fasttime.domain.study.dto.StudyResponse;
 import com.fasttime.domain.study.dto.StudyUpdateRequest;
 import com.fasttime.domain.study.entity.Study;
 import com.fasttime.domain.study.exception.NotStudyWriterException;
+import com.fasttime.domain.study.exception.StudyDeleteException;
 import com.fasttime.domain.study.exception.StudyNotFoundException;
 import com.fasttime.domain.study.repository.StudyRepository;
 import java.time.LocalDateTime;
@@ -32,12 +33,12 @@ public class StudyService {
         Member member = memberService.getMember(memberId);
 
         Study savedStudy = studyRepository.save(
-            Study.createNewStudy(
-                studyCreateRequest.title(), studyCreateRequest.content(),
-                studyCreateRequest.skill(), studyCreateRequest.total(),
-                studyCreateRequest.recruitmentEnd(), studyCreateRequest.progressStart(),
-                studyCreateRequest.progressEnd(), studyCreateRequest.contact(), member
-            ));
+                Study.createNewStudy(
+                        studyCreateRequest.title(), studyCreateRequest.content(),
+                        studyCreateRequest.skill(), studyCreateRequest.total(),
+                        studyCreateRequest.recruitmentEnd(), studyCreateRequest.progressStart(),
+                        studyCreateRequest.progressEnd(), studyCreateRequest.contact(), member
+                ));
 
         studyCategoryService.createCategory(savedStudy, studyCreateRequest.categoryIds());
 
@@ -92,7 +93,11 @@ public class StudyService {
     }
 
     private Study findStudyById(Long studyId) {
-        return studyRepository.findById(studyId).orElseThrow(StudyNotFoundException::new);
+        Study study = studyRepository.findById(studyId).orElseThrow(StudyNotFoundException::new);
+        if (study.getDeletedAt() == null) {
+            throw new StudyDeleteException();
+        }
+        return study;
     }
 
     private StudyResponse getStudyResponse(Study study) {
