@@ -1,4 +1,4 @@
-= Post REST API Docs
+= Study REST API Docs
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
