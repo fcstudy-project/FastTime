@@ -29,8 +29,8 @@ include::{snippets}/study-create/response-fields.adoc[]
 
 === HttpRequest
 
-include::{snippets}/articles/v2/search/http-request.adoc[]
-include::{snippets}/articles/v2/search/query-parameters.adoc[]
+include::{snippets}/study-search/http-request.adoc[]
+include::{snippets}/study-search/query-parameters.adoc[]
 
 === HttpResponse
 
