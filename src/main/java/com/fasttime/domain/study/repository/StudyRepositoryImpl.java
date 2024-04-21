@@ -28,13 +28,15 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
     @Override
     public Page<Study> search(Pageable pageable) {
         List<Study> studies = jpaQueryFactory.selectFrom(study)
+                .where(study.deletedAt.isNull())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .orderBy(getAllOrderSpecifiers(pageable).toArray(OrderSpecifier[]::new)).fetch();
 
         JPAQuery<Long> countQuery = jpaQueryFactory
             .select(study.count())
-            .from(study);
+            .from(study)
+                .where(study.deletedAt.isNull());
 
         return PageableExecutionUtils.getPage(studies, pageable, countQuery::fetchOne);
     }

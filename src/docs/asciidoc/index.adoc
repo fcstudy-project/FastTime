@@ -21,6 +21,8 @@ endif::[]
 === link:review/review-api.html[리뷰 API, window=blank]
 === link:reference/reference-api.html[대외활동/공모전 API, window=blank]
 === link:certification/certification-api.html[부트캠프 인증 API, window=blank]
+=== link:study/study-api.html[스터디 모집글 API, window=blank]
+=== link:category/category-api.html[스터디 모집글 카데고리 API, window=blank]
 
 
 == API Common Response
