@@ -69,10 +69,10 @@ public class ReviewController {
     @GetMapping
     public ResponseEntity<ResponseDTO<Map<String, Object>>> getReviews(
         @RequestParam(required = false) String bootcamp,
-        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "1") int page,
         @RequestParam(required = false, defaultValue = "createdAt") String sortBy) {
 
-        Pageable pageable = PageRequest.of(page, 6, Sort.by(sortBy).descending());
+        Pageable pageable = PageRequest.of(page - 1, 6, Sort.by(sortBy).descending());
         Page<ReviewResponseDTO> reviews = reviewService.getSortedReviews(bootcamp, pageable);
         Map<String, Object> responseMap = createPaginationResponse(reviews);
         return ResponseEntity.ok(
@@ -82,9 +82,9 @@ public class ReviewController {
 
     @GetMapping("/summary")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> getBootcampReviewSummaries(
-        @RequestParam(defaultValue = "0") int page) {
+        @RequestParam(defaultValue = "1") int page) {
 
-        Pageable pageable = PageRequest.of(page, 10);
+        Pageable pageable = PageRequest.of(page - 1, 10);
         Page<BootcampReviewSummaryDTO> summaries = reviewService.getBootcampReviewSummaries(
             pageable);
         Map<String, Object> responseMap = createPaginationResponse(summaries);
