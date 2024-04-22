@@ -14,6 +14,7 @@ import com.fasttime.domain.resume.exception.AlreadyExistsResumeLikeException;
 import com.fasttime.domain.resume.exception.NoResumeWriterException;
 import com.fasttime.domain.resume.exception.ResumeAlreadyDeletedException;
 import com.fasttime.domain.resume.exception.ResumeNotFoundException;
+import com.fasttime.domain.resume.exception.UnauthorizedAccessLikeException;
 import com.fasttime.domain.resume.repository.LikeRepository;
 import com.fasttime.domain.resume.repository.ResumeRepository;
 import jakarta.transaction.Transactional;
@@ -50,7 +51,7 @@ public class ResumeService {
                 .content(requestDto.content())
                 .writer(member)
                 .build();
-        Resume createdResume =  resumeRepository.save(newResume);
+        Resume createdResume = resumeRepository.save(newResume);
 
         return buildResumeResponse(createdResume);
     }
@@ -98,6 +99,19 @@ public class ResumeService {
         resume.like();
         likeRepository.save(Like.builder().resume(resume).member(member).build());
     }
+
+    public void cancelLike(Long resumeId, Long memberId) {
+        Member member = memberService.getMember(memberId);
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new ResumeNotFoundException(resumeId));
+
+        if (!likeRepository.existsByMemberAndResume(member, resume)) {
+            throw new UnauthorizedAccessLikeException();
+        }
+        resume.cancelLike();
+        likeRepository.deleteByMemberAndResume(member, resume);
+    }
+
     private void isDeleted(Resume resume) {
         if (resume.isDeleted()) {
             throw new ResumeAlreadyDeletedException();
