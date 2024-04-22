@@ -19,6 +19,7 @@ import com.fasttime.domain.resume.entity.Resume;
 import com.fasttime.domain.resume.exception.AlreadyExistsResumeLikeException;
 import com.fasttime.domain.resume.exception.NoResumeWriterException;
 import com.fasttime.domain.resume.exception.ResumeNotFoundException;
+import com.fasttime.domain.resume.exception.UnauthorizedAccessLikeException;
 import com.fasttime.domain.resume.repository.LikeRepository;
 import com.fasttime.domain.resume.repository.ResumeRepository;
 import com.fasttime.domain.resume.service.ResumeService;
@@ -221,23 +222,110 @@ class ResumeServiceTest {
             assertThat(mockResume.getLikeCount()).isEqualTo(1);
         }
 
-        @DisplayName("이미 좋아요를 한 경우 AlreadyExistsResumeLikeException을 던진다.")
+        @DisplayName("이미 좋아요를 한 경우 AlreadyExistsResumeLikeException을 반환한다.")
         @Test
         void like_alreadyExist_throwException() {
             // given
             long memberId = 1L;
             Member member = Member.builder().id(memberId).nickname("testName").build();
             Resume mockResume = createMockResume(member);
+
+            // when
             given(memberService.getMember(memberId)).willReturn(member);
             given(resumeRepository.findById(anyLong())).willReturn(Optional.of(mockResume));
             given(likeRepository.existsByMemberAndResume(any(Member.class),
                     any(Resume.class))).willReturn(Boolean.TRUE);
 
+            // then
             assertThatThrownBy(
                     () -> resumeService.likeResume(
                             new LikeResumeRequest(MOCK_RESUME_ID, memberId))).isInstanceOf(
                     AlreadyExistsResumeLikeException.class);
 
+        }
+    }
+
+    @DisplayName("cancelLike()는")
+    @Nested
+    class Context_cancelLike {
+
+        @DisplayName("정상적으로 좋아요를 삭제한다.")
+        @Test
+        void _willSuccess() {
+            // given
+            long memberId = 1L;
+            Member member = Member.builder().id(memberId).nickname("testName").build();
+            Resume resume = Resume.builder()
+                    .id(MOCK_RESUME_ID)
+                    .title(MOCK_RESUME_TITLE)
+                    .content(MOCK_RESUME_CONTENT)
+                    .likeCount(1)
+                    .writer(member)
+                    .build();
+
+            // when
+            given(memberService.getMember(memberId)).willReturn(member);
+            given(resumeRepository.findById(anyLong())).willReturn(Optional.of(resume));
+            given(likeRepository.existsByMemberAndResume(member, resume)).willReturn(true);
+
+            resumeService.cancelLike(MOCK_RESUME_ID, memberId);
+
+            // then
+            assertThat(resume.getLikeCount()).isEqualTo(0);
+        }
+
+        @DisplayName("좋아요 삭제 권한이 없는 경우 UnauthorizedAccessLikeException를 반환한다.")
+        @Test
+        void cancelLike_Unauthorized_throwException() {
+            // given
+            long memberId = 1L;
+            Member member = Member.builder().id(memberId).nickname("testName").build();
+            Resume resume = Resume.builder()
+                    .id(MOCK_RESUME_ID)
+                    .title(MOCK_RESUME_TITLE)
+                    .content(MOCK_RESUME_CONTENT)
+                    .likeCount(1)
+                    .writer(member)
+                    .build();
+            Member notAuthorMember = Member.builder().id(321L).nickname("not Author").build();
+
+            // when
+            given(memberService.getMember(321L)).willReturn(notAuthorMember);
+            given(resumeRepository.findById(anyLong())).willReturn(Optional.of(resume));
+            given(likeRepository.existsByMemberAndResume(notAuthorMember, resume)).willReturn(
+                    false);
+
+            // then
+            assertThatThrownBy(
+                    () -> resumeService.cancelLike(MOCK_RESUME_ID, 321L)).isInstanceOf(
+                    UnauthorizedAccessLikeException.class);
+        }
+
+        @DisplayName("자기소개서 좋아요 count가 0 이하인 경우 -가 되지 않는다.")
+        @Test
+        void test2() {
+            // given
+            long memberId = 1L;
+            Member member = Member.builder().id(memberId).nickname("testName").build();
+            Resume resume = Resume.builder()
+                    .id(MOCK_RESUME_ID)
+                    .title(MOCK_RESUME_TITLE)
+                    .content(MOCK_RESUME_CONTENT)
+                    .likeCount(0)
+                    .writer(member)
+                    .build();
+
+            assertThat(resume.getLikeCount()).isEqualTo(0);
+
+            // when
+            given(memberService.getMember(memberId)).willReturn(member);
+            given(resumeRepository.findById(anyLong())).willReturn(Optional.of(resume));
+            given(likeRepository.existsByMemberAndResume(member, resume)).willReturn(true);
+
+            resumeService.cancelLike(MOCK_RESUME_ID, memberId);
+
+            // then
+            assertThat(resume.getLikeCount()).isEqualTo(0);
         }
     }
 
