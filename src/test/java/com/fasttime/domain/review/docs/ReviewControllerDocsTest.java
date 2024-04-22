@@ -182,7 +182,7 @@ class ReviewControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(get("/api/v2/reviews")
                 .queryParam("bootcamp", "")
-                .queryParam("page", "")
+                .queryParam("page", "1")
                 .queryParam("size", "6")
                 .queryParam("sortBy", "rating"))
             .andExpect(status().isOk())
@@ -274,7 +274,7 @@ class ReviewControllerDocsTest extends RestDocsSupport {
 
         int page = 1;
         int size = 10;
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
 
         Page<BootcampReviewSummaryDTO> pagedSummaries = new PageImpl<>(summaries, pageable, summaries.size());
 
