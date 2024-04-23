@@ -106,10 +106,10 @@ public class ResumeService {
         likeRepository.save(Like.builder().resume(resume).member(member).build());
     }
 
-    public void cancelLike(Long resumeId, Long memberId) {
-        Member member = memberService.getMember(memberId);
-        Resume resume = resumeRepository.findById(resumeId)
-                .orElseThrow(() -> new ResumeNotFoundException(resumeId));
+    public void cancelLike(LikeResumeRequest likeResumeRequest) {
+        Member member = memberService.getMember(likeResumeRequest.memberId());
+        Resume resume = resumeRepository.findById(likeResumeRequest.resumeId())
+                .orElseThrow(ResumeNotFoundException::new);
 
         if (!likeRepository.existsByMemberAndResume(member, resume)) {
             throw new UnauthorizedAccessLikeException();
