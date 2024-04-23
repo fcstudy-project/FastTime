@@ -13,7 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Entity(name = "resume_like")
 @Getter
 @NoArgsConstructor
 public class Like extends BaseTimeEntity {
