@@ -10,6 +10,7 @@ import com.fasttime.domain.resume.repository.ResumeOrderBy;
 import com.fasttime.domain.resume.service.ResumeService;
 import com.fasttime.global.util.ResponseDTO;
 import com.fasttime.global.util.SecurityUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -60,9 +61,11 @@ public class ResumeController {
     }
 
     @GetMapping("/{resumeId}")
-    public ResponseEntity<ResponseDTO<ResumeResponseDto>> getResume(@PathVariable Long resumeId) {
+    public ResponseEntity<ResponseDTO<ResumeResponseDto>> getResume(@PathVariable Long resumeId,
+            HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ResponseDTO.res(HttpStatus.OK, resumeService.getResume(resumeId)));
+                .body(ResponseDTO.res(HttpStatus.OK,
+                        resumeService.getResume(resumeId, request.getRemoteAddr())));
     }
 
     @GetMapping

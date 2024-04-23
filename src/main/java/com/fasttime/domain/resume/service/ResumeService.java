@@ -36,11 +36,11 @@ public class ResumeService {
     private final MemberService memberService;
 
 
-    public ResumeResponseDto getResume(Long id) {
+    public ResumeResponseDto getResume(Long id, String remoteAddr) {
         Resume resume = resumeRepository.findById(id)
                 .orElseThrow(() -> new ResumeNotFoundException(id));
         isDeleted(resume);
-
+        addViewCntToRedis(id, remoteAddr);
         return buildResumeResponse(resume);
     }
 
@@ -110,6 +110,15 @@ public class ResumeService {
         }
         resume.cancelLike();
         likeRepository.deleteByMemberAndResume(member, resume);
+    }
+
+    private void addViewCntToRedis(Long resumeId, String remoteAddr) {
+        String key = "resumeId: " + resumeId;
+        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        if (Boolean.TRUE.equals(setOperations.isMember(key, remoteAddr))) {
+            return;
+        }
+        setOperations.add(key, remoteAddr);
     }
 
     private void isDeleted(Resume resume) {

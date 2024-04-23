@@ -33,6 +33,14 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
                 .fetch();
     }
 
+    @Override
+    public void addViewCountFromRedis(Long resumeId, Long viewCount) {
+        jpaQueryFactory.update(resume)
+                .where(resume.id.eq(resumeId))
+                .set(resume.viewCount, resume.viewCount.add(viewCount))
+                .execute();
+    }
+
     private BooleanBuilder createResumeSearchCondition(ResumesSearchRequest searchCondition) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         booleanBuilder.and(resume.deletedAt.isNull());
