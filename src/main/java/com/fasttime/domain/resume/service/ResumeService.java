@@ -20,9 +20,14 @@ import com.fasttime.domain.resume.repository.ResumeRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -34,6 +39,7 @@ public class ResumeService {
     private final LikeRepository likeRepository;
     private final ResumeRepository resumeRepository;
     private final MemberService memberService;
+    private final RedisTemplate<String, String> redisTemplate;
 
 
     public ResumeResponseDto getResume(Long id, String remoteAddr) {
@@ -119,6 +125,25 @@ public class ResumeService {
             return;
         }
         setOperations.add(key, remoteAddr);
+    }
+
+
+    private void updateViewCntToDB() {
+        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        Set<String> redisKeys = redisTemplate.keys("resumeId*");
+        for (String keyName : redisKeys) {
+            Long resumeId = extractResumeId(keyName);
+            Long viewCount = setOperations.size(keyName);
+            resumeRepository.addViewCountFromRedis(resumeId, viewCount);
+            setOperations.pop(keyName);
+        }
+    }
+
+    @NotNull
+    private static Long extractResumeId(String keyName) {
+        String resumeIdStr = keyName.replaceAll("\\D", "");
+        return Long.parseLong(resumeIdStr);
     }
 
     private void isDeleted(Resume resume) {
