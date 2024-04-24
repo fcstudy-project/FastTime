@@ -1,0 +1,23 @@
+= Study Application/Suggestion REST API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+
+[[Study-Apply]]
+== 스터디 참여 지원
+
+회원이 스터디 참여를 지원하는 API 입니다.
+
+
+=== HttpRequest
+
+include::{snippets}/study-apply/http-request.adoc[]
+include::{snippets}/study-apply/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/study-apply/http-response.adoc[]
+include::{snippets}/study-apply/response-fields.adoc[]
