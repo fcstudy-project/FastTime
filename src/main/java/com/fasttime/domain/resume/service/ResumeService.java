@@ -27,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -97,7 +96,7 @@ public class ResumeService {
     public void likeResume(LikeResumeRequest likeResumeRequest) {
         Member member = memberService.getMember(likeResumeRequest.memberId());
         Resume resume = resumeRepository.findById(likeResumeRequest.resumeId())
-                .orElseThrow(() -> new ResumeNotFoundException(likeResumeRequest.resumeId()));
+                .orElseThrow(ResumeNotFoundException::new);
         if (likeRepository.existsByMemberAndResume(member, resume)) {
             throw new AlreadyExistsResumeLikeException();
         }
@@ -128,9 +127,8 @@ public class ResumeService {
     }
 
 
-    private void updateViewCntToDB() {
+    public void updateViewCntToDB() {
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         Set<String> redisKeys = redisTemplate.keys("resumeId*");
         for (String keyName : redisKeys) {
             Long resumeId = extractResumeId(keyName);

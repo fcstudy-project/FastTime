@@ -75,8 +75,9 @@ public class ResumeController {
             @RequestParam(name = "orderBy", defaultValue = "date") String orderBy) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ResponseDTO.res(HttpStatus.OK,
-                resumeService.search(
-                        new ResumesSearchRequest(ResumeOrderBy.of(orderBy), page, pageSize))));
+                        resumeService.search(
+                                new ResumesSearchRequest(ResumeOrderBy.of(orderBy), page,
+                                        pageSize))));
     }
 
 }

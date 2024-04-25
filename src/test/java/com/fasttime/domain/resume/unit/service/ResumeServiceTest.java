@@ -173,13 +173,14 @@ class ResumeServiceTest {
         @Test
         void _willSuccess() {
             // given
+            String testRemoteAddress = "test remote address";
             Member member = Member.builder().id(1L).nickname("testName").build();
             Resume resumeInDb = createMockResume(member);
 
             given(resumeRepository.findById(anyLong())).willReturn(Optional.of(resumeInDb));
 
             // when
-            ResumeResponseDto response = resumeService.getResume(1L);
+            ResumeResponseDto response = resumeService.getResume(1L, testRemoteAddress);
 
             // then
             assertThat(response).extracting("id", "title", "content", "writer", "likeCount",
@@ -194,7 +195,7 @@ class ResumeServiceTest {
             given(resumeRepository.findById(anyLong())).willReturn(Optional.empty());
 
             // when
-            assertThatThrownBy(() -> resumeService.getResume(5L)).isInstanceOf(
+            assertThatThrownBy(() -> resumeService.getResume(5L, "test remote address")).isInstanceOf(
                     ResumeNotFoundException.class);
         }
     }
@@ -267,8 +268,7 @@ class ResumeServiceTest {
             given(memberService.getMember(memberId)).willReturn(member);
             given(resumeRepository.findById(anyLong())).willReturn(Optional.of(resume));
             given(likeRepository.existsByMemberAndResume(member, resume)).willReturn(true);
-
-            resumeService.cancelLike(MOCK_RESUME_ID, memberId);
+            resumeService.cancelLike(new LikeResumeRequest(MOCK_RESUME_ID, memberId));
 
             // then
             assertThat(resume.getLikeCount()).isEqualTo(0);
@@ -297,7 +297,7 @@ class ResumeServiceTest {
 
             // then
             assertThatThrownBy(
-                    () -> resumeService.cancelLike(MOCK_RESUME_ID, 321L)).isInstanceOf(
+                    () -> resumeService.cancelLike(new LikeResumeRequest(MOCK_RESUME_ID, 321L))).isInstanceOf(
                     UnauthorizedAccessLikeException.class);
         }
 
@@ -322,7 +322,7 @@ class ResumeServiceTest {
             given(resumeRepository.findById(anyLong())).willReturn(Optional.of(resume));
             given(likeRepository.existsByMemberAndResume(member, resume)).willReturn(true);
 
-            resumeService.cancelLike(MOCK_RESUME_ID, memberId);
+            resumeService.cancelLike(new LikeResumeRequest(MOCK_RESUME_ID, memberId));
 
             // then
             assertThat(resume.getLikeCount()).isEqualTo(0);
