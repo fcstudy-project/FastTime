@@ -41,6 +41,12 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
                 .execute();
     }
 
+    @Override
+    public Long getLikeCount(Long resumeId) {
+        return Long.valueOf(
+                jpaQueryFactory.select(resume.likeCount).from(resume).where(resume.id.eq(resumeId)).fetchOne());
+    }
+
     private BooleanBuilder createResumeSearchCondition(ResumesSearchRequest searchCondition) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         booleanBuilder.and(resume.deletedAt.isNull());

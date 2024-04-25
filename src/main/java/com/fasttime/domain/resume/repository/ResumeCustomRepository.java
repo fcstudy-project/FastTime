@@ -7,5 +7,7 @@ import java.util.List;
 public interface ResumeCustomRepository {
 
     List<Resume> search(ResumesSearchRequest searchCondition);
+    void addViewCountFromRedis(Long resumeId, Long viewCount);
 
+    Long getLikeCount(Long resumeId);
 }
