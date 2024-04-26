@@ -24,6 +24,7 @@ public class StudyApplicationServiceImpl implements StudyApplicationService {
     private final StudyRepository studyRepository;
     private final StudyApplicationRepository studyApplicationRepository;
 
+    @Override
     public ApplyToStudyResponseDto apply(
         long applicantId,
         long studyId,
