@@ -32,20 +32,22 @@ public class StudyApplicationServiceImpl implements StudyApplicationService {
     ) {
         Member applicant = memberService.getMember(applicantId);
         Study study = findStudyById(studyId);
-        return new ApplyToStudyResponseDto(
-            createStudyApplication(applicant, study, applyToStudyRequestDto.message())
-                .studyApplication()
-                .getId()
+        StudyApplication studyApplication = createStudyApplication(
+            applicant,
+            study,
+            applyToStudyRequestDto.message()
         );
+        sendNotification(studyApplication);
+        return new ApplyToStudyResponseDto(studyApplication.getId());
     }
 
-    @NeedNotification
-    private ApplyToStudyNotificationDto createStudyApplication(
+
+    private StudyApplication createStudyApplication(
         Member applicant,
         Study study,
         String message
     ) {
-        StudyApplication studyApplication = studyApplicationRepository.save(
+        return studyApplicationRepository.save(
             StudyApplication.builder()
                 .status(StudyRequestStatus.CONSIDERING)
                 .applicant(applicant)
@@ -53,6 +55,12 @@ public class StudyApplicationServiceImpl implements StudyApplicationService {
                 .message(message)
                 .build()
         );
+    }
+
+    @NeedNotification
+    private ApplyToStudyNotificationDto sendStudyApplicationNotification(
+        StudyApplication studyApplication
+    ) {
         return new ApplyToStudyNotificationDto(studyApplication);
     }
 
