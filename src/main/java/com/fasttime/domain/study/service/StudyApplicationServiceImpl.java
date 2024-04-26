@@ -37,7 +37,7 @@ public class StudyApplicationServiceImpl implements StudyApplicationService {
             study,
             applyToStudyRequestDto.message()
         );
-        sendNotification(studyApplication);
+        sendStudyApplicationNotification(studyApplication);
         return new ApplyToStudyResponseDto(studyApplication.getId());
     }
 
