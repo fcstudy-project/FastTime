@@ -120,9 +120,6 @@ public class ResumeService {
     private void addViewCntToRedis(Long resumeId, String remoteAddr) {
         String key = "resumeId: " + resumeId;
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        if (Boolean.TRUE.equals(setOperations.isMember(key, remoteAddr))) {
-            return;
-        }
         setOperations.add(key, remoteAddr);
     }
 

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.RedisTemplate;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
@@ -48,6 +50,8 @@ class ResumeServiceTest {
     private ResumeRepository resumeRepository;
     @Mock
     private LikeRepository likeRepository;
+    @Mock
+    private RedisTemplate<String, String> redisTemplate;
 
     @DisplayName("createResume()는")
     @Nested
@@ -173,12 +177,12 @@ class ResumeServiceTest {
         @Test
         void _willSuccess() {
             // given
-            String testRemoteAddress = "test remote address";
+
+            String testRemoteAddress = "0:0:0:0";
             Member member = Member.builder().id(1L).nickname("testName").build();
             Resume resumeInDb = createMockResume(member);
-
             given(resumeRepository.findById(anyLong())).willReturn(Optional.of(resumeInDb));
-
+            given(redisTemplate.opsForSet()).willReturn(mock());
             // when
             ResumeResponseDto response = resumeService.getResume(1L, testRemoteAddress);
 
@@ -195,7 +199,8 @@ class ResumeServiceTest {
             given(resumeRepository.findById(anyLong())).willReturn(Optional.empty());
 
             // when
-            assertThatThrownBy(() -> resumeService.getResume(5L, "test remote address")).isInstanceOf(
+            assertThatThrownBy(
+                    () -> resumeService.getResume(5L, "test remote address")).isInstanceOf(
                     ResumeNotFoundException.class);
         }
     }
@@ -297,7 +302,8 @@ class ResumeServiceTest {
 
             // then
             assertThatThrownBy(
-                    () -> resumeService.cancelLike(new LikeResumeRequest(MOCK_RESUME_ID, 321L))).isInstanceOf(
+                    () -> resumeService.cancelLike(
+                            new LikeResumeRequest(MOCK_RESUME_ID, 321L))).isInstanceOf(
                     UnauthorizedAccessLikeException.class);
         }
 
