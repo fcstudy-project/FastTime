@@ -11,7 +11,6 @@
 
 회원이 스터디 참여를 지원하는 API 입니다.
 
-
 === HttpRequest
 
 include::{snippets}/study-apply/http-request.adoc[]
@@ -21,3 +20,19 @@ include::{snippets}/study-apply/request-fields.adoc[]
 
 include::{snippets}/study-apply/http-response.adoc[]
 include::{snippets}/study-apply/response-fields.adoc[]
+
+[[Study-Suggest]]
+== 스터디 참여 제안
+
+회원이 스터디 참여를 제안하는 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/study-suggest/http-request.adoc[]
+include::{snippets}/study-suggest/path-parameters.adoc[]
+include::{snippets}/study-suggest/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/study-suggest/http-response.adoc[]
+include::{snippets}/study-suggest/response-fields.adoc[]
