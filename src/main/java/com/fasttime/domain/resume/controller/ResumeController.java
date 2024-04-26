@@ -1,5 +1,6 @@
 package com.fasttime.domain.resume.controller;
 
+import com.fasttime.domain.resume.dto.LikeResumeRequest;
 import com.fasttime.domain.resume.dto.ResumeDeleteServiceRequest;
 import com.fasttime.domain.resume.dto.ResumeRequestDto;
 import com.fasttime.domain.resume.dto.ResumeResponseDto;
@@ -78,6 +79,22 @@ public class ResumeController {
                         resumeService.search(
                                 new ResumesSearchRequest(ResumeOrderBy.of(orderBy), page,
                                         pageSize))));
+    }
+
+    @PostMapping("/{resumeId}/likes")
+    public ResponseEntity<ResponseDTO<Object>> likeResume(@PathVariable Long resumeId) {
+        resumeService.likeResume(
+                new LikeResumeRequest(resumeId, securityUtil.getCurrentMemberId()));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ResponseDTO.res(HttpStatus.OK, "정상적으로 처리되었습니다."));
+    }
+
+    @DeleteMapping("/{resumeId}/likes")
+    public ResponseEntity<ResponseDTO<Object>> cancelLike(@PathVariable Long resumeId) {
+        resumeService.cancelLike(
+                new LikeResumeRequest(resumeId, securityUtil.getCurrentMemberId()));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ResponseDTO.res(HttpStatus.OK, "정상적으로 처리되었습니다."));
     }
 
 }
