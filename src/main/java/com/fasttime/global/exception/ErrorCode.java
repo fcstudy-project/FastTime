@@ -74,6 +74,10 @@ public enum ErrorCode {
     HAS_NO_PERMISSION_WITH_THIS_STUDY(HttpStatus.UNAUTHORIZED, "해당 스터디 게시글에 대한 권한이 없습니다."),
     STUDY_DELETED(HttpStatus.NOT_FOUND,"삭제된 스터디 모집글입니다."),
 
+    // STUDY_COMMENT
+    STUDY_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 스터디 댓글입니다."),
+    HAS_NO_PERMISSION_WITH_THIS_STUDY_COMMENT(HttpStatus.UNAUTHORIZED, "스터디 댓글 작성자만 해당 스터디 댓글 수정/삭제가 가능합니다."),
+
     // SSE & NOTIFICATION
     SSE_CONNECTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SSE 연결에 실패했습니다."),
     UNSUPPORTED_DATA_TYPE_FOR_NOTIFICATION_SENDING(HttpStatus.INTERNAL_SERVER_ERROR,
