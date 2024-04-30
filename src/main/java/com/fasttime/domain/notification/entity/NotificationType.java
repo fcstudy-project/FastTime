@@ -12,7 +12,8 @@ import lombok.Getter;
 public enum NotificationType {
     STUDY_APPLICATION("새로운 스터디 지원이 들어왔습니다."),
     STUDY_SUGGEST("새로운 스터디 참여 제안이 있습니다."),
-    STUDY_APPROVE("스터디 참여가 승인되었습니다."),
+    STUDY_APPROVE_APPLICATION("스터디 참여가 승인되었습니다."),
+    STUDY_APPROVE_SUGGESTION("스터디 제안을 승인했습니다."),
     STUDY_REJECT("스터디 참여가 거절되었습니다.");
 
     /**

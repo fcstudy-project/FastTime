@@ -45,7 +45,7 @@ public class EmitterRepositoryImplTest {
         String eventCacheId = memberId + "_" + System.currentTimeMillis();
         Notification notification = Notification.builder()
             .type(NotificationType.STUDY_APPLICATION)
-            .content("nickname2님이 스터디에 지원하셨습니다.")
+            .content("새로운 스터디 지원이 들어왔습니다.")
             .url("www.boocam.net/studies/1")
             .isRead(false)
             .receiver(member)
@@ -96,7 +96,7 @@ public class EmitterRepositoryImplTest {
         String eventCacheId1 = memberId + "_" + System.currentTimeMillis();
         Notification notification1 = Notification.builder()
             .type(NotificationType.STUDY_APPLICATION)
-            .content("nickname2님이 스터디에 지원하셨습니다.")
+            .content("새로운 스터디 지원이 들어왔습니다.")
             .url("www.boocam.net/studies/1")
             .isRead(false)
             .receiver(member)
@@ -107,7 +107,7 @@ public class EmitterRepositoryImplTest {
         String eventCacheId2 = memberId + "_" + System.currentTimeMillis();
         Notification notification2 = Notification.builder()
             .type(NotificationType.STUDY_SUGGEST)
-            .content("nickname3님이 스터디 참여를 제안하셨습니다.")
+            .content("새로운 스터디 참여 제안이 있습니다.")
             .url("www.boocam.net/studies/3")
             .isRead(false)
             .receiver(member)
@@ -117,8 +117,8 @@ public class EmitterRepositoryImplTest {
         Thread.sleep(100);
         String eventCacheId3 = memberId + "_" + System.currentTimeMillis();
         Notification notification3 = Notification.builder()
-            .type(NotificationType.STUDY_APPROVE)
-            .content("nickname4님이 스터디에 참여를 승인하셨습니다.")
+            .type(NotificationType.STUDY_APPROVE_APPLICATION)
+            .content("스터디 참여가 승인되었습니다.")
             .url("www.boocam.net/studies/4")
             .isRead(false)
             .receiver(member)
@@ -185,7 +185,7 @@ public class EmitterRepositoryImplTest {
         String eventCacheId1 = memberId + "_" + System.currentTimeMillis();
         Notification notification1 = Notification.builder()
             .type(NotificationType.STUDY_APPLICATION)
-            .content("nickname2님이 스터디에 지원하셨습니다.")
+            .content("새로운 스터디 지원이 들어왔습니다.")
             .url("www.boocam.net/studies/1")
             .isRead(false)
             .receiver(member)
@@ -196,7 +196,7 @@ public class EmitterRepositoryImplTest {
         String eventCacheId2 = memberId + "_" + System.currentTimeMillis();
         Notification notification2 = Notification.builder()
             .type(NotificationType.STUDY_SUGGEST)
-            .content("nickname3님이 스터디 참여를 제안하셨습니다.")
+            .content("새로운 스터디 참여 제안이 있습니다.")
             .url("www.boocam.net/studies/3")
             .isRead(false)
             .receiver(member)
