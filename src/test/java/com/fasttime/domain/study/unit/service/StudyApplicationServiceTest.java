@@ -12,9 +12,11 @@ import com.fasttime.domain.member.entity.Member;
 import com.fasttime.domain.member.service.MemberService;
 import com.fasttime.domain.study.dto.request.ApplyToStudyRequestDto;
 import com.fasttime.domain.study.dto.response.ApplyToStudyResponseDto;
+import com.fasttime.domain.study.dto.response.ApproveStudyApplicationResponseDto;
 import com.fasttime.domain.study.entity.Study;
 import com.fasttime.domain.study.entity.StudyApplication;
 import com.fasttime.domain.study.entity.StudyRequestStatus;
+import com.fasttime.domain.study.exception.NotStudyWriterException;
 import com.fasttime.domain.study.exception.StudyDeleteException;
 import com.fasttime.domain.study.exception.StudyNotFoundException;
 import com.fasttime.domain.study.repository.StudyApplicationRepository;
@@ -79,6 +81,7 @@ public class StudyApplicationServiceTest {
             // then
             assertThat(applyToStudyResponseDto).extracting("studyApplicationId")
                 .isEqualTo(1L);
+
             verify(studyRepository, times(1)).findById(any(Long.class));
             verify(memberService, times(1)).getMember(any(Long.class));
             verify(studyApplicationRepository, times(1))
@@ -87,7 +90,7 @@ public class StudyApplicationServiceTest {
 
         @Test
         @DisplayName("스터디를 찾을 수 없으면 스터디 참여 지원을 할 수 없다.")
-        void study_not_found_willFail() {
+        void _study_not_found_willFail() {
             // given
             ApplyToStudyRequestDto applyToStudyRequestDto = new ApplyToStudyRequestDto(
                 "스터디 같이 해요!");
@@ -99,12 +102,13 @@ public class StudyApplicationServiceTest {
             Throwable exception = assertThrows(StudyNotFoundException.class, () -> {
                 studyApplicationService.apply(1L, 1L, applyToStudyRequestDto);
             });
+
             assertEquals("존재하지 않는 스터디게시판입니다.", exception.getMessage());
         }
 
         @Test
         @DisplayName("삭제된 스터디면 스터디 참여 지원을 할 수 없다.")
-        void study_deleted_willFail() {
+        void _study_deleted_willFail() {
             // given
             ApplyToStudyRequestDto applyToStudyRequestDto = new ApplyToStudyRequestDto(
                 "스터디 같이 해요!");
@@ -119,23 +123,119 @@ public class StudyApplicationServiceTest {
             Throwable exception = assertThrows(StudyDeleteException.class, () -> {
                 studyApplicationService.apply(1L, 1L, applyToStudyRequestDto);
             });
+
             assertEquals("삭제된 스터디 모집글입니다.", exception.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("approve()는 ")
+    class Context_approve {
+
+        @Test
+        @DisplayName("스터디 참여 지원을 승인할 수 있다.")
+        void _willSuccess() {
+            // given
+            given(studyApplicationRepository.findById(any(long.class))).willReturn(
+                Optional.of(newStudyApplication()));
+
+            // when
+            ApproveStudyApplicationResponseDto approveStudyApplicationResponseDto = studyApplicationService.approve(
+                1L,
+                1L
+            );
+
+            // then
+            assertThat(approveStudyApplicationResponseDto).extracting("studyApplicationId")
+                .isEqualTo(1L);
+
+            verify(studyApplicationRepository, times(1))
+                .findById(any(long.class));
+        }
+
+        @Test
+        @DisplayName("스터디 지원을 찾을 수 없으면 스터디 참여 지원을 승인할 수 없다.")
+        void _study_application_not_found_willFail() {
+            // given
+            ApplyToStudyRequestDto applyToStudyRequestDto = new ApplyToStudyRequestDto(
+                "스터디 같이 해요!");
+
+            given(studyRepository.findById(any(Long.class))).willReturn(Optional.empty());
+            given(memberService.getMember(any(Long.class))).willReturn(newMember());
+
+            // when then
+            Throwable exception = assertThrows(StudyNotFoundException.class, () -> {
+                studyApplicationService.apply(1L, 1L, applyToStudyRequestDto);
+            });
+
+            assertEquals("존재하지 않는 스터디게시판입니다.", exception.getMessage());
+        }
+
+        @Test
+        @DisplayName("삭제된 스터디면 스터디 참여 지원을 승인할 수 없다.")
+        void _study_deleted_willFail() {
+            // given
+            StudyApplication studyApplication = newStudyApplication();
+            studyApplication.getStudy().delete(LocalDateTime.now());
+
+            given(studyApplicationRepository.findById(any(Long.class))).willReturn(
+                Optional.of(studyApplication));
+
+            // when then
+            Throwable exception = assertThrows(StudyDeleteException.class, () -> {
+                studyApplicationService.approve(1L, 1L);
+            });
+
+            assertEquals("삭제된 스터디 모집글입니다.", exception.getMessage());
+        }
+
+        @Test
+        @DisplayName("스터디 게시글 작성자가 아니면 스터디 참여 지원을 승인할 수 없다.")
+        void _not_study_writer_willFail() {
+            // given
+            given(studyApplicationRepository.findById(any(Long.class)))
+                .willReturn(Optional.of(newStudyApplication()));
+
+            // when then
+            Throwable exception = assertThrows(NotStudyWriterException.class, () -> {
+                studyApplicationService.approve(2L, 1L);
+            });
+
+            assertEquals("해당 스터디 게시글에 대한 권한이 없습니다.", exception.getMessage());
         }
     }
 
     private Member newMember() {
         return Member.builder()
-            .id(1L)
-            .email("email")
-            .password("password")
-            .nickname("nickname")
-            .image("imageUrl")
+            .id(2L)
+            .email("email2")
+            .password("password2")
+            .nickname("nickname2")
+            .image("imageUrl2")
             .build();
     }
 
     private Study newStudy() {
         return Study.builder()
             .id(1L)
+            .member(Member.builder()
+                .id(1L)
+                .email("email1")
+                .password("password1")
+                .nickname("nickname1")
+                .image("imageUrl1")
+                .build()
+            )
+            .build();
+    }
+
+    private StudyApplication newStudyApplication() {
+        return StudyApplication.builder()
+            .id(1L)
+            .status(StudyRequestStatus.CONSIDERING)
+            .applicant(newMember())
+            .study(newStudy())
+            .message("스터디 같이 해요")
             .build();
     }
 }
