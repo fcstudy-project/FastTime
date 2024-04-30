@@ -75,6 +75,7 @@ public class StudySuggestionServiceTest {
             // then
             assertThat(suggestStudyResponseDto).extracting("studySuggestionId")
                 .isEqualTo(1L);
+
             verify(studyRepository, times(1)).findById(any(Long.class));
             verify(memberService, times(1)).getMember(any(Long.class));
             verify(studySuggestionRepository, times(1))
@@ -95,6 +96,7 @@ public class StudySuggestionServiceTest {
             Throwable exception = assertThrows(StudyNotFoundException.class, () -> {
                 studySuggestionService.suggest(1L, 2L, 1L, suggestStudyRequestDto);
             });
+
             assertEquals("존재하지 않는 스터디게시판입니다.", exception.getMessage());
         }
 
@@ -115,6 +117,7 @@ public class StudySuggestionServiceTest {
             Throwable exception = assertThrows(StudyDeleteException.class, () -> {
                 studySuggestionService.suggest(1L, 2L, 1L, suggestStudyRequestDto);
             });
+
             assertEquals("삭제된 스터디 모집글입니다.", exception.getMessage());
         }
 
@@ -125,9 +128,6 @@ public class StudySuggestionServiceTest {
             SuggestStudyRequestDto suggestStudyRequestDto = new SuggestStudyRequestDto(
                 "스터디 같이 해요!");
 
-            Study deletedStudy = newStudy();
-            deletedStudy.delete(LocalDateTime.now());
-
             given(studyRepository.findById(any(Long.class)))
                 .willReturn(Optional.of(newStudy()));
             given(memberService.getMember(any(Long.class))).willReturn(newMember());
@@ -136,6 +136,7 @@ public class StudySuggestionServiceTest {
             Throwable exception = assertThrows(NotStudyWriterException.class, () -> {
                 studySuggestionService.suggest(3L, 2L, 1L, suggestStudyRequestDto);
             });
+
             assertEquals("해당 스터디 게시글에 대한 권한이 없습니다.", exception.getMessage());
         }
     }
