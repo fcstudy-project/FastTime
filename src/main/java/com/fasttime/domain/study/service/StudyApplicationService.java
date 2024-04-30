@@ -2,6 +2,7 @@ package com.fasttime.domain.study.service;
 
 import com.fasttime.domain.study.dto.request.ApplyToStudyRequestDto;
 import com.fasttime.domain.study.dto.response.ApplyToStudyResponseDto;
+import com.fasttime.domain.study.dto.response.ApproveStudyApplicationResponseDto;
 
 public interface StudyApplicationService {
 
@@ -9,5 +10,10 @@ public interface StudyApplicationService {
         long applicantId,
         long studyId,
         ApplyToStudyRequestDto applyToStudyRequestDto
+    );
+
+    ApproveStudyApplicationResponseDto approve(
+        long memberId,
+        long studyApplicationId
     );
 }
