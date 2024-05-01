@@ -5,6 +5,7 @@ import com.fasttime.domain.member.service.MemberService;
 import com.fasttime.domain.notification.annotation.NeedNotification;
 import com.fasttime.domain.study.dto.notification.ApplyToStudyNotificationDto;
 import com.fasttime.domain.study.dto.notification.ApproveStudyApplicationNotificationDto;
+import com.fasttime.domain.study.dto.notification.RejectStudyApplicationNotificationDto;
 import com.fasttime.domain.study.dto.request.ApplyToStudyRequestDto;
 import com.fasttime.domain.study.dto.response.StudyApplicationResponseDto;
 import com.fasttime.domain.study.entity.Study;
@@ -52,7 +53,16 @@ public class StudyApplicationServiceImpl implements StudyApplicationService {
         StudyApplication studyApplication = getStudyApplication(studyApplicationId);
         AuthValidation(memberId, studyApplication.getStudy());
         studyApplication.changeStatus(StudyRequestStatus.APPROVE);
-        sendApprovalOfStudyApplicationNotification(studyApplication);
+        sendNotificationOfStudyApplicationApproval(studyApplication);
+        return new StudyApplicationResponseDto(studyApplication.getId());
+    }
+
+    @Override
+    public StudyApplicationResponseDto reject(long memberId, long studyApplicationId) {
+        StudyApplication studyApplication = getStudyApplication(studyApplicationId);
+        AuthValidation(memberId, studyApplication.getStudy());
+        studyApplication.changeStatus(StudyRequestStatus.REJECT);
+        sendNotificationOfRejectionOfStudyApplication(studyApplication);
         return new StudyApplicationResponseDto(studyApplication.getId());
     }
 
@@ -105,9 +115,16 @@ public class StudyApplicationServiceImpl implements StudyApplicationService {
     }
 
     @NeedNotification
-    private ApproveStudyApplicationNotificationDto sendApprovalOfStudyApplicationNotification(
+    private ApproveStudyApplicationNotificationDto sendNotificationOfStudyApplicationApproval(
         StudyApplication studyApplication
     ) {
         return new ApproveStudyApplicationNotificationDto(studyApplication);
+    }
+
+    @NeedNotification
+    private RejectStudyApplicationNotificationDto sendNotificationOfRejectionOfStudyApplication(
+        StudyApplication studyApplication
+    ) {
+        return new RejectStudyApplicationNotificationDto(studyApplication);
     }
 }

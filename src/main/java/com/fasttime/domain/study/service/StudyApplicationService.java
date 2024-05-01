@@ -16,5 +16,8 @@ public interface StudyApplicationService {
         long studyApplicationId
     );
 
-
+    StudyApplicationResponseDto reject(
+        long memberId,
+        long studyApplicationId
+    );
 }
