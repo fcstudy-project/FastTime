@@ -1,8 +1,7 @@
 package com.fasttime.domain.study.controller;
 
 import com.fasttime.domain.study.dto.request.ApplyToStudyRequestDto;
-import com.fasttime.domain.study.dto.response.ApplyToStudyResponseDto;
-import com.fasttime.domain.study.dto.response.ApproveStudyApplicationResponseDto;
+import com.fasttime.domain.study.dto.response.StudyApplicationResponseDto;
 import com.fasttime.domain.study.service.StudyApplicationService;
 import com.fasttime.global.util.ResponseDTO;
 import com.fasttime.global.util.SecurityUtil;
@@ -28,7 +27,7 @@ public class StudyApplicationController {
     private final StudyApplicationService studyApplicationService;
 
     @PostMapping("/{studyId}")
-    public ResponseEntity<ResponseDTO<ApplyToStudyResponseDto>> applyToStudy(
+    public ResponseEntity<ResponseDTO<StudyApplicationResponseDto>> applyToStudy(
         @PathVariable @NotNull Long studyId,
         @RequestBody ApplyToStudyRequestDto applyToStudyRequestDto
     ) {
@@ -42,7 +41,7 @@ public class StudyApplicationController {
     }
 
     @PatchMapping("/{studyId}/applications/{studyApplicationId}")
-    public ResponseEntity<ResponseDTO<ApproveStudyApplicationResponseDto>> approveStudyApplication(
+    public ResponseEntity<ResponseDTO<StudyApplicationResponseDto>> approveStudyApplication(
         @PathVariable @NotNull Long studyApplicationId
     ) {
         long memberId = securityUtil.getCurrentMemberId();

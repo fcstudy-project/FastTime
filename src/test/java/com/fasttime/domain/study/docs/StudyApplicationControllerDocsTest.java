@@ -19,8 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasttime.docs.RestDocsSupport;
 import com.fasttime.domain.study.controller.StudyApplicationController;
 import com.fasttime.domain.study.dto.request.ApplyToStudyRequestDto;
-import com.fasttime.domain.study.dto.response.ApplyToStudyResponseDto;
-import com.fasttime.domain.study.dto.response.ApproveStudyApplicationResponseDto;
+import com.fasttime.domain.study.dto.response.StudyApplicationResponseDto;
 import com.fasttime.domain.study.service.StudyApplicationService;
 import com.fasttime.domain.study.service.StudyApplicationServiceImpl;
 import com.fasttime.global.util.SecurityUtil;
@@ -53,7 +52,7 @@ public class StudyApplicationControllerDocsTest extends RestDocsSupport {
             any(long.class),
             any(long.class),
             any(ApplyToStudyRequestDto.class)
-        )).willReturn(new ApplyToStudyResponseDto(1L));
+        )).willReturn(new StudyApplicationResponseDto(1L));
 
         // when then
         mockMvc.perform(post("/api/v2/studies/{studyId}", 1L)
@@ -83,7 +82,7 @@ public class StudyApplicationControllerDocsTest extends RestDocsSupport {
         given(studyApplicationService.approve(
             any(long.class),
             any(long.class)
-        )).willReturn(new ApproveStudyApplicationResponseDto(1L));
+        )).willReturn(new StudyApplicationResponseDto(1L));
 
         // when then
         mockMvc.perform(patch("/api/v2/studies/{studyId}/applications/{studyApplicationId}", 1L, 1L)

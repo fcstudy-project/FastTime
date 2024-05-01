@@ -1,6 +1,6 @@
 package com.fasttime.domain.study.dto.response;
 
-public record ApplyToStudyResponseDto(
+public record StudyApplicationResponseDto(
     long studyApplicationId
 ) {
 

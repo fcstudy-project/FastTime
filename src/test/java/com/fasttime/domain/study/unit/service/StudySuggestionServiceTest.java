@@ -11,7 +11,7 @@ import static org.mockito.Mockito.verify;
 import com.fasttime.domain.member.entity.Member;
 import com.fasttime.domain.member.service.MemberService;
 import com.fasttime.domain.study.dto.request.SuggestStudyRequestDto;
-import com.fasttime.domain.study.dto.response.SuggestStudyResponseDto;
+import com.fasttime.domain.study.dto.response.StudySuggestionResponseDto;
 import com.fasttime.domain.study.entity.Study;
 import com.fasttime.domain.study.entity.StudyRequestStatus;
 import com.fasttime.domain.study.entity.StudySuggestion;
@@ -65,7 +65,7 @@ public class StudySuggestionServiceTest {
                 .willReturn(newStudySuggestion());
 
             // when
-            SuggestStudyResponseDto suggestStudyResponseDto = studySuggestionService.suggest(
+            StudySuggestionResponseDto studySuggestionResponseDto = studySuggestionService.suggest(
                 1L,
                 2L,
                 1L,
@@ -73,7 +73,7 @@ public class StudySuggestionServiceTest {
             );
 
             // then
-            assertThat(suggestStudyResponseDto).extracting("studySuggestionId")
+            assertThat(studySuggestionResponseDto).extracting("studySuggestionId")
                 .isEqualTo(1L);
 
             verify(studyRepository, times(1)).findById(any(Long.class));

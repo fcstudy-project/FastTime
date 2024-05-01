@@ -1,11 +1,11 @@
 package com.fasttime.domain.study.service;
 
 import com.fasttime.domain.study.dto.request.SuggestStudyRequestDto;
-import com.fasttime.domain.study.dto.response.SuggestStudyResponseDto;
+import com.fasttime.domain.study.dto.response.StudySuggestionResponseDto;
 
 public interface StudySuggestionService {
 
-    SuggestStudyResponseDto suggest(
+    StudySuggestionResponseDto suggest(
         long memberId,
         long receiverId,
         long studyId,

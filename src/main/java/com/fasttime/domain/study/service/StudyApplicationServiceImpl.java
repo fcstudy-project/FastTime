@@ -6,8 +6,7 @@ import com.fasttime.domain.notification.annotation.NeedNotification;
 import com.fasttime.domain.study.dto.notification.ApplyToStudyNotificationDto;
 import com.fasttime.domain.study.dto.notification.ApproveStudyApplicationNotificationDto;
 import com.fasttime.domain.study.dto.request.ApplyToStudyRequestDto;
-import com.fasttime.domain.study.dto.response.ApplyToStudyResponseDto;
-import com.fasttime.domain.study.dto.response.ApproveStudyApplicationResponseDto;
+import com.fasttime.domain.study.dto.response.StudyApplicationResponseDto;
 import com.fasttime.domain.study.entity.Study;
 import com.fasttime.domain.study.entity.StudyApplication;
 import com.fasttime.domain.study.entity.StudyRequestStatus;
@@ -31,7 +30,7 @@ public class StudyApplicationServiceImpl implements StudyApplicationService {
 
     @Override
     @Transactional
-    public ApplyToStudyResponseDto apply(
+    public StudyApplicationResponseDto apply(
         long applicantId,
         long studyId,
         ApplyToStudyRequestDto applyToStudyRequestDto
@@ -44,17 +43,17 @@ public class StudyApplicationServiceImpl implements StudyApplicationService {
             applyToStudyRequestDto.message()
         );
         sendStudyApplicationNotification(studyApplication);
-        return new ApplyToStudyResponseDto(studyApplication.getId());
+        return new StudyApplicationResponseDto(studyApplication.getId());
     }
 
     @Override
     @Transactional
-    public ApproveStudyApplicationResponseDto approve(long memberId, long studyApplicationId) {
+    public StudyApplicationResponseDto approve(long memberId, long studyApplicationId) {
         StudyApplication studyApplication = getStudyApplication(studyApplicationId);
         AuthValidation(memberId, studyApplication.getStudy());
         studyApplication.changeStatus(StudyRequestStatus.APPROVE);
         sendApprovalOfStudyApplicationNotification(studyApplication);
-        return new ApproveStudyApplicationResponseDto(studyApplication.getId());
+        return new StudyApplicationResponseDto(studyApplication.getId());
     }
 
     private StudyApplication createStudyApplication(

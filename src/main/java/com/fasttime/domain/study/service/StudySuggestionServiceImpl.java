@@ -5,7 +5,7 @@ import com.fasttime.domain.member.service.MemberService;
 import com.fasttime.domain.notification.annotation.NeedNotification;
 import com.fasttime.domain.study.dto.notification.SuggestStudyNotificationDto;
 import com.fasttime.domain.study.dto.request.SuggestStudyRequestDto;
-import com.fasttime.domain.study.dto.response.SuggestStudyResponseDto;
+import com.fasttime.domain.study.dto.response.StudySuggestionResponseDto;
 import com.fasttime.domain.study.entity.Study;
 import com.fasttime.domain.study.entity.StudyRequestStatus;
 import com.fasttime.domain.study.entity.StudySuggestion;
@@ -28,7 +28,7 @@ public class StudySuggestionServiceImpl implements StudySuggestionService {
 
     @Override
     @Transactional
-    public SuggestStudyResponseDto suggest(
+    public StudySuggestionResponseDto suggest(
         long memberId,
         long receiverId,
         long studyId,
@@ -43,7 +43,7 @@ public class StudySuggestionServiceImpl implements StudySuggestionService {
             suggestStudyRequestDto.message()
         );
         sendStudySuggestionNotification(receiver, studySuggestion);
-        return new SuggestStudyResponseDto(studySuggestion.getId());
+        return new StudySuggestionResponseDto(studySuggestion.getId());
     }
 
     private StudySuggestion createStudySuggestion(

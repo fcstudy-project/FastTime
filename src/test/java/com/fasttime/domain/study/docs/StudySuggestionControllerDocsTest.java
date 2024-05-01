@@ -19,7 +19,7 @@ import com.fasttime.docs.RestDocsSupport;
 import com.fasttime.domain.study.controller.StudySuggestionController;
 import com.fasttime.domain.study.dto.request.ApplyToStudyRequestDto;
 import com.fasttime.domain.study.dto.request.SuggestStudyRequestDto;
-import com.fasttime.domain.study.dto.response.SuggestStudyResponseDto;
+import com.fasttime.domain.study.dto.response.StudySuggestionResponseDto;
 import com.fasttime.domain.study.service.StudySuggestionService;
 import com.fasttime.domain.study.service.StudySuggestionServiceImpl;
 import com.fasttime.global.util.SecurityUtil;
@@ -53,7 +53,7 @@ public class StudySuggestionControllerDocsTest extends RestDocsSupport {
             any(long.class),
             any(long.class),
             any(SuggestStudyRequestDto.class)
-        )).willReturn(new SuggestStudyResponseDto(1L));
+        )).willReturn(new StudySuggestionResponseDto(1L));
 
         // when then
         mockMvc.perform(post("/api/v2/studies/{studyId}/members/{memberId}", 1L, 2L)

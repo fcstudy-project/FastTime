@@ -1,6 +1,6 @@
 package com.fasttime.domain.study.dto.response;
 
-public record SuggestStudyResponseDto(
+public record StudySuggestionResponseDto(
     long studySuggestionId
 ) {
 

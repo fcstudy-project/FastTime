@@ -1,7 +1,7 @@
 package com.fasttime.domain.study.controller;
 
 import com.fasttime.domain.study.dto.request.SuggestStudyRequestDto;
-import com.fasttime.domain.study.dto.response.SuggestStudyResponseDto;
+import com.fasttime.domain.study.dto.response.StudySuggestionResponseDto;
 import com.fasttime.domain.study.service.StudySuggestionService;
 import com.fasttime.global.util.ResponseDTO;
 import com.fasttime.global.util.SecurityUtil;
@@ -26,7 +26,7 @@ public class StudySuggestionController {
     private final StudySuggestionService studySuggestionService;
 
     @PostMapping("/{studyId}/members/{memberId}")
-    public ResponseEntity<ResponseDTO<SuggestStudyResponseDto>> suggestStudy(
+    public ResponseEntity<ResponseDTO<StudySuggestionResponseDto>> suggestStudy(
         @PathVariable @NotNull Long studyId,
         @PathVariable("memberId") @NotNull Long receiverId,
         @RequestBody SuggestStudyRequestDto suggestStudyRequestDto

@@ -11,8 +11,7 @@ import static org.mockito.Mockito.verify;
 import com.fasttime.domain.member.entity.Member;
 import com.fasttime.domain.member.service.MemberService;
 import com.fasttime.domain.study.dto.request.ApplyToStudyRequestDto;
-import com.fasttime.domain.study.dto.response.ApplyToStudyResponseDto;
-import com.fasttime.domain.study.dto.response.ApproveStudyApplicationResponseDto;
+import com.fasttime.domain.study.dto.response.StudyApplicationResponseDto;
 import com.fasttime.domain.study.entity.Study;
 import com.fasttime.domain.study.entity.StudyApplication;
 import com.fasttime.domain.study.entity.StudyRequestStatus;
@@ -72,14 +71,14 @@ public class StudyApplicationServiceTest {
                     .build());
 
             // when
-            ApplyToStudyResponseDto applyToStudyResponseDto = studyApplicationService.apply(
+            StudyApplicationResponseDto studyApplicationResponseDto = studyApplicationService.apply(
                 1L,
                 1L,
                 applyToStudyRequestDto
             );
 
             // then
-            assertThat(applyToStudyResponseDto).extracting("studyApplicationId")
+            assertThat(studyApplicationResponseDto).extracting("studyApplicationId")
                 .isEqualTo(1L);
 
             verify(studyRepository, times(1)).findById(any(Long.class));
@@ -140,13 +139,13 @@ public class StudyApplicationServiceTest {
                 Optional.of(newStudyApplication()));
 
             // when
-            ApproveStudyApplicationResponseDto approveStudyApplicationResponseDto = studyApplicationService.approve(
+            StudyApplicationResponseDto studyApplicationResponseDto = studyApplicationService.approve(
                 1L,
                 1L
             );
 
             // then
-            assertThat(approveStudyApplicationResponseDto).extracting("studyApplicationId")
+            assertThat(studyApplicationResponseDto).extracting("studyApplicationId")
                 .isEqualTo(1L);
 
             verify(studyApplicationRepository, times(1))
