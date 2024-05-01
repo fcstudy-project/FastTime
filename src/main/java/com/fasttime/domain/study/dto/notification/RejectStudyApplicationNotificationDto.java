@@ -21,6 +21,6 @@ public record RejectStudyApplicationNotificationDto(
 
     @Override
     public NotificationType getNotificationType() {
-        return NotificationType.STUDY_APPROVE_APPLICATION;
+        return NotificationType.STUDY_REJECT;
     }
 }

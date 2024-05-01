@@ -51,7 +51,7 @@ public class StudyApplicationServiceImpl implements StudyApplicationService {
     @Transactional
     public StudyApplicationResponseDto approve(long memberId, long studyApplicationId) {
         StudyApplication studyApplication = getStudyApplication(studyApplicationId);
-        AuthValidation(memberId, studyApplication.getStudy());
+        authValidation(memberId, studyApplication.getStudy());
         studyApplication.changeStatus(StudyRequestStatus.APPROVE);
         sendNotificationOfStudyApplicationApproval(studyApplication);
         return new StudyApplicationResponseDto(studyApplication.getId());
@@ -61,7 +61,7 @@ public class StudyApplicationServiceImpl implements StudyApplicationService {
     @Transactional
     public StudyApplicationResponseDto reject(long memberId, long studyApplicationId) {
         StudyApplication studyApplication = getStudyApplication(studyApplicationId);
-        AuthValidation(memberId, studyApplication.getStudy());
+        authValidation(memberId, studyApplication.getStudy());
         studyApplication.changeStatus(StudyRequestStatus.REJECT);
         sendNotificationOfRejectionOfStudyApplication(studyApplication);
         return new StudyApplicationResponseDto(studyApplication.getId());
@@ -97,7 +97,7 @@ public class StudyApplicationServiceImpl implements StudyApplicationService {
         return study;
     }
 
-    private void AuthValidation(long memberId, Study study) {
+    private void authValidation(long memberId, Study study) {
         if (!isStudyWriter(memberId, study)) {
             throw new NotStudyWriterException();
         }
