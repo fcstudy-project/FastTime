@@ -7,9 +7,9 @@
 
 
 [[Study-Apply]]
-== 스터디 참여 지원
+== 스터디 참여 신청
 
-회원이 스터디 참여를 지원하는 API 입니다.
+회원이 스터디 참여를 신청하는 API 입니다.
 
 === HttpRequest
 
@@ -20,6 +20,36 @@ include::{snippets}/study-apply/request-fields.adoc[]
 
 include::{snippets}/study-apply/http-response.adoc[]
 include::{snippets}/study-apply/response-fields.adoc[]
+
+[[Study-Approve-Application]]
+== 스터디 참여 신청 승인
+
+회원이 스터디 참여 신청을 승인하는 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/study-approve/http-request.adoc[]
+include::{snippets}/study-approve/path-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/study-approve/http-response.adoc[]
+include::{snippets}/study-approve/response-fields.adoc[]
+
+[[Study-Reject-Application]]
+== 스터디 참여 신청 거부
+
+회원이 스터디 참여 신청을 거부하는 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/study-reject/http-request.adoc[]
+include::{snippets}/study-reject/path-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/study-reject/http-response.adoc[]
+include::{snippets}/study-reject/response-fields.adoc[]
 
 [[Study-Suggest]]
 == 스터디 참여 제안
