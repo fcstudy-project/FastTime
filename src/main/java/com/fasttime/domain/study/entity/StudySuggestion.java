@@ -58,4 +58,8 @@ public class StudySuggestion extends BaseTimeEntity {
         this.study = study;
         this.message = message;
     }
+
+    public void changeStatus(StudyRequestStatus newStatus) {
+        this.status = newStatus;
+    }
 }
