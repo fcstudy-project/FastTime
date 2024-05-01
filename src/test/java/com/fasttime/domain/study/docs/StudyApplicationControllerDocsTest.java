@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
@@ -69,7 +70,7 @@ public class StudyApplicationControllerDocsTest extends RestDocsSupport {
                     fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
                     fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답데이터"),
                     fieldWithPath("data.studyApplicationId").type(JsonFieldType.NUMBER)
-                        .description("스터디 신청 식별자"))));
+                        .description("스터디 참여 신청 식별자"))));
     }
 
     @DisplayName("approve()는 스터디 참여 지원을 승인할 수 있다.")
@@ -99,6 +100,37 @@ public class StudyApplicationControllerDocsTest extends RestDocsSupport {
                     fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
                     fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답데이터"),
                     fieldWithPath("data.studyApplicationId").type(JsonFieldType.NUMBER)
-                        .description("스터디 신청 식별자"))));
+                        .description("스터디 참여 신청 식별자"))));
+    }
+
+    @DisplayName("reject()는 스터디 참여 신청을 거부할 수 있다.")
+    @Test
+    public void reject() throws Exception {
+        // given
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("MEMBER", 1L);
+
+        given(studyApplicationService.reject(
+            any(long.class),
+            any(long.class)
+        )).willReturn(new StudyApplicationResponseDto(1L));
+
+        // when then
+        mockMvc.perform(
+                delete("/api/v2/studies/{studyId}/applications/{studyApplicationId}", 1L, 1L)
+                    .session(session)
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andDo(document("study-reject",
+                preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("studyId").description("스터디 식별자"),
+                    parameterWithName("studyApplicationId").description("거부할 스터디 참여 신청 식별자")),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태코드"),
+                    fieldWithPath("message").type(JsonFieldType.STRING).description("메시지"),
+                    fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답데이터"),
+                    fieldWithPath("data.studyApplicationId").type(JsonFieldType.NUMBER)
+                        .description("스터디 참여 신청 식별자"))));
     }
 }
