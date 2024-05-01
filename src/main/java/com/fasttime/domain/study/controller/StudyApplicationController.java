@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,6 +51,19 @@ public class StudyApplicationController {
             .body(ResponseDTO.res(HttpStatus.OK,
                 "성공적으로 스터디 참여 신청을 승인했습니다.",
                 studyApplicationService.approve(memberId, studyApplicationId)
+            ));
+    }
+
+    @DeleteMapping("/{studyId}/applications/{studyApplicationId}")
+    public ResponseEntity<ResponseDTO<StudyApplicationResponseDto>> rejectStudyApplication(
+        @PathVariable @NotNull Long studyApplicationId
+    ) {
+        long memberId = securityUtil.getCurrentMemberId();
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(ResponseDTO.res(HttpStatus.OK,
+                "성공적으로 스터디 참여 신청을 거부했습니다.",
+                studyApplicationService.reject(memberId, studyApplicationId)
             ));
     }
 }
