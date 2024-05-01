@@ -37,7 +37,7 @@ public class StudyApplicationServiceImpl implements StudyApplicationService {
         ApplyToStudyRequestDto applyToStudyRequestDto
     ) {
         Member applicant = memberService.getMember(applicantId);
-        Study study = findStudyById(studyId);
+        Study study = getStudy(studyId);
         StudyApplication studyApplication = createStudyApplication(
             applicant,
             study,
@@ -89,7 +89,7 @@ public class StudyApplicationServiceImpl implements StudyApplicationService {
         return new ApplyToStudyNotificationDto(studyApplication);
     }
 
-    private Study findStudyById(Long studyId) {
+    private Study getStudy(Long studyId) {
         Study study = studyRepository.findById(studyId).orElseThrow(StudyNotFoundException::new);
         if (study.isDeleted()) {
             throw new StudyDeleteException();
