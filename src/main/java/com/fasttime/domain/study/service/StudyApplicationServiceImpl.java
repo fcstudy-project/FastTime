@@ -58,6 +58,7 @@ public class StudyApplicationServiceImpl implements StudyApplicationService {
     }
 
     @Override
+    @Transactional
     public StudyApplicationResponseDto reject(long memberId, long studyApplicationId) {
         StudyApplication studyApplication = getStudyApplication(studyApplicationId);
         AuthValidation(memberId, studyApplication.getStudy());
