@@ -28,13 +28,13 @@ include::{snippets}/study-apply/response-fields.adoc[]
 
 === HttpRequest
 
-include::{snippets}/study-approve/http-request.adoc[]
-include::{snippets}/study-approve/path-parameters.adoc[]
+include::{snippets}/study-application-approve/http-request.adoc[]
+include::{snippets}/study-application-approve/path-parameters.adoc[]
 
 === HttpResponse
 
-include::{snippets}/study-approve/http-response.adoc[]
-include::{snippets}/study-approve/response-fields.adoc[]
+include::{snippets}/study-application-approve/http-response.adoc[]
+include::{snippets}/study-application-approve/response-fields.adoc[]
 
 [[Study-Reject-Application]]
 == 스터디 참여 신청 거부
@@ -43,13 +43,13 @@ include::{snippets}/study-approve/response-fields.adoc[]
 
 === HttpRequest
 
-include::{snippets}/study-reject/http-request.adoc[]
-include::{snippets}/study-reject/path-parameters.adoc[]
+include::{snippets}/study-application-reject/http-request.adoc[]
+include::{snippets}/study-application-reject/path-parameters.adoc[]
 
 === HttpResponse
 
-include::{snippets}/study-reject/http-response.adoc[]
-include::{snippets}/study-reject/response-fields.adoc[]
+include::{snippets}/study-application-reject/http-response.adoc[]
+include::{snippets}/study-application-reject/response-fields.adoc[]
 
 [[Study-Suggest]]
 == 스터디 참여 제안
@@ -66,3 +66,33 @@ include::{snippets}/study-suggest/request-fields.adoc[]
 
 include::{snippets}/study-suggest/http-response.adoc[]
 include::{snippets}/study-suggest/response-fields.adoc[]
+
+[[Study-Approve-Suggestion]]
+== 스터디 참여 제안 승인
+
+회원이 스터디 참여 제안을 승인하는 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/study-suggestion-approve/http-request.adoc[]
+include::{snippets}/study-suggestion-approve/path-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/study-suggestion-approve/http-response.adoc[]
+include::{snippets}/study-suggestion-approve/response-fields.adoc[]
+
+[[Study-Reject-Suggestion]]
+== 스터디 참여 제안 거부
+
+회원이 스터디 참여 제안을 거부하는 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/study-suggestion-reject/http-request.adoc[]
+include::{snippets}/study-suggestion-reject/path-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/study-suggestion-reject/http-response.adoc[]
+include::{snippets}/study-suggestion-reject/response-fields.adoc[]
