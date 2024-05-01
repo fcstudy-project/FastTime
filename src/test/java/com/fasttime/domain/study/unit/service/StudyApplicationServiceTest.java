@@ -16,6 +16,7 @@ import com.fasttime.domain.study.entity.Study;
 import com.fasttime.domain.study.entity.StudyApplication;
 import com.fasttime.domain.study.entity.StudyRequestStatus;
 import com.fasttime.domain.study.exception.NotStudyWriterException;
+import com.fasttime.domain.study.exception.StudyApplicationNotFoundException;
 import com.fasttime.domain.study.exception.StudyDeleteException;
 import com.fasttime.domain.study.exception.StudyNotFoundException;
 import com.fasttime.domain.study.repository.StudyApplicationRepository;
@@ -132,7 +133,7 @@ public class StudyApplicationServiceTest {
     class Context_approve {
 
         @Test
-        @DisplayName("스터디 참여 지원을 승인할 수 있다.")
+        @DisplayName("스터디 참여 신청을 승인할 수 있다.")
         void _willSuccess() {
             // given
             given(studyApplicationRepository.findById(any(long.class))).willReturn(
@@ -153,25 +154,21 @@ public class StudyApplicationServiceTest {
         }
 
         @Test
-        @DisplayName("스터디 지원을 찾을 수 없으면 스터디 참여 지원을 승인할 수 없다.")
+        @DisplayName("스터디 참여 신청을 찾을 수 없으면 스터디 참여 신청을 승인할 수 없다.")
         void _study_application_not_found_willFail() {
             // given
-            ApplyToStudyRequestDto applyToStudyRequestDto = new ApplyToStudyRequestDto(
-                "스터디 같이 해요!");
-
-            given(studyRepository.findById(any(Long.class))).willReturn(Optional.empty());
-            given(memberService.getMember(any(Long.class))).willReturn(newMember());
+            given(studyApplicationRepository.findById(any(Long.class))).willReturn(Optional.empty());
 
             // when then
-            Throwable exception = assertThrows(StudyNotFoundException.class, () -> {
-                studyApplicationService.apply(1L, 1L, applyToStudyRequestDto);
+            Throwable exception = assertThrows(StudyApplicationNotFoundException.class, () -> {
+                studyApplicationService.approve(1L, 1L);
             });
 
-            assertEquals("존재하지 않는 스터디게시판입니다.", exception.getMessage());
+            assertEquals("존재하지 않는 스터디 신청입니다.", exception.getMessage());
         }
 
         @Test
-        @DisplayName("삭제된 스터디면 스터디 참여 지원을 승인할 수 없다.")
+        @DisplayName("삭제된 스터디면 스터디 참여 신청을 승인할 수 없다.")
         void _study_deleted_willFail() {
             // given
             StudyApplication studyApplication = newStudyApplication();
@@ -189,7 +186,7 @@ public class StudyApplicationServiceTest {
         }
 
         @Test
-        @DisplayName("스터디 게시글 작성자가 아니면 스터디 참여 지원을 승인할 수 없다.")
+        @DisplayName("스터디 게시글 작성자가 아니면 스터디 참여 신청을 승인할 수 없다.")
         void _not_study_writer_willFail() {
             // given
             given(studyApplicationRepository.findById(any(Long.class)))
@@ -198,6 +195,79 @@ public class StudyApplicationServiceTest {
             // when then
             Throwable exception = assertThrows(NotStudyWriterException.class, () -> {
                 studyApplicationService.approve(2L, 1L);
+            });
+
+            assertEquals("해당 스터디 게시글에 대한 권한이 없습니다.", exception.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("reject()는 ")
+    class Context_reject {
+
+        @Test
+        @DisplayName("스터디 참여 신청을 거부할 수 있다.")
+        void _willSuccess() {
+            // given
+            given(studyApplicationRepository.findById(any(long.class))).willReturn(
+                Optional.of(newStudyApplication()));
+
+            // when
+            StudyApplicationResponseDto studyApplicationResponseDto = studyApplicationService.reject(
+                1L,
+                1L
+            );
+
+            // then
+            assertThat(studyApplicationResponseDto).extracting("studyApplicationId")
+                .isEqualTo(1L);
+
+            verify(studyApplicationRepository, times(1))
+                .findById(any(long.class));
+        }
+
+        @Test
+        @DisplayName("스터디 참여 신청을 찾을 수 없으면 스터디 참여 신청을 거부할 수 없다.")
+        void _study_application_not_found_willFail() {
+            // given
+            given(studyApplicationRepository.findById(any(Long.class))).willReturn(Optional.empty());
+
+            // when then
+            Throwable exception = assertThrows(StudyApplicationNotFoundException.class, () -> {
+                studyApplicationService.reject(1L, 1L);
+            });
+
+            assertEquals("존재하지 않는 스터디 신청입니다.", exception.getMessage());
+        }
+
+        @Test
+        @DisplayName("삭제된 스터디면 스터디 참여 신청을 거부할 수 없다.")
+        void _study_deleted_willFail() {
+            // given
+            StudyApplication studyApplication = newStudyApplication();
+            studyApplication.getStudy().delete(LocalDateTime.now());
+
+            given(studyApplicationRepository.findById(any(Long.class))).willReturn(
+                Optional.of(studyApplication));
+
+            // when then
+            Throwable exception = assertThrows(StudyDeleteException.class, () -> {
+                studyApplicationService.reject(1L, 1L);
+            });
+
+            assertEquals("삭제된 스터디 모집글입니다.", exception.getMessage());
+        }
+
+        @Test
+        @DisplayName("스터디 게시글 작성자가 아니면 스터디 참여 신청을 거부할 수 없다.")
+        void _not_study_writer_willFail() {
+            // given
+            given(studyApplicationRepository.findById(any(Long.class)))
+                .willReturn(Optional.of(newStudyApplication()));
+
+            // when then
+            Throwable exception = assertThrows(NotStudyWriterException.class, () -> {
+                studyApplicationService.reject(2L, 1L);
             });
 
             assertEquals("해당 스터디 게시글에 대한 권한이 없습니다.", exception.getMessage());
