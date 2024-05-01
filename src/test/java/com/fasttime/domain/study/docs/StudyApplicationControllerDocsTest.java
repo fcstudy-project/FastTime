@@ -90,7 +90,7 @@ public class StudyApplicationControllerDocsTest extends RestDocsSupport {
                 .session(session)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andDo(document("study-approve",
+            .andDo(document("study-application-approve",
                 preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
                 pathParameters(
                     parameterWithName("studyId").description("스터디 식별자"),
@@ -121,7 +121,7 @@ public class StudyApplicationControllerDocsTest extends RestDocsSupport {
                     .session(session)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andDo(document("study-reject",
+            .andDo(document("study-application-reject",
                 preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
                 pathParameters(
                     parameterWithName("studyId").description("스터디 식별자"),
