@@ -15,9 +15,11 @@ import com.fasttime.domain.study.dto.response.StudySuggestionResponseDto;
 import com.fasttime.domain.study.entity.Study;
 import com.fasttime.domain.study.entity.StudyRequestStatus;
 import com.fasttime.domain.study.entity.StudySuggestion;
+import com.fasttime.domain.study.exception.NotStudySuggestionReceiverException;
 import com.fasttime.domain.study.exception.NotStudyWriterException;
 import com.fasttime.domain.study.exception.StudyDeleteException;
 import com.fasttime.domain.study.exception.StudyNotFoundException;
+import com.fasttime.domain.study.exception.StudySuggestionNotFoundException;
 import com.fasttime.domain.study.repository.StudyRepository;
 import com.fasttime.domain.study.repository.StudySuggestionRepository;
 import com.fasttime.domain.study.service.StudySuggestionServiceImpl;
@@ -138,6 +140,152 @@ public class StudySuggestionServiceTest {
             });
 
             assertEquals("해당 스터디 게시글에 대한 권한이 없습니다.", exception.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("approve()는 ")
+    class Context_approve {
+
+        @Test
+        @DisplayName("스터디 참여 제안을 승인할 수 있다.")
+        void _willSuccess() {
+            // given
+            given(studySuggestionRepository.findById(any(long.class))).willReturn(
+                Optional.of(newStudySuggestion()));
+
+            // when
+            StudySuggestionResponseDto studySuggestionResponseDto = studySuggestionService.approve(
+                1L,
+                1L
+            );
+
+            // then
+            assertThat(studySuggestionResponseDto).extracting("studySuggestionId")
+                .isEqualTo(1L);
+
+            verify(studySuggestionRepository, times(1))
+                .findById(any(long.class));
+        }
+
+        @Test
+        @DisplayName("스터디 참여 제안을 찾을 수 없으면 스터디 참여 제안을 승인할 수 없다.")
+        void _study_application_not_found_willFail() {
+            // given
+            given(studySuggestionRepository.findById(any(Long.class))).willReturn(Optional.empty());
+
+            // when then
+            Throwable exception = assertThrows(StudySuggestionNotFoundException.class, () -> {
+                studySuggestionService.approve(1L, 1L);
+            });
+
+            assertEquals("존재하지 않는 스터디 제안입니다.", exception.getMessage());
+        }
+
+        @Test
+        @DisplayName("삭제된 스터디면 스터디 참여 제안을 승인할 수 없다.")
+        void _study_deleted_willFail() {
+            // given
+            StudySuggestion studySuggestion = newStudySuggestion();
+            studySuggestion.getStudy().delete(LocalDateTime.now());
+
+            given(studySuggestionRepository.findById(any(Long.class))).willReturn(
+                Optional.of(studySuggestion));
+
+            // when then
+            Throwable exception = assertThrows(StudyDeleteException.class, () -> {
+                studySuggestionService.approve(1L, 1L);
+            });
+
+            assertEquals("삭제된 스터디 모집글입니다.", exception.getMessage());
+        }
+
+        @Test
+        @DisplayName("스터디 참여 제안 수신자가 아니면 스터디 참여 제안을 승인할 수 없다.")
+        void _not_study_suggestion_receiver_willFail() {
+            // given
+            given(studySuggestionRepository.findById(any(Long.class)))
+                .willReturn(Optional.of(newStudySuggestion()));
+
+            // when then
+            Throwable exception = assertThrows(NotStudySuggestionReceiverException.class, () -> {
+                studySuggestionService.approve(2L, 1L);
+            });
+
+            assertEquals("해당 제안을 승인하거나 거부할 권한이 없습니다.", exception.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("reject()는 ")
+    class Context_reject {
+
+        @Test
+        @DisplayName("스터디 참여 제안을 거부할 수 있다.")
+        void _willSuccess() {
+            // given
+            given(studySuggestionRepository.findById(any(long.class))).willReturn(
+                Optional.of(newStudySuggestion()));
+
+            // when
+            StudySuggestionResponseDto studySuggestionResponseDto = studySuggestionService.reject(
+                1L,
+                1L
+            );
+
+            // then
+            assertThat(studySuggestionResponseDto).extracting("studySuggestionId")
+                .isEqualTo(1L);
+
+            verify(studySuggestionRepository, times(1))
+                .findById(any(long.class));
+        }
+
+        @Test
+        @DisplayName("스터디 참여 제안을 찾을 수 없으면 스터디 참여 제안을 거부할 수 없다.")
+        void _study_application_not_found_willFail() {
+            // given
+            given(studySuggestionRepository.findById(any(Long.class))).willReturn(Optional.empty());
+
+            // when then
+            Throwable exception = assertThrows(StudySuggestionNotFoundException.class, () -> {
+                studySuggestionService.reject(1L, 1L);
+            });
+
+            assertEquals("존재하지 않는 스터디 제안입니다.", exception.getMessage());
+        }
+
+        @Test
+        @DisplayName("삭제된 스터디면 스터디 참여 제안을 거부할 수 없다.")
+        void _study_deleted_willFail() {
+            // given
+            StudySuggestion studySuggestion = newStudySuggestion();
+            studySuggestion.getStudy().delete(LocalDateTime.now());
+
+            given(studySuggestionRepository.findById(any(Long.class))).willReturn(
+                Optional.of(studySuggestion));
+
+            // when then
+            Throwable exception = assertThrows(StudyDeleteException.class, () -> {
+                studySuggestionService.reject(1L, 1L);
+            });
+
+            assertEquals("삭제된 스터디 모집글입니다.", exception.getMessage());
+        }
+
+        @Test
+        @DisplayName("스터디 참여 제안 수신자가 아니면 스터디 참여 제안을 거부할 수 없다.")
+        void _not_study_suggestion_receiver_willFail() {
+            // given
+            given(studySuggestionRepository.findById(any(Long.class)))
+                .willReturn(Optional.of(newStudySuggestion()));
+
+            // when then
+            Throwable exception = assertThrows(NotStudySuggestionReceiverException.class, () -> {
+                studySuggestionService.reject(2L, 1L);
+            });
+
+            assertEquals("해당 제안을 승인하거나 거부할 권한이 없습니다.", exception.getMessage());
         }
     }
 
