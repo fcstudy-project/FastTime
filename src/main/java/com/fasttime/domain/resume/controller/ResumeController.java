@@ -1,5 +1,6 @@
 package com.fasttime.domain.resume.controller;
 
+import com.fasttime.domain.resume.dto.LikeResumeRequest;
 import com.fasttime.domain.resume.dto.ResumeDeleteServiceRequest;
 import com.fasttime.domain.resume.dto.ResumeRequestDto;
 import com.fasttime.domain.resume.dto.ResumeResponseDto;
@@ -10,6 +11,7 @@ import com.fasttime.domain.resume.repository.ResumeOrderBy;
 import com.fasttime.domain.resume.service.ResumeService;
 import com.fasttime.global.util.ResponseDTO;
 import com.fasttime.global.util.SecurityUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -60,9 +62,11 @@ public class ResumeController {
     }
 
     @GetMapping("/{resumeId}")
-    public ResponseEntity<ResponseDTO<ResumeResponseDto>> getResume(@PathVariable Long resumeId) {
+    public ResponseEntity<ResponseDTO<ResumeResponseDto>> getResume(@PathVariable Long resumeId,
+            HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ResponseDTO.res(HttpStatus.OK, resumeService.getResume(resumeId)));
+                .body(ResponseDTO.res(HttpStatus.OK,
+                        resumeService.getResume(resumeId, request.getRemoteAddr())));
     }
 
     @GetMapping
@@ -72,8 +76,25 @@ public class ResumeController {
             @RequestParam(name = "orderBy", defaultValue = "date") String orderBy) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ResponseDTO.res(HttpStatus.OK,
-                resumeService.search(
-                        new ResumesSearchRequest(ResumeOrderBy.of(orderBy), page, pageSize))));
+                        resumeService.search(
+                                new ResumesSearchRequest(ResumeOrderBy.of(orderBy), page,
+                                        pageSize))));
+    }
+
+    @PostMapping("/{resumeId}/likes")
+    public ResponseEntity<ResponseDTO<Object>> likeResume(@PathVariable Long resumeId) {
+        resumeService.likeResume(
+                new LikeResumeRequest(resumeId, securityUtil.getCurrentMemberId()));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ResponseDTO.res(HttpStatus.OK, "정상적으로 처리되었습니다."));
+    }
+
+    @DeleteMapping("/{resumeId}/likes")
+    public ResponseEntity<ResponseDTO<Object>> cancelLike(@PathVariable Long resumeId) {
+        resumeService.cancelLike(
+                new LikeResumeRequest(resumeId, securityUtil.getCurrentMemberId()));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ResponseDTO.res(HttpStatus.OK, "정상적으로 처리되었습니다."));
     }
 
 }
