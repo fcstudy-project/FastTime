@@ -9,6 +9,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -44,7 +45,34 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
     @Override
     public Long getLikeCount(Long resumeId) {
         return Long.valueOf(
-                jpaQueryFactory.select(resume.likeCount).from(resume).where(resume.id.eq(resumeId)).fetchOne());
+                jpaQueryFactory
+                        .select(resume.likeCount)
+                        .from(resume)
+                        .where(resume.id.eq(resumeId))
+                        .fetchOne()
+        );
+    }
+
+    @Override
+    public List<Resume> getRecentResumesBySizeExceptIds(int size, List<Long> ids) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        booleanBuilder.and(resume.id.notIn(ids));
+        return jpaQueryFactory.selectFrom(resume)
+                .orderBy(new OrderSpecifier<>(Order.DESC, resume.createdAt))
+                .where(booleanBuilder)
+                .limit(size)
+                .fetch();
+    }
+
+    @Override
+    public List<Resume> getResumesCreatedWithinTwoWeeks() {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
+        booleanBuilder.and(resume.createdAt.after(twoWeeksAgo));
+        return jpaQueryFactory.selectFrom(resume)
+                .where(booleanBuilder)
+                .orderBy(new OrderSpecifier<>(Order.ASC, resume.createdAt))
+                .fetch();
     }
 
     private BooleanBuilder createResumeSearchCondition(ResumesSearchRequest searchCondition) {

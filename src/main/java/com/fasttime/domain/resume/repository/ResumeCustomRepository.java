@@ -10,4 +10,8 @@ public interface ResumeCustomRepository {
     void addViewCountFromRedis(Long resumeId, Long viewCount);
 
     Long getLikeCount(Long resumeId);
+
+    List<Resume> getResumesCreatedWithinTwoWeeks();
+
+    List<Resume> getRecentResumesBySizeExceptIds(int size, List<Long> ids);
 }

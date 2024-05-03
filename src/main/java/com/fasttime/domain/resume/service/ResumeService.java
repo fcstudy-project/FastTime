@@ -19,7 +19,9 @@ import com.fasttime.domain.resume.repository.LikeRepository;
 import com.fasttime.domain.resume.repository.ResumeRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -133,6 +135,51 @@ public class ResumeService {
             resumeRepository.addViewCountFromRedis(resumeId, viewCount);
             setOperations.pop(keyName);
         }
+    }
+
+    public List<ResumeResponseDto> getBestResume() {
+        List<Resume> resumes = resumeRepository.getResumesCreatedWithinTwoWeeks();
+        PriorityQueue<Resume> pq = buildPriorityQueue();
+        pq.addAll(resumes);
+        if (pq.size() < 3) {
+            ensurePriorityQueueSize(pq, getResumesId(resumes));
+        }
+        return extractTopResumes(pq);
+    }
+
+    @NotNull
+    private static List<Long> getResumesId(List<Resume> resumes) {
+        return resumes.stream()
+                .map(Resume::getId)
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
+    private List<ResumeResponseDto> extractTopResumes(PriorityQueue<Resume> pq) {
+        List<ResumeResponseDto> responseDtos = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            responseDtos.add(buildResumeResponse(pq.poll()));
+        }
+        return responseDtos;
+    }
+
+    private void ensurePriorityQueueSize(PriorityQueue<Resume> pq, List<Long> ids) {
+        int diff = 3 - pq.size();
+        pq.addAll(resumeRepository.getRecentResumesBySizeExceptIds(diff, ids));
+    }
+
+    @NotNull
+    private PriorityQueue<Resume> buildPriorityQueue() {
+        PriorityQueue<Resume> pq = new PriorityQueue<>((o1, o2) -> {
+            double priority1 = calculatePriority(o1);
+            double priority2 = calculatePriority(o2);
+            return Double.compare(priority2, priority1);
+        });
+        return pq;
+    }
+
+    private double calculatePriority(Resume o1) {
+        return o1.getLikeCount() * 0.7 + o1.getViewCount() * 0.3;
     }
 
     @NotNull

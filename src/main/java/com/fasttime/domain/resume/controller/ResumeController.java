@@ -97,4 +97,10 @@ public class ResumeController {
                 .body(ResponseDTO.res(HttpStatus.OK, "정상적으로 처리되었습니다."));
     }
 
+    @GetMapping("/best")
+    public ResponseEntity<ResponseDTO<List<ResumeResponseDto>>> getBestResume(){
+        List<ResumeResponseDto> response  = resumeService.getBestResume();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ResponseDTO.res(HttpStatus.OK, "정상적으로 처리되었습니다.", response));
+    }
 }
