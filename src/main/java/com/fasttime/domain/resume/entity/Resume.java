@@ -40,7 +40,7 @@ public class Resume extends BaseTimeEntity {
 
     @Builder
     public Resume(Long id, String title, String content, int likeCount, int viewCount,
-            Member writer) {
+        Member writer) {
         this.id = id;
         this.title = title;
         this.content = content;

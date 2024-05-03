@@ -27,29 +27,29 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
     @Override
     public List<Resume> search(ResumesSearchRequest searchCondition) {
         return jpaQueryFactory.selectFrom(resume)
-                .where(createResumeSearchCondition(searchCondition))
-                .offset((long) searchCondition.page() * searchCondition.pageSize())
-                .limit(searchCondition.pageSize())
-                .orderBy(orderSpecifier(searchCondition))
-                .fetch();
+            .where(createResumeSearchCondition(searchCondition))
+            .offset((long) searchCondition.page() * searchCondition.pageSize())
+            .limit(searchCondition.pageSize())
+            .orderBy(orderSpecifier(searchCondition))
+            .fetch();
     }
 
     @Override
     public void addViewCountFromRedis(Long resumeId, Long viewCount) {
         jpaQueryFactory.update(resume)
-                .where(resume.id.eq(resumeId))
-                .set(resume.viewCount, resume.viewCount.add(viewCount))
-                .execute();
+            .where(resume.id.eq(resumeId))
+            .set(resume.viewCount, resume.viewCount.add(viewCount))
+            .execute();
     }
 
     @Override
     public Long getLikeCount(Long resumeId) {
         return Long.valueOf(
-                jpaQueryFactory
-                        .select(resume.likeCount)
-                        .from(resume)
-                        .where(resume.id.eq(resumeId))
-                        .fetchOne()
+            jpaQueryFactory
+                .select(resume.likeCount)
+                .from(resume)
+                .where(resume.id.eq(resumeId))
+                .fetchOne()
         );
     }
 
@@ -58,10 +58,10 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         booleanBuilder.and(resume.id.notIn(ids));
         return jpaQueryFactory.selectFrom(resume)
-                .orderBy(new OrderSpecifier<>(Order.DESC, resume.createdAt))
-                .where(booleanBuilder)
-                .limit(size)
-                .fetch();
+            .orderBy(new OrderSpecifier<>(Order.DESC, resume.createdAt))
+            .where(booleanBuilder)
+            .limit(size)
+            .fetch();
     }
 
     @Override
@@ -70,9 +70,9 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
         LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
         booleanBuilder.and(resume.createdAt.after(twoWeeksAgo));
         return jpaQueryFactory.selectFrom(resume)
-                .where(booleanBuilder)
-                .orderBy(new OrderSpecifier<>(Order.ASC, resume.createdAt))
-                .fetch();
+            .where(booleanBuilder)
+            .orderBy(new OrderSpecifier<>(Order.ASC, resume.createdAt))
+            .fetch();
     }
 
     private BooleanBuilder createResumeSearchCondition(ResumesSearchRequest searchCondition) {

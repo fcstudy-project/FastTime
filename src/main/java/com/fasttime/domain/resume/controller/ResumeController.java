@@ -38,70 +38,72 @@ public class ResumeController {
 
     @PostMapping
     public ResponseEntity<ResponseDTO<ResumeResponseDto>> createResume(
-            @RequestBody @Valid ResumeRequestDto requestDto) {
+        @RequestBody @Valid ResumeRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ResponseDTO.res(HttpStatus.CREATED, SUCCESS_MESSAGE,
-                        resumeService.createResume(requestDto, securityUtil.getCurrentMemberId())));
+            .body(ResponseDTO.res(HttpStatus.CREATED, SUCCESS_MESSAGE,
+                resumeService.createResume(requestDto, securityUtil.getCurrentMemberId())));
     }
 
     @DeleteMapping("/{resumeId}")
     public ResponseEntity<ResponseDTO<Void>> deleteResume(@PathVariable Long resumeId) {
         resumeService.delete(
-                new ResumeDeleteServiceRequest(resumeId, securityUtil.getCurrentMemberId()));
+            new ResumeDeleteServiceRequest(resumeId, securityUtil.getCurrentMemberId()));
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE, null));
+            .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE, null));
     }
 
     @PutMapping("/{resumeId}")
-    public ResponseEntity<ResponseDTO<ResumeResponseDto>> updateResume(@PathVariable Long resumeId,
-            @RequestBody @Valid ResumeUpdateRequest request) {
+    public ResponseEntity<ResponseDTO<ResumeResponseDto>> updateResume(
+        @PathVariable Long resumeId,
+        @RequestBody @Valid ResumeUpdateRequest request) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE,
-                        resumeService.updateResume(new ResumeUpdateServiceRequest(resumeId,
-                                securityUtil.getCurrentMemberId(), request.title(),
-                                request.content()))));
+            .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE,
+                resumeService.updateResume(new ResumeUpdateServiceRequest(resumeId,
+                    securityUtil.getCurrentMemberId(), request.title(),
+                    request.content()))));
     }
 
     @GetMapping("/{resumeId}")
-    public ResponseEntity<ResponseDTO<ResumeResponseDto>> getResume(@PathVariable Long resumeId,
-            HttpServletRequest request) {
+    public ResponseEntity<ResponseDTO<ResumeResponseDto>> getResume(
+        @PathVariable Long resumeId,
+        HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ResponseDTO.res(HttpStatus.OK,
-                        resumeService.getResume(resumeId, request.getRemoteAddr())));
+            .body(ResponseDTO.res(HttpStatus.OK,
+                resumeService.getResume(resumeId, request.getRemoteAddr())));
     }
 
     @GetMapping
     public ResponseEntity<ResponseDTO<List<ResumeResponseDto>>> getResumes(
-            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "orderBy", defaultValue = "date") String orderBy) {
+        @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+        @RequestParam(name = "page", defaultValue = "0") int page,
+        @RequestParam(name = "orderBy", defaultValue = "date") String orderBy) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ResponseDTO.res(HttpStatus.OK,
-                        resumeService.search(
-                                new ResumesSearchRequest(ResumeOrderBy.of(orderBy), page,
-                                        pageSize))));
+            .body(ResponseDTO.res(HttpStatus.OK,
+                resumeService.search(
+                    new ResumesSearchRequest(ResumeOrderBy.of(orderBy), page,
+                        pageSize))));
     }
 
     @PostMapping("/{resumeId}/likes")
     public ResponseEntity<ResponseDTO<Object>> likeResume(@PathVariable Long resumeId) {
         resumeService.likeResume(
-                new LikeResumeRequest(resumeId, securityUtil.getCurrentMemberId()));
+            new LikeResumeRequest(resumeId, securityUtil.getCurrentMemberId()));
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE));
+            .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE));
     }
 
     @DeleteMapping("/{resumeId}/likes")
     public ResponseEntity<ResponseDTO<Object>> cancelLike(@PathVariable Long resumeId) {
         resumeService.cancelLike(
-                new LikeResumeRequest(resumeId, securityUtil.getCurrentMemberId()));
+            new LikeResumeRequest(resumeId, securityUtil.getCurrentMemberId()));
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE));
+            .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE));
     }
 
     @GetMapping("/best")
     public ResponseEntity<ResponseDTO<List<ResumeResponseDto>>> getBestResume() {
         List<ResumeResponseDto> response = resumeService.getBestResume();
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE, response));
+            .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE, response));
     }
 }

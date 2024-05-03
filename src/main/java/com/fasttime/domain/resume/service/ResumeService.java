@@ -45,7 +45,7 @@ public class ResumeService {
 
     public ResumeResponseDto getResume(Long id, String remoteAddr) {
         Resume resume = resumeRepository.findById(id)
-                .orElseThrow(() -> new ResumeNotFoundException(id));
+            .orElseThrow(() -> new ResumeNotFoundException(id));
         isDeleted(resume);
         addViewCntToRedis(id, remoteAddr);
         return buildResumeResponse(resume);
@@ -54,10 +54,10 @@ public class ResumeService {
     public ResumeResponseDto createResume(ResumeRequestDto requestDto, Long memberId) {
         Member member = memberService.getMember(memberId);
         final Resume newResume = Resume.builder()
-                .title(requestDto.title())
-                .content(requestDto.content())
-                .writer(member)
-                .build();
+            .title(requestDto.title())
+            .content(requestDto.content())
+            .writer(member)
+            .build();
         Resume createdResume = resumeRepository.save(newResume);
 
         return buildResumeResponse(createdResume);
@@ -65,7 +65,7 @@ public class ResumeService {
 
     public ResumeResponseDto updateResume(ResumeUpdateServiceRequest request) {
         final Member requestMember = memberService.getMember(
-                request.memberId());
+            request.memberId());
         Resume resume = findResumeById(request.resumeId());
 
         isDeleted(resume);
@@ -80,13 +80,13 @@ public class ResumeService {
     public List<ResumeResponseDto> search(ResumesSearchRequest request) {
         List<Resume> resumes = resumeRepository.search(request);
         return resumes.stream()
-                .map(this::buildResumeResponse)
-                .collect(Collectors.toList());
+            .map(this::buildResumeResponse)
+            .collect(Collectors.toList());
     }
 
     public void delete(ResumeDeleteServiceRequest deleteRequest) {
         final Member deleteRequestMember = memberService.getMember(
-                deleteRequest.requestUserId());
+            deleteRequest.requestUserId());
         final Resume resume = findResumeById(deleteRequest.resumeId());
 
         isDeleted(resume);
@@ -98,7 +98,7 @@ public class ResumeService {
     public void likeResume(LikeResumeRequest likeResumeRequest) {
         Member member = memberService.getMember(likeResumeRequest.memberId());
         Resume resume = resumeRepository.findById(likeResumeRequest.resumeId())
-                .orElseThrow(ResumeNotFoundException::new);
+            .orElseThrow(ResumeNotFoundException::new);
         if (likeRepository.existsByMemberAndResume(member, resume)) {
             throw new AlreadyExistsResumeLikeException();
         }
@@ -110,7 +110,7 @@ public class ResumeService {
     public void cancelLike(LikeResumeRequest likeResumeRequest) {
         Member member = memberService.getMember(likeResumeRequest.memberId());
         Resume resume = resumeRepository.findById(likeResumeRequest.resumeId())
-                .orElseThrow(ResumeNotFoundException::new);
+            .orElseThrow(ResumeNotFoundException::new);
 
         if (!likeRepository.existsByMemberAndResume(member, resume)) {
             throw new UnauthorizedAccessLikeException();
@@ -150,8 +150,8 @@ public class ResumeService {
     @NotNull
     private static List<Long> getResumesId(List<Resume> resumes) {
         return resumes.stream()
-                .map(Resume::getId)
-                .collect(Collectors.toList());
+            .map(Resume::getId)
+            .collect(Collectors.toList());
     }
 
     @NotNull
@@ -197,27 +197,27 @@ public class ResumeService {
     private void isWriter(Member requestMember, Resume resume) {
         if (!requestMember.getId().equals(resume.getWriter().getId())) {
             throw new NoResumeWriterException(
-                    String.format("작성자가 아닙니다. request user id = %d, resume writer id = %d",
-                            requestMember.getId(), resume.getWriter().getId()));
+                String.format("작성자가 아닙니다. request user id = %d, resume writer id = %d",
+                    requestMember.getId(), resume.getWriter().getId()));
         }
     }
 
     private Resume findResumeById(Long resumeId) {
         return resumeRepository.findById(resumeId)
-                .orElseThrow(() -> new ResumeNotFoundException(resumeId));
+            .orElseThrow(() -> new ResumeNotFoundException(resumeId));
     }
 
     private ResumeResponseDto buildResumeResponse(Resume resume) {
         return ResumeResponseDto.builder()
-                .id(resume.getId())
-                .title(resume.getTitle())
-                .content(resume.getContent())
-                .writer(resume.getWriter().getNickname())
-                .likeCount(resume.getLikeCount())
-                .viewCount(resume.getViewCount())
-                .createdAt(resume.getCreatedAt())
-                .lastModifiedAt(resume.getUpdatedAt())
-                .deletedAt(resume.getDeletedAt())
-                .build();
+            .id(resume.getId())
+            .title(resume.getTitle())
+            .content(resume.getContent())
+            .writer(resume.getWriter().getNickname())
+            .likeCount(resume.getLikeCount())
+            .viewCount(resume.getViewCount())
+            .createdAt(resume.getCreatedAt())
+            .lastModifiedAt(resume.getUpdatedAt())
+            .deletedAt(resume.getDeletedAt())
+            .build();
     }
 }
