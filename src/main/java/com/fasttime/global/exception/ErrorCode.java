@@ -9,6 +9,7 @@ public enum ErrorCode {
     //EMAIL
     EMAIL_SENDING_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 전송에 실패했습니다."),
     EMAIL_TEMPLATE_LOAD_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 템플릿 로드에 실패했습니다."),
+    EMAIL_VERIFICATION_CODE_EXPIRED(HttpStatus.GONE, "인증 코드의 유효 기간이 만료되었습니다."),
 
     // MEMBER
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
@@ -52,9 +53,34 @@ public enum ErrorCode {
     HAS_NO_PERMISSION_WITH_THIS_REVIEW(HttpStatus.UNAUTHORIZED, "리뷰 작성/삭제 권한이 없습니다."),
     REVIEW_ALREADY_REGISTERED(HttpStatus.BAD_REQUEST, "이미 리뷰를 작성했습니다."),
 
+
+    // RESUME
+    RESUME_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 자기소개서입니다."),
+    RESUME_IS_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "이미 삭제한 자기소개서입니다."),
+    HAS_NO_PERMISSION_WITH_THIS_RESUME(HttpStatus.UNAUTHORIZED, "해당 자기소개서에 대한 권한이 없습니다."),
+    ALREADY_LIKE_THIS_RESUME(HttpStatus.BAD_REQUEST, "이미 좋아요한 자기소개서입니다."),
+    HAS_NO_PERMISSION_WITH_THIS_LIKE(HttpStatus.UNAUTHORIZED, "좋아요 삭제 권한이 없습니다."),
+
     // REFERENCE
     ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 대외활동입니다."),
     COMPETITION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 공모전입니다."),
+
+    // CERTIFICATION
+    CERTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 인증입니다."),
+    UNAUTHORIZED_CERTIFICATION(HttpStatus.UNAUTHORIZED, "인증 권한이 없습니다."),
+    CERTIFICATION_BAD_REQUEST(HttpStatus.BAD_REQUEST, "이미 처리한 인증입니다."),
+
+    // STUDY
+    STUDY_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 스터디게시판입니다."),
+    CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 스터디 분야입니다."),
+    HAS_NO_PERMISSION_WITH_THIS_STUDY(HttpStatus.UNAUTHORIZED, "해당 스터디 게시글에 대한 권한이 없습니다."),
+    STUDY_DELETED(HttpStatus.NOT_FOUND,"삭제된 스터디 모집글입니다."),
+
+    // SSE & NOTIFICATION
+    SSE_CONNECTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SSE 연결에 실패했습니다."),
+    UNSUPPORTED_DATA_TYPE_FOR_NOTIFICATION_SENDING(HttpStatus.INTERNAL_SERVER_ERROR,
+        "알림 전송 기능을 사용할 메서드의 반환값이 알림 전송을 지원하지 않는 자료형입니다."),
+
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");

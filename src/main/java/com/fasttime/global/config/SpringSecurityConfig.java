@@ -40,7 +40,7 @@ public class SpringSecurityConfig {
         "/api/v1/members",
         "/api/v2/login",
         "/api/v2/refresh",
-        "/api/v1/admin/join",
+        "/api/v1/admin",
         "/api/live/**",
         "/api/dashboards/**",
         "/actuator/**",
@@ -66,6 +66,7 @@ public class SpringSecurityConfig {
                 .requestMatchers(PERMIT_URL_ARRAY).permitAll()
                 .requestMatchers(GRAFANA_WHITE_LIST).permitAll()
                 .requestMatchers(HttpMethod.GET, "api/v1/article", "api/v2/articles", "api/v2/reviews/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "api/v2/resumes/**").permitAll()
                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .anyRequest().authenticated())

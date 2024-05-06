@@ -60,6 +60,7 @@ include::{snippets}/review-update/response-fields.adoc[]
 
 전체 리뷰를 조회하는 API 입니다.
 
+* bootcamp 파라미터 값이 없을 경우 전체리뷰를 조회합니다.
 * sortBy 값이 없으면 createdAt(최신순) 기준으로 정렬됩니다.
 
 === HttpRequest
@@ -97,6 +98,7 @@ include::{snippets}/reviews-get-bootcamp/response-fields.adoc[]
 === HttpRequest
 
 include::{snippets}/reviews-get-summary/http-request.adoc[]
+include::{snippets}/reviews-get-summary/query-parameters.adoc[]
 
 === HttpResponse
 

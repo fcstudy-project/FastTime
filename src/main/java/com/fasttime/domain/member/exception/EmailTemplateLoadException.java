@@ -11,5 +11,4 @@ public class EmailTemplateLoadException extends ApplicationException {
 
         super(ERROR_CODE);
     }
-
 }

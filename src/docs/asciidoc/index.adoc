@@ -11,6 +11,7 @@ endif::[]
 
 
 == API
+=== link:email/email-api.html[이메일 API, window=blank]
 === link:member/member-api.html[회원 API, window=blank]
 === link:article/article-api.html[게시글 API, window=blank]
 === link:comment/comment-api.html[댓글 API, window=blank]
@@ -19,6 +20,10 @@ endif::[]
 === link:member_article_like/memberArticleLike-api.html[좋아요/싫어요 API, window=blank]
 === link:review/review-api.html[리뷰 API, window=blank]
 === link:reference/reference-api.html[대외활동/공모전 API, window=blank]
+=== link:certification/certification-api.html[부트캠프 인증 API, window=blank]
+=== link:study/study-api.html[스터디 모집글 API, window=blank]
+=== link:category/category-api.html[스터디 모집글 카테고리 API, window=blank]
+
 
 == API Common Response
 [[overview-http-status-code]]

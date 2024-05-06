@@ -10,8 +10,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.fasttime.domain.bootcamp.entity.BootCamp;
-import com.fasttime.domain.bootcamp.repository.BootCampRepository;
+import com.fasttime.domain.certification.entity.BootCamp;
+import com.fasttime.domain.certification.repository.BootCampRepository;
 import com.fasttime.domain.review.dto.response.TagSummaryDTO;
 import com.fasttime.domain.review.exception.BootCampNotFoundException;
 import jakarta.transaction.Transactional;
