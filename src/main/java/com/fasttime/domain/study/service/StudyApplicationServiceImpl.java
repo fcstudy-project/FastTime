@@ -7,7 +7,9 @@ import com.fasttime.domain.study.dto.notification.ApplyToStudyNotificationDto;
 import com.fasttime.domain.study.dto.notification.ApproveStudyApplicationNotificationDto;
 import com.fasttime.domain.study.dto.notification.RejectStudyApplicationNotificationDto;
 import com.fasttime.domain.study.dto.request.ApplyToStudyRequestDto;
+import com.fasttime.domain.study.dto.request.GetStudyApplicationsRequestDto;
 import com.fasttime.domain.study.dto.response.StudyApplicationResponseDto;
+import com.fasttime.domain.study.dto.response.StudyApplicationsResponseDto;
 import com.fasttime.domain.study.entity.Study;
 import com.fasttime.domain.study.entity.StudyApplication;
 import com.fasttime.domain.study.entity.StudyRequestStatus;
@@ -18,6 +20,8 @@ import com.fasttime.domain.study.exception.StudyNotFoundException;
 import com.fasttime.domain.study.repository.StudyApplicationRepository;
 import com.fasttime.domain.study.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +49,20 @@ public class StudyApplicationServiceImpl implements StudyApplicationService {
         );
         sendStudyApplicationNotification(studyApplication);
         return new StudyApplicationResponseDto(studyApplication.getId());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public StudyApplicationsResponseDto getStudyApplications(
+        GetStudyApplicationsRequestDto getStudyApplicationsRequestDto,
+        PageRequest pageRequest
+    ) {
+        Page<StudyApplication> studyApplications;
+        studyApplications = studyApplicationRepository.findAllByConditions(
+            getStudyApplicationsRequestDto,
+            pageRequest
+        );
+        return StudyApplicationsResponseDto.of(studyApplications);
     }
 
     @Override

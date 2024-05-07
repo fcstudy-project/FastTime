@@ -1,7 +1,10 @@
 package com.fasttime.domain.study.service;
 
 import com.fasttime.domain.study.dto.request.ApplyToStudyRequestDto;
+import com.fasttime.domain.study.dto.request.GetStudyApplicationsRequestDto;
 import com.fasttime.domain.study.dto.response.StudyApplicationResponseDto;
+import com.fasttime.domain.study.dto.response.StudyApplicationsResponseDto;
+import org.springframework.data.domain.PageRequest;
 
 public interface StudyApplicationService {
 
@@ -9,6 +12,11 @@ public interface StudyApplicationService {
         long applicantId,
         long studyId,
         ApplyToStudyRequestDto applyToStudyRequestDto
+    );
+
+    StudyApplicationsResponseDto getStudyApplications(
+        GetStudyApplicationsRequestDto getStudyApplicationsRequestDto,
+        PageRequest pageRequest
     );
 
     StudyApplicationResponseDto approve(
