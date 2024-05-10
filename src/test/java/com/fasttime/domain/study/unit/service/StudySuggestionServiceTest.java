@@ -10,8 +10,11 @@ import static org.mockito.Mockito.verify;
 
 import com.fasttime.domain.member.entity.Member;
 import com.fasttime.domain.member.service.MemberService;
+import com.fasttime.domain.study.dto.request.GetStudySuggestionsRequestDto;
+import com.fasttime.domain.study.dto.request.StudySuggestionPageRequestDto;
 import com.fasttime.domain.study.dto.request.SuggestStudyRequestDto;
 import com.fasttime.domain.study.dto.response.StudySuggestionResponseDto;
+import com.fasttime.domain.study.dto.response.StudySuggestionsResponseDto;
 import com.fasttime.domain.study.entity.Study;
 import com.fasttime.domain.study.entity.StudyRequestStatus;
 import com.fasttime.domain.study.entity.StudySuggestion;
@@ -25,6 +28,7 @@ import com.fasttime.domain.study.repository.StudySuggestionRepository;
 import com.fasttime.domain.study.service.StudySuggestionServiceImpl;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -33,6 +37,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @Transactional
 @ExtendWith(MockitoExtension.class)
@@ -140,6 +147,67 @@ public class StudySuggestionServiceTest {
             });
 
             assertEquals("해당 스터디 게시글에 대한 권한이 없습니다.", exception.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("getStudySuggestions()는 ")
+    class Context_getStudySuggestions {
+
+        @Test
+        @DisplayName("스터디 참여 제안 목록을 조회할 수 있다.")
+        void _willSuccess() {
+            // given
+            GetStudySuggestionsRequestDto getStudySuggestionsRequestDto = GetStudySuggestionsRequestDto.builder()
+                .receiverId(1L)
+                .studyId(1L)
+                .build();
+            PageRequest pageRequest = StudySuggestionPageRequestDto.builder()
+                .page(0)
+                .size(10)
+                .build().of();
+            Study study = newStudy();
+            Member member1 = Member.builder()
+                .id(2L)
+                .email("email2")
+                .password("password2")
+                .nickname("nickname2")
+                .image("imageUrl2")
+                .build();
+            Member member2 = Member.builder()
+                .id(3L)
+                .email("email3")
+                .password("password3")
+                .nickname("nickname3")
+                .image("imageUrl3")
+                .build();
+            List<StudySuggestion> studySuggestions = List.of(
+                StudySuggestion.builder()
+                    .id(1L)
+                    .status(StudyRequestStatus.CONSIDERING)
+                    .receiver(member1)
+                    .study(study)
+                    .message("스터디 같이 하고 싶어요!")
+                    .build(),
+                StudySuggestion.builder()
+                    .id(1L)
+                    .status(StudyRequestStatus.CONSIDERING)
+                    .receiver(member2)
+                    .study(study)
+                    .message("스터디 참여 하고 싶어요!")
+                    .build()
+            );
+
+            given(studySuggestionRepository.findAllByConditions(
+                any(GetStudySuggestionsRequestDto.class), any(Pageable.class)))
+                .willReturn(new PageImpl<>(studySuggestions));
+
+            // when
+            StudySuggestionsResponseDto studySuggestionsResponseDto = studySuggestionService
+                .getStudySuggestions(getStudySuggestionsRequestDto, pageRequest);
+
+            // then
+            assertEquals(studySuggestionsResponseDto.studySuggestions().size(), 2);
         }
     }
 
