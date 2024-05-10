@@ -11,7 +11,7 @@ import org.springframework.util.ObjectUtils;
 public class WebDriverUtil {
 //    로컬 환경 세팅
 //    private static final String WEB_DRIVER_PATH= "C:/chromedriver/chromedriver.exe";
-    private static final String WEB_DRIVER_PATH="/home/ubuntu/chromedriver-linux64/chromedriver.exe";
+    private static final String WEB_DRIVER_PATH="/home/ubuntu/chromedriver-linux64/chromedriver";
 
     public  WebDriver getChromeDriver(){
         if (ObjectUtils.isEmpty(System.getProperty("webdriver.chrome.driver"))) {
