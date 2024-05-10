@@ -6,8 +6,10 @@ import com.fasttime.domain.notification.annotation.NeedNotification;
 import com.fasttime.domain.study.dto.notification.ApproveStudySuggestionNotificationDto;
 import com.fasttime.domain.study.dto.notification.RejectStudySuggestionNotificationDto;
 import com.fasttime.domain.study.dto.notification.SuggestStudyNotificationDto;
+import com.fasttime.domain.study.dto.request.GetStudySuggestionsRequestDto;
 import com.fasttime.domain.study.dto.request.SuggestStudyRequestDto;
 import com.fasttime.domain.study.dto.response.StudySuggestionResponseDto;
+import com.fasttime.domain.study.dto.response.StudySuggestionsResponseDto;
 import com.fasttime.domain.study.entity.Study;
 import com.fasttime.domain.study.entity.StudyRequestStatus;
 import com.fasttime.domain.study.entity.StudySuggestion;
@@ -19,6 +21,8 @@ import com.fasttime.domain.study.exception.StudySuggestionNotFoundException;
 import com.fasttime.domain.study.repository.StudyRepository;
 import com.fasttime.domain.study.repository.StudySuggestionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +52,17 @@ public class StudySuggestionServiceImpl implements StudySuggestionService {
         );
         sendStudySuggestionNotification(receiver, studySuggestion);
         return new StudySuggestionResponseDto(studySuggestion.getId());
+    }
+
+    @Override
+    public StudySuggestionsResponseDto getStudySuggestions(
+        GetStudySuggestionsRequestDto getStudySuggestionsRequestDto, PageRequest pageRequest) {
+        Page<StudySuggestion> studySuggestions;
+        studySuggestions = studySuggestionRepository.findAllByConditions(
+            getStudySuggestionsRequestDto,
+            pageRequest
+        );
+        return StudySuggestionsResponseDto.of(studySuggestions);
     }
 
     @Override
