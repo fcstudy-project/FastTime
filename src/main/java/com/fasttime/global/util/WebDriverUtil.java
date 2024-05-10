@@ -19,7 +19,7 @@ public class WebDriverUtil {
         }
 
         ChromeOptions chromeOptions = new ChromeOptions();
-
+        chromeOptions.addArguments("--headless");
         chromeOptions.addArguments("--lang=ko");
         chromeOptions.addArguments("--no-sandbox");
         chromeOptions.addArguments("--disable-dev-shm-usage");
