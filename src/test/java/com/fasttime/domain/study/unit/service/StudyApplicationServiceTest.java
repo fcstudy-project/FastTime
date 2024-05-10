@@ -177,7 +177,7 @@ public class StudyApplicationServiceTest {
                 StudyApplication.builder()
                     .id(1L)
                     .status(StudyRequestStatus.CONSIDERING)
-                    .applicant(member1)
+                    .applicant(member2)
                     .study(study)
                     .message("스터디 참여 하고 싶어요!")
                     .build()
