@@ -21,6 +21,26 @@ include::{snippets}/study-apply/request-fields.adoc[]
 include::{snippets}/study-apply/http-response.adoc[]
 include::{snippets}/study-apply/response-fields.adoc[]
 
+[[Get-Study-Applications]]
+== 스터디 참여 신청 목록 조회
+
+회원이 스터디 참여 신청 목록을 조회하는 API 입니다.
+
+**Guide**
+
+- 마이페이지에서 회원의 스터디 신청 목록 조회 시에는 studyId 없이 요청해주세요.
+- 스터디 게시글 작성자가 해당 스터디 신청/제안 목록을 조회하고자 할 때는 studyId를 쿼리 파라미터에 담아 요청해주세요.
+
+=== HttpRequest
+
+include::{snippets}/study-applications-get/http-request.adoc[]
+include::{snippets}/study-applications-get/query-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/study-applications-get/http-response.adoc[]
+include::{snippets}/study-applications-get/response-fields.adoc[]
+
 [[Study-Approve-Application]]
 == 스터디 참여 신청 승인
 
