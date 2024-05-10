@@ -11,7 +11,10 @@ import static org.mockito.Mockito.verify;
 import com.fasttime.domain.member.entity.Member;
 import com.fasttime.domain.member.service.MemberService;
 import com.fasttime.domain.study.dto.request.ApplyToStudyRequestDto;
+import com.fasttime.domain.study.dto.request.GetStudyApplicationsRequestDto;
+import com.fasttime.domain.study.dto.request.StudyApplicationPageRequestDto;
 import com.fasttime.domain.study.dto.response.StudyApplicationResponseDto;
+import com.fasttime.domain.study.dto.response.StudyApplicationsResponseDto;
 import com.fasttime.domain.study.entity.Study;
 import com.fasttime.domain.study.entity.StudyApplication;
 import com.fasttime.domain.study.entity.StudyRequestStatus;
@@ -24,6 +27,7 @@ import com.fasttime.domain.study.repository.StudyRepository;
 import com.fasttime.domain.study.service.StudyApplicationServiceImpl;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,6 +36,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @Transactional
 @ExtendWith(MockitoExtension.class)
@@ -129,6 +136,67 @@ public class StudyApplicationServiceTest {
     }
 
     @Nested
+    @DisplayName("getStudyApplications()는 ")
+    class Context_getStudyApplications {
+
+        @Test
+        @DisplayName("스터디 참여 신청 목록을 조회할 수 있다.")
+        void _willSuccess() {
+            // given
+            GetStudyApplicationsRequestDto getStudyApplicationsRequestDto = GetStudyApplicationsRequestDto.builder()
+                .applicantId(1L)
+                .studyId(1L)
+                .build();
+            PageRequest pageRequest = StudyApplicationPageRequestDto.builder()
+                .page(0)
+                .size(10)
+                .build().of();
+            Study study = newStudy();
+            Member member1 = Member.builder()
+                .id(2L)
+                .email("email2")
+                .password("password2")
+                .nickname("nickname2")
+                .image("imageUrl2")
+                .build();
+            Member member2 = Member.builder()
+                .id(3L)
+                .email("email3")
+                .password("password3")
+                .nickname("nickname3")
+                .image("imageUrl3")
+                .build();
+            List<StudyApplication> studyApplications = List.of(
+                StudyApplication.builder()
+                    .id(1L)
+                    .status(StudyRequestStatus.CONSIDERING)
+                    .applicant(member1)
+                    .study(study)
+                    .message("스터디 같이 하고 싶어요!")
+                    .build(),
+                StudyApplication.builder()
+                    .id(1L)
+                    .status(StudyRequestStatus.CONSIDERING)
+                    .applicant(member1)
+                    .study(study)
+                    .message("스터디 참여 하고 싶어요!")
+                    .build()
+            );
+
+            given(studyApplicationRepository.findAllByConditions(
+                any(GetStudyApplicationsRequestDto.class), any(Pageable.class)))
+                .willReturn(new PageImpl<>(studyApplications));
+
+            // when
+            StudyApplicationsResponseDto studyApplicationsResponseDto = studyApplicationService
+                .getStudyApplications(getStudyApplicationsRequestDto, pageRequest);
+
+            // then
+            assertEquals(studyApplicationsResponseDto.studyApplications().size(), 2);
+        }
+    }
+
+    @Nested
     @DisplayName("approve()는 ")
     class Context_approve {
 
@@ -157,7 +225,8 @@ public class StudyApplicationServiceTest {
         @DisplayName("스터디 참여 신청을 찾을 수 없으면 스터디 참여 신청을 승인할 수 없다.")
         void _study_application_not_found_willFail() {
             // given
-            given(studyApplicationRepository.findById(any(Long.class))).willReturn(Optional.empty());
+            given(studyApplicationRepository.findById(any(Long.class))).willReturn(
+                Optional.empty());
 
             // when then
             Throwable exception = assertThrows(StudyApplicationNotFoundException.class, () -> {
@@ -230,7 +299,8 @@ public class StudyApplicationServiceTest {
         @DisplayName("스터디 참여 신청을 찾을 수 없으면 스터디 참여 신청을 거부할 수 없다.")
         void _study_application_not_found_willFail() {
             // given
-            given(studyApplicationRepository.findById(any(Long.class))).willReturn(Optional.empty());
+            given(studyApplicationRepository.findById(any(Long.class))).willReturn(
+                Optional.empty());
 
             // when then
             Throwable exception = assertThrows(StudyApplicationNotFoundException.class, () -> {
