@@ -15,7 +15,7 @@ public record StudyApplicationDetailsResponseDto(
     String message,
     String createdAt,
     String updatedAt,
-    String deleteAt
+    String deletedAt
 ) {
 
     public static StudyApplicationDetailsResponseDto of(StudyApplication studyApplication) {
@@ -28,7 +28,7 @@ public record StudyApplicationDetailsResponseDto(
             .message(studyApplication.getMessage())
             .createdAt(dateTimeParse(studyApplication.getCreatedAt()))
             .updatedAt(dateTimeParse(studyApplication.getUpdatedAt()))
-            .deleteAt(dateTimeParse(studyApplication.getDeletedAt()))
+            .deletedAt(dateTimeParse(studyApplication.getDeletedAt()))
             .build();
     }
 
