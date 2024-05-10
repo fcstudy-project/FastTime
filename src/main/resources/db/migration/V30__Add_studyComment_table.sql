@@ -1,9 +1,9 @@
 CREATE TABLE study_comment
 (
     id                       BIGINT AUTO_INCREMENT NOT NULL,
-    created_at               DATETIME              NULL,
-    updated_at               DATETIME              NULL,
-    deleted_at               DATETIME              NULL,
+    created_at               datetime              NULL,
+    updated_at               datetime              NULL,
+    deleted_at               datetime              NULL,
     study_id                 BIGINT                NOT NULL,
     member_id                BIGINT                NOT NULL,
     content                  VARCHAR(255)          NOT NULL,
