@@ -67,7 +67,6 @@ public class SpringSecurityConfig {
                 .requestMatchers(GRAFANA_WHITE_LIST).permitAll()
                 .requestMatchers(HttpMethod.GET, "api/v1/article", "api/v2/articles", "api/v2/reviews/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "api/v2/resumes/**","api/v2/studies").permitAll()
-                .requestMatchers(HttpMethod.POST, "api/v2/resumes/create").permitAll()
                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .anyRequest().authenticated())
