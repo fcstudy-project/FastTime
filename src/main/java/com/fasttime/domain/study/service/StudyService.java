@@ -94,7 +94,7 @@ public class StudyService {
 
     private Study findStudyById(Long studyId) {
         Study study = studyRepository.findById(studyId).orElseThrow(StudyNotFoundException::new);
-        if (study.getDeletedAt() == null) {
+        if (study.isDeleted()) {
             throw new StudyDeleteException();
         }
         return study;

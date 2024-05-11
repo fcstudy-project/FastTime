@@ -34,9 +34,11 @@ endif::[]
 
 === link:study/study-api.html[스터디 모집글 API, window=blank]
 
+=== link:category/category-api.html[스터디 모집글 카데고리 API, window=blank]
+
 === link:study/study-application-suggestion-api.html[스터디 지원/제안 관련 API, window=blank]
 
-=== link:category/category-api.html[스터디 모집글 카데고리 API, window=blank]
+=== link:resume/resume-api.html[자기소개서 API, window=blank]
 
 == API Common Response
 

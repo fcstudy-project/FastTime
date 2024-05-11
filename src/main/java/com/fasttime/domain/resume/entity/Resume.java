@@ -63,6 +63,13 @@ public class Resume extends BaseTimeEntity {
         this.likeCount += 1;
     }
 
+    public void cancelLike() {
+        if (this.likeCount > 0) {
+            this.likeCount -= 1;
+        }
+
+    }
+
     public void view() {
         this.viewCount += 1;
     }

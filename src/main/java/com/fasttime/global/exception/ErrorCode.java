@@ -58,6 +58,8 @@ public enum ErrorCode {
     RESUME_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 자기소개서입니다."),
     RESUME_IS_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "이미 삭제한 자기소개서입니다."),
     HAS_NO_PERMISSION_WITH_THIS_RESUME(HttpStatus.UNAUTHORIZED, "해당 자기소개서에 대한 권한이 없습니다."),
+    ALREADY_LIKE_THIS_RESUME(HttpStatus.BAD_REQUEST, "이미 좋아요한 자기소개서입니다."),
+    HAS_NO_PERMISSION_WITH_THIS_LIKE(HttpStatus.UNAUTHORIZED, "좋아요 삭제 권한이 없습니다."),
 
     // REFERENCE
     ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 대외활동입니다."),
@@ -77,11 +79,15 @@ public enum ErrorCode {
     STUDY_SUGGESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 스터디 제안입니다."),
     HAS_NO_PERMISSION_WITH_THIS_SUGGESTION(HttpStatus.FORBIDDEN, "해당 제안을 승인하거나 거부할 권한이 없습니다."),
 
+    // STUDY_COMMENT
+    STUDY_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 스터디 댓글입니다."),
+    HAS_NO_PERMISSION_WITH_THIS_STUDY_COMMENT(HttpStatus.UNAUTHORIZED,
+        "스터디 댓글 작성자만 해당 스터디 댓글 수정/삭제가 가능합니다."),
+
     // SSE & NOTIFICATION
     SSE_CONNECTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SSE 연결에 실패했습니다."),
     UNSUPPORTED_DATA_TYPE_FOR_NOTIFICATION_SENDING(HttpStatus.INTERNAL_SERVER_ERROR,
         "알림 전송 기능을 사용할 메서드의 반환값이 알림 전송을 지원하지 않는 자료형입니다."),
-
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");

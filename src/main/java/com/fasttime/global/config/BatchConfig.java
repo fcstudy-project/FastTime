@@ -10,6 +10,7 @@ import com.fasttime.global.batch.tasklet.UpdateDoneActivityTasklet;
 import com.fasttime.global.batch.tasklet.UpdateDoneCompetitionTasklet;
 import com.fasttime.global.batch.tasklet.UpdateNewActivityTasklet;
 import com.fasttime.global.batch.tasklet.UpdateNewCompetitionTasklet;
+import com.fasttime.global.batch.tasklet.UpdateResumeViewCountTasklet;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -138,6 +139,23 @@ public class BatchConfig {
         PlatformTransactionManager transactionManager, DeleteCertificationsTasklet tasklet) {
         return new StepBuilder("deleteCertificationsStep", jobRepository)
             .tasklet(tasklet, transactionManager)
+            .build();
+    }
+
+    @Bean
+    public Job updateResumeViewCountToDbJob(JobRepository jobRepository,
+        @Qualifier("updateResumeViewCountStep") Step updateResumeViewCountStep) {
+        return new JobBuilder("updateResumeViewCountToDbJob", jobRepository)
+            .start(updateResumeViewCountStep)
+            .build();
+    }
+
+    @Bean
+    public Step updateResumeViewCountStep(JobRepository jobRepository,
+        UpdateResumeViewCountTasklet tasklet, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("updateResumeViewCountStep", jobRepository)
+            .tasklet(tasklet, transactionManager)
+            .allowStartIfComplete(Boolean.TRUE)
             .build();
     }
 }
