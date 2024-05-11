@@ -1,0 +1,117 @@
+= Resume REST API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+
+[[Create-Resume]]
+== 자기소개서 작성
+
+자기소개서 작성 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/create-resume/http-request.adoc[]
+include::{snippets}/create-resume/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/create-resume/http-response.adoc[]
+include::{snippets}/create-resume/response-fields.adoc[]
+
+[[Delete-Resume]]
+== 자기소개서 삭제
+
+자기소개서 삭제 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/delete-resume/http-request.adoc[]
+include::{snippets}/delete-resume/path-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/delete-resume/http-response.adoc[]
+include::{snippets}/delete-resume/response-fields.adoc[]
+
+[[Update-Resume]]
+== 자기소개서 수정
+
+자기소개서 수정 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/update-resume/http-request.adoc[]
+include::{snippets}/update-resume/path-parameters.adoc[]
+include::{snippets}/update-resume/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/update-resume/http-response.adoc[]
+include::{snippets}/update-resume/response-fields.adoc[]
+
+[[Get-Resumes]]
+== 자기소개서 전체 조회
+
+자기소개서 전체 조회 API 입니다.
+
+* 정렬 기준은 date, viewcount, likecount 입니다.(default = date)
+
+* page 기본값 = 0 / pageSize 기본값 = 10
+
+=== HttpRequest
+
+include::{snippets}/get-resumes/http-request.adoc[]
+include::{snippets}/get-resumes/query-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/get-resumes/http-response.adoc[]
+include::{snippets}/get-resumes/response-fields.adoc[]
+
+[[Get-Resume]]
+== 자기소개서 상세 조회
+
+자기소개서 상세 조회 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/get-resume/http-request.adoc[]
+include::{snippets}/get-resume/path-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/get-resume/http-response.adoc[]
+include::{snippets}/get-resume/response-fields.adoc[]
+
+[[Like-Resume]]
+== 자기소개서 좋아요
+
+자기소개서 좋아요 등록 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/like-resume/http-request.adoc[]
+include::{snippets}/like-resume/path-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/like-resume/http-response.adoc[]
+include::{snippets}/like-resume/response-fields.adoc[]
+
+[[Cancel-Like-Resume]]
+== 자기소개서 좋아요 취소
+
+자기소개서 좋아요 취소 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/cancel-like-resume/http-request.adoc[]
+include::{snippets}/cancel-like-resume/path-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/cancel-like-resume/http-response.adoc[]
+include::{snippets}/cancel-like-resume/response-fields.adoc[]

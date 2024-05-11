@@ -23,6 +23,7 @@ endif::[]
 === link:certification/certification-api.html[부트캠프 인증 API, window=blank]
 === link:study/study-api.html[스터디 모집글 API, window=blank]
 === link:category/category-api.html[스터디 모집글 카테고리 API, window=blank]
+=== link:resume/resume-api.html[자기소개서 API, window=blank]
 
 
 == API Common Response
