@@ -12,6 +12,9 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -73,6 +76,8 @@ class ResumeControllerDocsTest extends RestDocsSupport {
                 .content(resumeJson))
             .andExpect(status().isCreated())
             .andDo(document("create-resume",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
                 requestFields(
                     fieldWithPath("title").type(JsonFieldType.STRING).description("자기소개서 제목"),
                     fieldWithPath("content").type(JsonFieldType.STRING).description("자기소개서 내용")
@@ -94,6 +99,8 @@ class ResumeControllerDocsTest extends RestDocsSupport {
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andDo(document("delete-resume",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
                 pathParameters(
                     parameterWithName("resumeId").description("삭제할 자기소개서의 ID")
                 ),
@@ -122,6 +129,8 @@ class ResumeControllerDocsTest extends RestDocsSupport {
                 .content(updateJson))
             .andExpect(status().isOk())
             .andDo(document("update-resume",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
                 pathParameters(
                     parameterWithName("resumeId").description("수정할 자기소개서의 ID")
                 ),
@@ -140,10 +149,10 @@ class ResumeControllerDocsTest extends RestDocsSupport {
                         .description("자기소개서 작성자"),
                     fieldWithPath("data.likeCount").type(JsonFieldType.NUMBER).description("좋아요 수"),
                     fieldWithPath("data.viewCount").type(JsonFieldType.NUMBER).description("조회 수"),
-                    fieldWithPath("data.createdAt").type(JsonFieldType.ARRAY).description("생성 시간"),
-                    fieldWithPath("data.lastModifiedAt").type(JsonFieldType.ARRAY)
+                    fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("생성 시간"),
+                    fieldWithPath("data.lastModifiedAt").type(JsonFieldType.STRING)
                         .description("마지막 수정 시간"),
-                    fieldWithPath("data.deletedAt").type(JsonFieldType.ARRAY).optional()
+                    fieldWithPath("data.deletedAt").type(JsonFieldType.STRING).optional()
                         .description("삭제 시간")
                 )
             ));
@@ -170,6 +179,8 @@ class ResumeControllerDocsTest extends RestDocsSupport {
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andDo(document("get-resume",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
                 pathParameters(
                     parameterWithName("resumeId").description("자기소개서의 ID")
                 ),
@@ -187,10 +198,10 @@ class ResumeControllerDocsTest extends RestDocsSupport {
                         .description("자기소개서 작성자"),
                     fieldWithPath("data.likeCount").type(JsonFieldType.NUMBER).description("좋아요 수"),
                     fieldWithPath("data.viewCount").type(JsonFieldType.NUMBER).description("조회 수"),
-                    fieldWithPath("data.createdAt").type(JsonFieldType.ARRAY).description("생성 시간"),
-                    fieldWithPath("data.lastModifiedAt").type(JsonFieldType.ARRAY)
+                    fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("생성 시간"),
+                    fieldWithPath("data.lastModifiedAt").type(JsonFieldType.STRING)
                         .description("마지막 수정 시간"),
-                    fieldWithPath("data.deletedAt").type(JsonFieldType.ARRAY).optional()
+                    fieldWithPath("data.deletedAt").type(JsonFieldType.STRING).optional()
                         .description("삭제 시간 (삭제된 경우)")
                 )
             ));
@@ -210,11 +221,13 @@ class ResumeControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(get("/api/v2/resumes")
                 .param("pageSize", "10")
-                .param("page", "1")
+                .param("page", "0")
                 .param("orderBy", "date")
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andDo(document("get-resumes",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
                 queryParameters(
                     parameterWithName("pageSize").description("페이지당 항목 수").optional(),
                     parameterWithName("page").description("페이지 번호").optional(),
@@ -236,11 +249,11 @@ class ResumeControllerDocsTest extends RestDocsSupport {
                         .description("좋아요 수"),
                     fieldWithPath("data[].viewCount").type(JsonFieldType.NUMBER)
                         .description("조회 수"),
-                    fieldWithPath("data[].createdAt").type(JsonFieldType.ARRAY)
+                    fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
                         .description("생성 시간"),
-                    fieldWithPath("data[].lastModifiedAt").type(JsonFieldType.ARRAY)
+                    fieldWithPath("data[].lastModifiedAt").type(JsonFieldType.STRING)
                         .description("마지막 수정 시간"),
-                    fieldWithPath("data[].deletedAt").type(JsonFieldType.ARRAY).optional()
+                    fieldWithPath("data[].deletedAt").type(JsonFieldType.STRING).optional()
                         .description("삭제 시간 (삭제된 경우)")
                 )
             ));
@@ -257,6 +270,8 @@ class ResumeControllerDocsTest extends RestDocsSupport {
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andDo(document("like-resume",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
                 pathParameters(
                     parameterWithName("resumeId").description("자기소개서의 ID")
                 ),
@@ -280,6 +295,8 @@ class ResumeControllerDocsTest extends RestDocsSupport {
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andDo(document("cancel-like-resume",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
                 pathParameters(
                     parameterWithName("resumeId").description("자기소개서의 ID")
                 ),
