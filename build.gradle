@@ -79,7 +79,7 @@ dependencies {
     testImplementation 'org.projectlombok:lombok:1.18.28'
 
     // selenium
-    implementation 'org.seleniumhq.selenium:selenium-java:4.14.1'
+    implementation 'org.seleniumhq.selenium:selenium-devtools-v85:4.20.0'
 
     //ops
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
