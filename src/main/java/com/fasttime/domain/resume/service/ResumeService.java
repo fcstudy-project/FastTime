@@ -119,24 +119,6 @@ public class ResumeService {
         likeRepository.deleteByMemberAndResume(member, resume);
     }
 
-    private void addViewCntToRedis(Long resumeId, String remoteAddr) {
-        String key = "resumeId: " + resumeId;
-        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        setOperations.add(key, remoteAddr);
-    }
-
-
-    public void updateViewCntToDB() {
-        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        Set<String> redisKeys = redisTemplate.keys("resumeId*");
-        for (String keyName : redisKeys) {
-            Long resumeId = extractResumeId(keyName);
-            Long viewCount = setOperations.size(keyName);
-            resumeRepository.addViewCountFromRedis(resumeId, viewCount);
-            setOperations.pop(keyName);
-        }
-    }
-
     public List<ResumeResponseDto> getBestResume() {
         List<Resume> resumes = resumeRepository.getResumesCreatedWithinTwoWeeks();
         PriorityQueue<Resume> pq = buildPriorityQueue();
@@ -180,12 +162,6 @@ public class ResumeService {
 
     private double calculatePriority(Resume o1) {
         return o1.getLikeCount() * 0.7 + o1.getViewCount() * 0.3;
-    }
-
-    @NotNull
-    private static Long extractResumeId(String keyName) {
-        String resumeIdStr = keyName.replaceAll("\\D", "");
-        return Long.parseLong(resumeIdStr);
     }
 
     private void isDeleted(Resume resume) {
