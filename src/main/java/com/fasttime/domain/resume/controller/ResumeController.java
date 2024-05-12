@@ -58,6 +58,7 @@ public class ResumeController {
         @RequestBody @Valid ResumeUpdateRequest request) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE,
+
                 resumeService.updateResume(new ResumeUpdateServiceRequest(resumeId,
                     securityUtil.getCurrentMemberId(), request.title(),
                     request.content()))));
@@ -66,6 +67,7 @@ public class ResumeController {
     @GetMapping("/{resumeId}")
     public ResponseEntity<ResponseDTO<ResumeResponseDto>> getResume(
         @PathVariable Long resumeId,
+
         HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(ResponseDTO.res(HttpStatus.OK,
@@ -90,6 +92,7 @@ public class ResumeController {
             new LikeResumeRequest(resumeId, securityUtil.getCurrentMemberId()));
         return ResponseEntity.status(HttpStatus.OK)
             .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE));
+
     }
 
     @DeleteMapping("/{resumeId}/likes")
@@ -106,4 +109,5 @@ public class ResumeController {
         return ResponseEntity.status(HttpStatus.OK)
             .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE, response));
     }
+
 }

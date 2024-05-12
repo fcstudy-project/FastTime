@@ -63,6 +63,7 @@ public class CertificationService {
         return certificationRepository.save(certification);
     }
 
+    @Transactional(readOnly = true)
     public List<Certification> getCertificationsByMember(Long memberId) {
         return certificationRepository.findByMemberId(memberId);
     }
@@ -123,6 +124,7 @@ public class CertificationService {
         return certificationRepository.save(certification);
     }
 
+    @Transactional(readOnly = true)
     public Page<AllCertificationResponseDTO> getAllCertificationsByStatus(
         CertificationStatus status, Pageable pageable) {
         Page<Certification> certificationPage;

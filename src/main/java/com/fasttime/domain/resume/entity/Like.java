@@ -35,6 +35,4 @@ public class Like extends BaseTimeEntity {
         this.member = member;
         this.resume = resume;
     }
-
-
 }
