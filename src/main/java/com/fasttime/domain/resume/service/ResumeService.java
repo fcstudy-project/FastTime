@@ -15,6 +15,7 @@ import com.fasttime.domain.resume.exception.NoResumeWriterException;
 import com.fasttime.domain.resume.exception.ResumeAlreadyDeletedException;
 import com.fasttime.domain.resume.exception.ResumeNotFoundException;
 import com.fasttime.domain.resume.exception.UnauthorizedAccessLikeException;
+import com.fasttime.domain.resume.infra.GetResumeEvent;
 import com.fasttime.domain.resume.repository.LikeRepository;
 import com.fasttime.domain.resume.repository.ResumeRepository;
 import jakarta.transaction.Transactional;
@@ -22,13 +23,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -40,14 +39,14 @@ public class ResumeService {
     private final LikeRepository likeRepository;
     private final ResumeRepository resumeRepository;
     private final MemberService memberService;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final ApplicationEventPublisher eventPublisher;
 
 
     public ResumeResponseDto getResume(Long id, String remoteAddr) {
         Resume resume = resumeRepository.findById(id)
             .orElseThrow(() -> new ResumeNotFoundException(id));
         isDeleted(resume);
-        addViewCntToRedis(id, remoteAddr);
+        eventPublisher.publishEvent(new GetResumeEvent(resume, remoteAddr));
         return buildResumeResponse(resume);
     }
 
