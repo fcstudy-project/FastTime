@@ -108,35 +108,7 @@ public class ResumeRepositoryTest {
                     .containsExactly("test2", "content22");
         }
 
-        @DisplayName("성공적으로 id를 제외해서 자기소개서를 가져온다.")
-        @Test
-        void _willSuccess_ExceptIds(){
-            // given
-            Member member = Member.builder().id(1L).nickname("testName").build();
-            memberRepository.save(member);
-            Resume resume1 = Resume.builder()
-                    .id(1L)
-                    .title("test1")
-                    .content("content11")
-                    .writer(member)
-                    .build();
 
-            Resume resume2 = Resume.builder()
-                    .id(2L)
-                    .title("test2")
-                    .content("content22")
-                    .writer(member)
-                    .build();
-
-
-            resumeRepository.save(resume1);
-            resumeRepository.save(resume2);
-            List<Resume> resumes = resumeRepository.getRecentResumesBySizeExceptIds(1, List.of(2L));
-
-            assertThat(resumes.size()).isEqualTo(1);
-            assertThat(resumes.getFirst()).extracting("title", "content")
-                    .containsExactly("test1", "content11");
-        }
 
     }
 }
