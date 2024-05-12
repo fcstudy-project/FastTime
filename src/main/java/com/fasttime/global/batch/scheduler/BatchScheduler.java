@@ -49,7 +49,7 @@ public class BatchScheduler {
         jobLauncher.run(deleteCertificationsJob, new JobParameters());
     }
 
-    @Scheduled(cron = "0 */10 * * * *")
+    @Scheduled(cron = "0 0 */3 * * *")
     public void runUpdateResumeViewCountToDbJob() throws JobExecutionException {
         jobLauncher.run(updateResumeViewCountToDbJob, new JobParameters());
     }
