@@ -34,6 +34,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.RedisTemplate;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,6 +54,8 @@ class ResumeServiceTest {
     private LikeRepository likeRepository;
     @Mock
     private RedisTemplate<String, String> redisTemplate;
+    @Mock
+    ApplicationEventPublisher eventPublisher;
 
     @DisplayName("createResume()는")
     @Nested
@@ -177,13 +180,13 @@ class ResumeServiceTest {
         @DisplayName("자기소개서를 성공적으로 불러온다.")
         @Test
         void _willSuccess() {
-            // given
 
+            // given
             String testRemoteAddress = "0:0:0:0";
             Member member = Member.builder().id(1L).nickname("testName").build();
             Resume resumeInDb = createMockResume(member);
             given(resumeRepository.findById(anyLong())).willReturn(Optional.of(resumeInDb));
-            given(redisTemplate.opsForSet()).willReturn(mock());
+
             // when
             ResumeResponseDto response = resumeService.getResume(1L, testRemoteAddress);
 
