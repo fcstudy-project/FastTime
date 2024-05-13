@@ -109,5 +109,4 @@ public class ResumeController {
         return ResponseEntity.status(HttpStatus.OK)
             .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE, response));
     }
-
 }
