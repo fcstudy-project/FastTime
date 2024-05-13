@@ -24,6 +24,7 @@ import com.fasttime.domain.resume.exception.UnauthorizedAccessLikeException;
 import com.fasttime.domain.resume.repository.LikeRepository;
 import com.fasttime.domain.resume.repository.ResumeRepository;
 import com.fasttime.domain.resume.service.ResumeService;
+import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +34,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.RedisTemplate;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,6 +54,8 @@ class ResumeServiceTest {
     private LikeRepository likeRepository;
     @Mock
     private RedisTemplate<String, String> redisTemplate;
+    @Mock
+    ApplicationEventPublisher eventPublisher;
 
     @DisplayName("createResume()는")
     @Nested
@@ -176,13 +180,13 @@ class ResumeServiceTest {
         @DisplayName("자기소개서를 성공적으로 불러온다.")
         @Test
         void _willSuccess() {
-            // given
 
+            // given
             String testRemoteAddress = "0:0:0:0";
             Member member = Member.builder().id(1L).nickname("testName").build();
             Resume resumeInDb = createMockResume(member);
             given(resumeRepository.findById(anyLong())).willReturn(Optional.of(resumeInDb));
-            given(redisTemplate.opsForSet()).willReturn(mock());
+
             // when
             ResumeResponseDto response = resumeService.getResume(1L, testRemoteAddress);
 
@@ -309,7 +313,7 @@ class ResumeServiceTest {
 
         @DisplayName("자기소개서 좋아요 count가 0 이하인 경우 -가 되지 않는다.")
         @Test
-        void test2() {
+        void cancelLike_doNotCalculateMinus() {
             // given
             long memberId = 1L;
             Member member = Member.builder().id(memberId).nickname("testName").build();
@@ -332,6 +336,54 @@ class ResumeServiceTest {
 
             // then
             assertThat(resume.getLikeCount()).isEqualTo(0);
+        }
+    }
+
+    @DisplayName("getBestResume()는")
+    @Nested
+    class Context_getBestResume {
+
+        @DisplayName("성공적으로 최근 2주간 생성된 최고의 게시글 3개를 가져온다.")
+        @Test
+        void _willSuccess() {
+            // given
+            Member member = Member.builder().id(1L).nickname("testName").build();
+
+            // 첫
+            Resume resume1 = Resume.builder()
+                    .title("2nd")
+                    .content("expecting second resume")
+                    .likeCount(2)
+                    .writer(member)
+                    .build();
+
+            Resume resume2 = Resume.builder()
+                    .title("1st")
+                    .content("expecting first resume")
+                    .likeCount(5)
+                    .writer(member)
+                    .build();
+
+            Resume resume3 = Resume.builder()
+                    .title("3rd")
+                    .content("expecting third resume")
+                    .likeCount(1)
+                    .writer(member)
+                    .build();
+
+            given(resumeRepository.getResumesCreatedWithinTwoWeeks()).willReturn(
+                    List.of(resume1, resume2, resume3));
+
+            // when
+            List<ResumeResponseDto> response = resumeService.getBestResume();
+
+            // then
+            assertThat(response.size()).isEqualTo(3);
+            assertThat(response.getFirst()).extracting("title", "content", "likeCount")
+                    .containsExactly("1st", "expecting first resume", 5);
+            assertThat(response.getLast()).extracting("title", "content", "likeCount")
+                    .containsExactly("3rd", "expecting third resume", 1);
+
         }
     }
 
