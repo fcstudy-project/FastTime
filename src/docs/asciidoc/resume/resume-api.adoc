@@ -115,3 +115,23 @@ include::{snippets}/cancel-like-resume/path-parameters.adoc[]
 
 include::{snippets}/cancel-like-resume/http-response.adoc[]
 include::{snippets}/cancel-like-resume/response-fields.adoc[]
+
+[[Get-Best-Resumes]]
+== 우수 자기소개서 조회
+
+우수 자기소개서 조회 API 입니다.
+
+(우수 자기소개서 조건)
+
+* 최근 2주안에 생성된 자기소개서
+* 좋아요 70% + 조회수 30%로 점수를 환산하여 계산
+* 만약, 2주간 생성된 자기소개서의 개수가 3개 미만인 경우 최근에 생성된 자기소개서를 가져온다.
+
+=== HttpRequest
+
+include::{snippets}/get-best-resumes/http-request.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/get-best-resumes/http-response.adoc[]
+include::{snippets}/get-best-resumes/response-fields.adoc[]
