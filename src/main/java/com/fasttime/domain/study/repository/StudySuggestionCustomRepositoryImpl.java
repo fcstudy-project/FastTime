@@ -17,6 +17,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+/**
+ * 스터디 참여 제안 커스텀 레포지토리
+ *
+ * @author JeongUijeong (jeong275117@gmail.com)
+ */
 @Repository
 public class StudySuggestionCustomRepositoryImpl implements StudySuggestionCustomRepository {
 
@@ -26,6 +31,13 @@ public class StudySuggestionCustomRepositoryImpl implements StudySuggestionCusto
         this.jpaQueryFactory = new JPAQueryFactory(entityManager);
     }
 
+    /**
+     * 스터디 참여 제안을 검색 조건에 따라 목록 조회하는 메서드
+     *
+     * @param getStudySuggestionsRequestDto 스터디 참여 제안 조회 요청 DTO
+     * @param pageable                      페이지네이션을 위한 pageable 객체
+     * @return 스터디 참여 제안 목록 페이지
+     */
     @Override
     public Page<StudySuggestion> findAllByConditions(
         GetStudySuggestionsRequestDto getStudySuggestionsRequestDto,
@@ -50,6 +62,12 @@ public class StudySuggestionCustomRepositoryImpl implements StudySuggestionCusto
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
+    /**
+     * 스터디 참여 제안 목록 조회 요청 DTO를 기반으로 검색 조건을 BooleanBuilder로 생성하는 메서드
+     *
+     * @param getStudySuggestionsRequestDto 스터디 참여 제안 목록 조회 요청 DTO
+     * @return 스터디 참여 제안 검색 조건이 담긴 BooleanBuilder
+     */
     private BooleanBuilder createSearchConditionsBuilder(
         GetStudySuggestionsRequestDto getStudySuggestionsRequestDto
     ) {
