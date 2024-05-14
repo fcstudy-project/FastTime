@@ -40,11 +40,9 @@ public class ResumeRepositoryTest {
         @DisplayName("성공적으로 좋아요 순서대로 가져온다.")
         @Test
         void resumeOrderByLikeCount() {
-            log.info("-------------------------");
-            log.info("test start!!!");
+            // given
             Member member = Member.builder().id(1L).nickname("testName").build();
             memberRepository.save(member);
-            // given
             Resume resume1 = Resume.builder()
                     .title("test1")
                     .content("content11")
@@ -77,6 +75,39 @@ public class ResumeRepositoryTest {
             assertThat(resumes.get(0)).isEqualTo(resume1);
             assertThat(resumes.get(1)).isEqualTo(resume2);
         }
+    }
+
+    @DisplayName("getRecentResumesBySize()는")
+    @Nested
+    class Context_getRecentResumeBySize{
+        @DisplayName("성공적으로 size값으로 자기소개서를 가져온다.")
+        @Test
+        void _willSuccess(){
+            // given
+            Member member = Member.builder().id(1L).nickname("testName").build();
+            memberRepository.save(member);
+            Resume resume1 = Resume.builder()
+                    .title("test1")
+                    .content("content11")
+                    .writer(member)
+                    .build();
+
+            Resume resume2 = Resume.builder()
+                    .title("test2")
+                    .content("content22")
+                    .writer(member)
+                    .build();
+
+
+            resumeRepository.save(resume1);
+            resumeRepository.save(resume2);
+            List<Resume> resumes = resumeRepository.getRecentResumesBySizeExceptIds(1, List.of());
+
+            assertThat(resumes.size()).isEqualTo(1);
+            assertThat(resumes.getFirst()).extracting("title", "content")
+                    .containsExactly("test2", "content22");
+        }
+
 
 
     }

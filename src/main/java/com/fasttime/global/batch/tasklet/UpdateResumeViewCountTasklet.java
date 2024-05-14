@@ -1,6 +1,7 @@
 package com.fasttime.global.batch.tasklet;
 
 import com.fasttime.domain.resume.service.ResumeService;
+import com.fasttime.domain.resume.service.ViewCountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.StepContribution;
@@ -14,14 +15,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class UpdateResumeViewCountTasklet implements Tasklet {
 
-    private final ResumeService resumeService;
-
+    private final ViewCountService viewCountService;
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext)
             throws Exception {
-        log.info("Redis에 있는 자기소개서 ViewCount DB로 Update");
-        resumeService.updateViewCntToDB();
-
+        log.info("자기소개서 조회수 DB로 Update");
+        viewCountService.updateViewCountToResume();
         return RepeatStatus.FINISHED;
     }
 }

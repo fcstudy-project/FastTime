@@ -84,6 +84,7 @@ dependencies {
     testImplementation 'org.projectlombok:lombok:1.18.28'
 
     // selenium
+    implementation 'org.seleniumhq.selenium:selenium-devtools-v85:4.20.0'
     implementation 'org.seleniumhq.selenium:selenium-java:4.14.1'
 
     //ops

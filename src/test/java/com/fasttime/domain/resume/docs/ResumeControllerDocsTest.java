@@ -308,4 +308,39 @@ class ResumeControllerDocsTest extends RestDocsSupport {
                 )
             ));
     }
+
+    @DisplayName("최고의 자기소개서 조회 API 문서화")
+    @Test
+    public void getBestResume() throws Exception {
+        List<ResumeResponseDto> bestResumes = List.of(
+            new ResumeResponseDto(1L, "자기소개서 1", "내용 1", "김아무개", 3, 150,
+                LocalDateTime.now(), LocalDateTime.now(), null),
+            new ResumeResponseDto(2L, "자기소개서 2", "내용 2", "최아무개", 5, 100,
+                LocalDateTime.now(), LocalDateTime.now(), null)
+        );
+
+        when(resumeService.getBestResume()).thenReturn(bestResumes);
+
+        mockMvc.perform(get("/api/v2/resumes/best")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andDo(document("get-best-resumes",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 상태 코드"),
+                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                    subsectionWithPath("data").description("가장 인기 있는 자기소개서 목록").type(JsonFieldType.ARRAY),
+                    fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("자기소개서 ID"),
+                    fieldWithPath("data[].title").type(JsonFieldType.STRING).description("자기소개서 제목"),
+                    fieldWithPath("data[].content").type(JsonFieldType.STRING).description("자기소개서 내용"),
+                    fieldWithPath("data[].writer").type(JsonFieldType.STRING).description("자기소개서 작성자"),
+                    fieldWithPath("data[].likeCount").type(JsonFieldType.NUMBER).description("좋아요 수"),
+                    fieldWithPath("data[].viewCount").type(JsonFieldType.NUMBER).description("조회 수"),
+                    fieldWithPath("data[].createdAt").type(JsonFieldType.STRING).description("생성 시간"),
+                    fieldWithPath("data[].lastModifiedAt").type(JsonFieldType.STRING).description("마지막 수정 시간"),
+                    fieldWithPath("data[].deletedAt").type(JsonFieldType.STRING).optional().description("삭제 시간 (삭제된 경우)")
+                )
+            ));
+    }
 }

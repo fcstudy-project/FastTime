@@ -1,8 +1,8 @@
 package com.fasttime.domain.resume.dto;
 
 public record ResumeDeleteServiceRequest(
-        Long resumeId,
-        Long requestUserId
+    Long resumeId,
+    Long requestUserId
 ) {
 
 }

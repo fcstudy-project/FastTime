@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v2/resumes")
 public class ResumeController {
 
+    public static final String SUCCESS_MESSAGE = "정상적으로 처리되었습니다.";
     private final SecurityUtil securityUtil;
     private final ResumeService resumeService;
 
@@ -39,7 +40,7 @@ public class ResumeController {
     public ResponseEntity<ResponseDTO<ResumeResponseDto>> createResume(
         @RequestBody @Valid ResumeRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(ResponseDTO.res(HttpStatus.CREATED, "자기소개서가 등록되었습니다.",
+            .body(ResponseDTO.res(HttpStatus.CREATED, SUCCESS_MESSAGE,
                 resumeService.createResume(requestDto, securityUtil.getCurrentMemberId())));
     }
 
@@ -48,21 +49,25 @@ public class ResumeController {
         resumeService.delete(
             new ResumeDeleteServiceRequest(resumeId, securityUtil.getCurrentMemberId()));
         return ResponseEntity.status(HttpStatus.OK)
-            .body(ResponseDTO.res(HttpStatus.OK, "정상적으로 삭제되었습니다.", null));
+            .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE, null));
     }
 
     @PutMapping("/{resumeId}")
-    public ResponseEntity<ResponseDTO<ResumeResponseDto>> updateResume(@PathVariable Long resumeId,
+    public ResponseEntity<ResponseDTO<ResumeResponseDto>> updateResume(
+        @PathVariable Long resumeId,
         @RequestBody @Valid ResumeUpdateRequest request) {
         return ResponseEntity.status(HttpStatus.OK)
-            .body(ResponseDTO.res(HttpStatus.OK, "자기소개서 업데이트 완료되었습니다.",
+            .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE,
+
                 resumeService.updateResume(new ResumeUpdateServiceRequest(resumeId,
                     securityUtil.getCurrentMemberId(), request.title(),
                     request.content()))));
     }
 
     @GetMapping("/{resumeId}")
-    public ResponseEntity<ResponseDTO<ResumeResponseDto>> getResume(@PathVariable Long resumeId,
+    public ResponseEntity<ResponseDTO<ResumeResponseDto>> getResume(
+        @PathVariable Long resumeId,
+
         HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(ResponseDTO.res(HttpStatus.OK,
@@ -86,7 +91,8 @@ public class ResumeController {
         resumeService.likeResume(
             new LikeResumeRequest(resumeId, securityUtil.getCurrentMemberId()));
         return ResponseEntity.status(HttpStatus.OK)
-            .body(ResponseDTO.res(HttpStatus.OK, "정상적으로 처리되었습니다."));
+            .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE));
+
     }
 
     @DeleteMapping("/{resumeId}/likes")
@@ -94,6 +100,13 @@ public class ResumeController {
         resumeService.cancelLike(
             new LikeResumeRequest(resumeId, securityUtil.getCurrentMemberId()));
         return ResponseEntity.status(HttpStatus.OK)
-            .body(ResponseDTO.res(HttpStatus.OK, "정상적으로 처리되었습니다."));
+            .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE));
+    }
+
+    @GetMapping("/best")
+    public ResponseEntity<ResponseDTO<List<ResumeResponseDto>>> getBestResume() {
+        List<ResumeResponseDto> response = resumeService.getBestResume();
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(ResponseDTO.res(HttpStatus.OK, SUCCESS_MESSAGE, response));
     }
 }
