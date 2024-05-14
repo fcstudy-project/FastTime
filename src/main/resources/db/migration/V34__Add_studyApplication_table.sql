@@ -1,7 +1,7 @@
 CREATE TABLE study_application
 (
     id         BIGINT AUTO_INCREMENT NOT NULL,
-    status     enum ('CONSIDERING','APPROVE', 'REJECT') NOT NULL,
+    status     enum ('CONSIDERING','APPROVED', 'REJECT') NOT NULL,
     member_id  BIGINT NULL,
     study_id   BIGINT NULL,
     message    VARCHAR(255) NOT NULL,
