@@ -70,7 +70,7 @@ public class StudySuggestionServiceImpl implements StudySuggestionService {
     public StudySuggestionResponseDto approve(long memberId, long studySuggestionId) {
         StudySuggestion studySuggestion = getStudySuggestion(studySuggestionId);
         authToApproveOrRejectSuggestionValidation(memberId, studySuggestion);
-        studySuggestion.changeStatus(StudyRequestStatus.APPROVE);
+        studySuggestion.changeStatus(StudyRequestStatus.APPROVED);
         sendNotificationOfStudySuggestionApproval(studySuggestion);
         return new StudySuggestionResponseDto(studySuggestion.getId());
     }

@@ -70,7 +70,7 @@ public class StudyApplicationServiceImpl implements StudyApplicationService {
     public StudyApplicationResponseDto approve(long memberId, long studyApplicationId) {
         StudyApplication studyApplication = getStudyApplication(studyApplicationId);
         authValidation(memberId, studyApplication.getStudy());
-        studyApplication.changeStatus(StudyRequestStatus.APPROVE);
+        studyApplication.changeStatus(StudyRequestStatus.APPROVED);
         sendNotificationOfStudyApplicationApproval(studyApplication);
         return new StudyApplicationResponseDto(studyApplication.getId());
     }
