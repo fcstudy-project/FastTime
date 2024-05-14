@@ -3,6 +3,12 @@ package com.fasttime.domain.study.dto.request;
 import lombok.Builder;
 import org.springframework.data.domain.PageRequest;
 
+/**
+ * 스터디 참여 제안 목록 페이지 요청 DTO
+ *
+ * @param page 조회하고자 하는 페이지 번호
+ * @param size 한 페이지 당 조회할 스터디 참여 제안 개수
+ */
 public record StudySuggestionPageRequestDto(
     int page,
     int size
