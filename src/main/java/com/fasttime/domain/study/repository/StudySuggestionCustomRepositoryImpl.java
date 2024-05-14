@@ -2,7 +2,6 @@ package com.fasttime.domain.study.repository;
 
 import static com.fasttime.domain.member.entity.QMember.member;
 import static com.fasttime.domain.study.entity.QStudy.study;
-import static com.fasttime.domain.study.entity.QStudyApplication.studyApplication;
 import static com.fasttime.domain.study.entity.QStudySuggestion.studySuggestion;
 
 import com.fasttime.domain.study.dto.request.GetStudySuggestionsRequestDto;
@@ -75,10 +74,10 @@ public class StudySuggestionCustomRepositoryImpl implements StudySuggestionCusto
         boolean isFindAllByStudyId = getStudySuggestionsRequestDto.studyId() != null;
         boolean isFindAllByReceiverId = getStudySuggestionsRequestDto.studyId() == null;
         if (isFindAllByStudyId) {
-            bB.and(studyApplication.study.id.eq(getStudySuggestionsRequestDto.studyId()));
+            bB.and(studySuggestion.study.id.eq(getStudySuggestionsRequestDto.studyId()));
         }
         if (isFindAllByReceiverId) {
-            bB.and(studyApplication.applicant.id.eq(getStudySuggestionsRequestDto.receiverId()));
+            bB.and(studySuggestion.receiver.id.eq(getStudySuggestionsRequestDto.receiverId()));
         }
         return bB;
     }
