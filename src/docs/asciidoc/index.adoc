@@ -11,24 +11,40 @@ endif::[]
 
 
 == API
+
 === link:email/email-api.html[이메일 API, window=blank]
+
 === link:member/member-api.html[회원 API, window=blank]
+
 === link:article/article-api.html[게시글 API, window=blank]
+
 === link:comment/comment-api.html[댓글 API, window=blank]
+
 === link:admin/admin-api.html[어드민 API, window=blank]
+
 === link:report/report-api.html[신고 API, window=blank]
+
 === link:member_article_like/memberArticleLike-api.html[좋아요/싫어요 API, window=blank]
+
 === link:review/review-api.html[리뷰 API, window=blank]
+
 === link:reference/reference-api.html[대외활동/공모전 API, window=blank]
+
 === link:certification/certification-api.html[부트캠프 인증 API, window=blank]
+
 === link:study/study-api.html[스터디 모집글 API, window=blank]
-=== link:category/category-api.html[스터디 모집글 카테고리 API, window=blank]
+
+=== link:category/category-api.html[스터디 모집글 카데고리 API, window=blank]
+
+=== link:study/study-application-suggestion-api.html[스터디 지원/제안 관련 API, window=blank]
+
 === link:resume/resume-api.html[자기소개서 API, window=blank]
 
-
 == API Common Response
+
 [[overview-http-status-code]]
 === 1. HTTP Status Code
+
 |===
 | Status code | Useage
 | `200 OK` | 요청을 성공적으로 수행
@@ -42,6 +58,7 @@ endif::[]
 
 [[overview-common-response]]
 === 2. API Common Response
+
 * FastTime API 에서 공통적으로 제공하는 Response 요소들입니다.
 * 통상적인 상황이나 에러 발생시 모두 제공되는 포맷입니다.
 
