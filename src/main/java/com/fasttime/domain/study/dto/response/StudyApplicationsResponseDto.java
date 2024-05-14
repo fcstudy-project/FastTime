@@ -17,7 +17,7 @@ import org.springframework.data.domain.Page;
 @Builder
 public record StudyApplicationsResponseDto(
     int totalPages,
-    Boolean isLastPage,
+    boolean isLastPage,
     long totalStudyApplications,
     List<StudyApplicationDetailsResponseDto> studyApplications
 ) {
