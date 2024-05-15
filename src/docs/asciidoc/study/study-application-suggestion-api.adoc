@@ -1,0 +1,138 @@
+= Study Application/Suggestion REST API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+
+[[Study-Apply]]
+== 스터디 참여 신청
+
+회원이 스터디 참여를 신청하는 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/study-apply/http-request.adoc[]
+include::{snippets}/study-apply/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/study-apply/http-response.adoc[]
+include::{snippets}/study-apply/response-fields.adoc[]
+
+[[Get-Study-Applications]]
+== 스터디 참여 신청 목록 조회
+
+회원이 스터디 참여 신청 목록을 조회하는 API 입니다.
+
+**Guide**
+
+- 마이페이지에서 회원의 스터디 신청 목록 조회 시에는 studyId 없이 요청해주세요.
+- 스터디 게시글 작성자가 해당 스터디 신청 목록을 조회하고자 할 때는 studyId를 쿼리 파라미터에 담아 요청해주세요.
+
+=== HttpRequest
+
+include::{snippets}/study-applications-get/http-request.adoc[]
+include::{snippets}/study-applications-get/query-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/study-applications-get/http-response.adoc[]
+include::{snippets}/study-applications-get/response-fields.adoc[]
+
+[[Study-Approve-Application]]
+== 스터디 참여 신청 승인
+
+회원이 스터디 참여 신청을 승인하는 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/study-application-approve/http-request.adoc[]
+include::{snippets}/study-application-approve/path-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/study-application-approve/http-response.adoc[]
+include::{snippets}/study-application-approve/response-fields.adoc[]
+
+[[Study-Reject-Application]]
+== 스터디 참여 신청 거부
+
+회원이 스터디 참여 신청을 거부하는 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/study-application-reject/http-request.adoc[]
+include::{snippets}/study-application-reject/path-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/study-application-reject/http-response.adoc[]
+include::{snippets}/study-application-reject/response-fields.adoc[]
+
+[[Study-Suggest]]
+== 스터디 참여 제안
+
+회원이 스터디 참여를 제안하는 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/study-suggest/http-request.adoc[]
+include::{snippets}/study-suggest/path-parameters.adoc[]
+include::{snippets}/study-suggest/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/study-suggest/http-response.adoc[]
+include::{snippets}/study-suggest/response-fields.adoc[]
+
+[[Get-Study-Suggestions]]
+== 스터디 참여 제안 목록 조회
+
+회원이 스터디 참여 제안 목록을 조회하는 API 입니다.
+
+**Guide**
+
+- 마이페이지에서 회원에게 온 스터디 제안 목록 조회 시에는 studyId 없이 요청해주세요.
+- 스터디 게시글 작성자가 해당 스터디 제안 목록을 조회하고자 할 때는 studyId를 쿼리 파라미터에 담아 요청해주세요.
+
+=== HttpRequest
+
+include::{snippets}/study-suggestions-get/http-request.adoc[]
+include::{snippets}/study-suggestions-get/query-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/study-suggestions-get/http-response.adoc[]
+include::{snippets}/study-suggestions-get/response-fields.adoc[]
+
+[[Study-Approve-Suggestion]]
+== 스터디 참여 제안 승인
+
+회원이 스터디 참여 제안을 승인하는 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/study-suggestion-approve/http-request.adoc[]
+include::{snippets}/study-suggestion-approve/path-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/study-suggestion-approve/http-response.adoc[]
+include::{snippets}/study-suggestion-approve/response-fields.adoc[]
+
+[[Study-Reject-Suggestion]]
+== 스터디 참여 제안 거부
+
+회원이 스터디 참여 제안을 거부하는 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/study-suggestion-reject/http-request.adoc[]
+include::{snippets}/study-suggestion-reject/path-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/study-suggestion-reject/http-response.adoc[]
+include::{snippets}/study-suggestion-reject/response-fields.adoc[]

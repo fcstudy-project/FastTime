@@ -149,7 +149,8 @@ public class BatchConfig {
     }
 
     @Bean
-    public Job deleteCertificationsJob(JobRepository jobRepository, Step deleteCertificationsStep) {
+    public Job deleteCertificationsJob(JobRepository jobRepository,
+        @Qualifier("updateNewActivityStep") Step deleteCertificationsStep) {
         return new JobBuilder("deleteCertificationsJob", jobRepository)
             .start(deleteCertificationsStep)
             .build();
