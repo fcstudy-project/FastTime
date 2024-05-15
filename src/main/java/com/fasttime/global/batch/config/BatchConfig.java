@@ -19,8 +19,6 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.database.support.DataFieldMaxValueIncrementerFactory;
-import org.springframework.batch.item.database.support.DefaultDataFieldMaxValueIncrementerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,22 +29,15 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class BatchConfig {
 
     @Bean
-    public DataFieldMaxValueIncrementerFactory incrementerFactory(DataSource dataSource) {
-        return new DefaultDataFieldMaxValueIncrementerFactory(dataSource);
-    }
-
-    @Bean
     public JobRepository jobRepository(DataSource dataSource,
-        PlatformTransactionManager transactionManager,
-        DataFieldMaxValueIncrementerFactory incrementerFactory) throws Exception {
+        PlatformTransactionManager transactionManager) throws Exception {
         JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
         factory.setDataSource(dataSource);
         factory.setTransactionManager(transactionManager);
-        factory.setIncrementerFactory(incrementerFactory);
+        factory.setDatabaseType("MYSQL");
         factory.afterPropertiesSet();
         return factory.getObject();
     }
-
 
     @Bean
     public Job deleteOldReviewsJob(JobRepository jobRepository,
