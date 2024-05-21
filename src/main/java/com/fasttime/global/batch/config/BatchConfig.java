@@ -22,6 +22,8 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
+import org.springframework.jdbc.support.incrementer.MySQLMaxValueIncrementer;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
@@ -38,6 +40,16 @@ public class BatchConfig {
         factory.afterPropertiesSet();
         return factory.getObject();
     }
+
+    @Bean
+    public DataFieldMaxValueIncrementer incrementer(DataSource dataSource) {
+        MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer();
+        incrementer.setDataSource(dataSource);
+        incrementer.setIncrementerName("BATCH_JOB_SEQ");
+        incrementer.setColumnName("ID_VAL");
+        return incrementer;
+    }
+
 
     @Bean
     public Job deleteOldReviewsJob(JobRepository jobRepository,
