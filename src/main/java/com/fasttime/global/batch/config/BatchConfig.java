@@ -46,10 +46,9 @@ public class BatchConfig {
         MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer();
         incrementer.setDataSource(dataSource);
         incrementer.setIncrementerName("BATCH_JOB_SEQ");
-        incrementer.setColumnName("ID_VAL");
+        incrementer.setColumnName("ID");
         return incrementer;
     }
-
 
     @Bean
     public Job deleteOldReviewsJob(JobRepository jobRepository,
