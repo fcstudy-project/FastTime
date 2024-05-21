@@ -29,7 +29,7 @@ public class BatchScheduler {
         this.updateResumeViewCountToDbJob = updateResumeViewCountToDbJob;
     }
 
-    @Scheduled(cron = "0 40 23 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void runDeleteOldReviewsJob() throws JobExecutionException {
         jobLauncher.run(deleteOldReviewsJob, new JobParameters());
     }
