@@ -51,6 +51,25 @@ public class BatchConfig {
     }
 
     @Bean
+    public DataFieldMaxValueIncrementer jobExecutionIncrementer(DataSource dataSource) {
+        MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer();
+        incrementer.setDataSource(dataSource);
+        incrementer.setIncrementerName("BATCH_JOB_EXECUTION_SEQ");
+        incrementer.setColumnName("ID");
+        return incrementer;
+    }
+
+    @Bean
+    public DataFieldMaxValueIncrementer stepExecutionIncrementer(DataSource dataSource) {
+        MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer();
+        incrementer.setDataSource(dataSource);
+        incrementer.setIncrementerName("BATCH_STEP_EXECUTION_SEQ");
+        incrementer.setColumnName("ID");
+        return incrementer;
+    }
+
+
+    @Bean
     public Job deleteOldReviewsJob(JobRepository jobRepository,
         @Qualifier("deleteOldReviewsStep") Step deleteOldReviewsStep) {
         return new JobBuilder("deleteOldReviewsJob", jobRepository)
