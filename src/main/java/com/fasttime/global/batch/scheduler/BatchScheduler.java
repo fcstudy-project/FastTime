@@ -18,18 +18,26 @@ public class BatchScheduler {
     private final Job updateReferenceStatusJob;
     private final Job deleteCertificationsJob;
     private final Job updateResumeViewCountToDbJob;
+    private final Job initJob;
 
     public BatchScheduler(JobLauncher jobLauncher, Job deleteOldReviewsJob, Job updateReferenceJob,
-            Job deleteCertificationsJob, Job updateResumeViewCountToDbJob) {
+        Job updateReferenceStatusJob, Job deleteCertificationsJob,
+        Job updateResumeViewCountToDbJob, Job initJob) {
         this.jobLauncher = jobLauncher;
         this.deleteOldReviewsJob = deleteOldReviewsJob;
         this.updateReferenceJob = updateReferenceJob;
-        this.updateReferenceStatusJob = updateReferenceJob;
+        this.updateReferenceStatusJob = updateReferenceStatusJob;
         this.deleteCertificationsJob = deleteCertificationsJob;
         this.updateResumeViewCountToDbJob = updateResumeViewCountToDbJob;
+        this.initJob = initJob;
     }
 
-    @Scheduled(cron = "0 35 18 * * *")
+    @Scheduled(initialDelay = 1000, fixedRate = Long.MAX_VALUE)
+    public void runInitJob() throws JobExecutionException {
+        jobLauncher.run(initJob, new JobParameters());
+    }
+
+    @Scheduled(cron = "0 40 18 * * *")
     public void runDeleteOldReviewsJob() throws JobExecutionException {
         jobLauncher.run(deleteOldReviewsJob, new JobParameters());
     }
