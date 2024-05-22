@@ -11,9 +11,12 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.jdbc.support.incrementer.MySQLMaxValueIncrementer;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -21,6 +24,16 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @EnableBatchProcessing
 public class BatchConfig {
+
+    private final DataSource dataSource;
+    private final PlatformTransactionManager transactionManager;
+    private final JobRepository jobRepository;
+
+    public BatchConfig(DataSource dataSource, PlatformTransactionManager transactionManager, JobRepository jobRepository) {
+        this.dataSource = dataSource;
+        this.transactionManager = transactionManager;
+        this.jobRepository = jobRepository;
+    }
 
     @Bean
     public JobRepository jobRepository(DataSource dataSource,
@@ -53,6 +66,47 @@ public class BatchConfig {
     public DataFieldMaxValueIncrementer stepExecutionIncrementer(DataSource dataSource) {
         MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer(dataSource, "BATCH_STEP_EXECUTION_SEQ", "ID");
         return incrementer;
+    }
+
+    @Bean
+    public Job initJob(JobRepository jobRepository) {
+        return new JobBuilder("initJob", jobRepository)
+            .start(initStep(jobRepository, transactionManager))
+            .build();
+    }
+
+    @Bean
+    public Step initStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("initStep", jobRepository)
+            .tasklet((contribution, chunkContext) -> {
+                // Sample data 삽입
+                JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
+                // Check if sample data already exists
+                Long jobInstanceId = null;
+                try {
+                    jobInstanceId = jdbcTemplate.queryForObject("SELECT JOB_INSTANCE_ID FROM BATCH_JOB_INSTANCE WHERE JOB_NAME = ? AND JOB_KEY = ?",
+                        Long.class, "sampleJob", "sampleKey");
+                } catch (EmptyResultDataAccessException e) {
+                    // Job instance does not exist
+                }
+
+                if (jobInstanceId == null) {
+                    // Insert new job instance
+                    jdbcTemplate.update("INSERT INTO BATCH_JOB_INSTANCE (JOB_NAME, JOB_KEY, VERSION) VALUES (?, ?, ?)",
+                        "sampleJob", "sampleKey", 1);
+                    // Retrieve the newly inserted job instance ID
+                    jobInstanceId = jdbcTemplate.queryForObject("SELECT JOB_INSTANCE_ID FROM BATCH_JOB_INSTANCE WHERE JOB_NAME = ? AND JOB_KEY = ?",
+                        Long.class, "sampleJob", "sampleKey");
+                }
+
+                // Insert job execution for the existing or newly created job instance
+                jdbcTemplate.update("INSERT INTO BATCH_JOB_EXECUTION (JOB_INSTANCE_ID, VERSION, CREATE_TIME) VALUES (?, ?, NOW())",
+                    jobInstanceId, 1);
+
+                return RepeatStatus.FINISHED;
+            }, transactionManager)
+            .build();
     }
 
     @Bean
