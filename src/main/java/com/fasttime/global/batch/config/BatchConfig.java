@@ -27,17 +27,14 @@ public class BatchConfig {
 
     private final DataSource dataSource;
     private final PlatformTransactionManager transactionManager;
-    private final JobRepository jobRepository;
 
-    public BatchConfig(DataSource dataSource, PlatformTransactionManager transactionManager, JobRepository jobRepository) {
+    public BatchConfig(DataSource dataSource, PlatformTransactionManager transactionManager) {
         this.dataSource = dataSource;
         this.transactionManager = transactionManager;
-        this.jobRepository = jobRepository;
     }
 
     @Bean
-    public JobRepository jobRepository(DataSource dataSource,
-        PlatformTransactionManager transactionManager) throws Exception {
+    public JobRepository jobRepository() throws Exception {
         JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
         factory.setDataSource(dataSource);
         factory.setTransactionManager(transactionManager);
@@ -51,33 +48,36 @@ public class BatchConfig {
     }
 
     @Bean
-    public DataFieldMaxValueIncrementer incrementer(DataSource dataSource) {
-        MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer(dataSource, "BATCH_JOB_SEQ", "ID");
+    public DataFieldMaxValueIncrementer incrementer() {
+        MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer(dataSource,
+            "BATCH_JOB_SEQ", "ID");
         return incrementer;
     }
 
     @Bean
-    public DataFieldMaxValueIncrementer jobExecutionIncrementer(DataSource dataSource) {
-        MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer(dataSource, "BATCH_JOB_EXECUTION_SEQ", "ID");
+    public DataFieldMaxValueIncrementer jobExecutionIncrementer() {
+        MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer(dataSource,
+            "BATCH_JOB_EXECUTION_SEQ", "ID");
         return incrementer;
     }
 
     @Bean
-    public DataFieldMaxValueIncrementer stepExecutionIncrementer(DataSource dataSource) {
-        MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer(dataSource, "BATCH_STEP_EXECUTION_SEQ", "ID");
+    public DataFieldMaxValueIncrementer stepExecutionIncrementer() {
+        MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer(dataSource,
+            "BATCH_STEP_EXECUTION_SEQ", "ID");
         return incrementer;
     }
 
     @Bean
-    public Job initJob(JobRepository jobRepository) {
-        return new JobBuilder("initJob", jobRepository)
-            .start(initStep(jobRepository, transactionManager))
+    public Job initJob() throws Exception {
+        return new JobBuilder("initJob", jobRepository())
+            .start(initStep())
             .build();
     }
 
     @Bean
-    public Step initStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        return new StepBuilder("initStep", jobRepository)
+    public Step initStep() throws Exception {
+        return new StepBuilder("initStep", jobRepository())
             .tasklet((contribution, chunkContext) -> {
                 // Sample data 삽입
                 JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
@@ -85,7 +85,8 @@ public class BatchConfig {
                 // Check if sample data already exists
                 Long jobInstanceId = null;
                 try {
-                    jobInstanceId = jdbcTemplate.queryForObject("SELECT JOB_INSTANCE_ID FROM BATCH_JOB_INSTANCE WHERE JOB_NAME = ? AND JOB_KEY = ?",
+                    jobInstanceId = jdbcTemplate.queryForObject(
+                        "SELECT JOB_INSTANCE_ID FROM BATCH_JOB_INSTANCE WHERE JOB_NAME = ? AND JOB_KEY = ?",
                         Long.class, "sampleJob", "sampleKey");
                 } catch (EmptyResultDataAccessException e) {
                     // Job instance does not exist
@@ -93,15 +94,18 @@ public class BatchConfig {
 
                 if (jobInstanceId == null) {
                     // Insert new job instance
-                    jdbcTemplate.update("INSERT INTO BATCH_JOB_INSTANCE (JOB_NAME, JOB_KEY, VERSION) VALUES (?, ?, ?)",
+                    jdbcTemplate.update(
+                        "INSERT INTO BATCH_JOB_INSTANCE (JOB_NAME, JOB_KEY, VERSION) VALUES (?, ?, ?)",
                         "sampleJob", "sampleKey", 1);
                     // Retrieve the newly inserted job instance ID
-                    jobInstanceId = jdbcTemplate.queryForObject("SELECT JOB_INSTANCE_ID FROM BATCH_JOB_INSTANCE WHERE JOB_NAME = ? AND JOB_KEY = ?",
+                    jobInstanceId = jdbcTemplate.queryForObject(
+                        "SELECT JOB_INSTANCE_ID FROM BATCH_JOB_INSTANCE WHERE JOB_NAME = ? AND JOB_KEY = ?",
                         Long.class, "sampleJob", "sampleKey");
                 }
 
                 // Insert job execution for the existing or newly created job instance
-                jdbcTemplate.update("INSERT INTO BATCH_JOB_EXECUTION (JOB_INSTANCE_ID, VERSION, CREATE_TIME) VALUES (?, ?, NOW())",
+                jdbcTemplate.update(
+                    "INSERT INTO BATCH_JOB_EXECUTION (JOB_INSTANCE_ID, VERSION, CREATE_TIME) VALUES (?, ?, NOW())",
                     jobInstanceId, 1);
 
                 return RepeatStatus.FINISHED;
