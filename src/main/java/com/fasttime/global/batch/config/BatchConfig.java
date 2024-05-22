@@ -2,23 +2,15 @@ package com.fasttime.global.batch.config;
 
 import com.fasttime.domain.certification.repository.CertificationRepository;
 import com.fasttime.domain.review.repository.ReviewRepository;
-import com.fasttime.global.batch.tasklet.DeleteCertificationsTasklet;
-import com.fasttime.global.batch.tasklet.DeleteOldReviewsTasklet;
-import com.fasttime.global.batch.tasklet.UpdateActivityStatusTasklet;
-import com.fasttime.global.batch.tasklet.UpdateCompetitionStatusTasklet;
-import com.fasttime.global.batch.tasklet.UpdateDoneActivityTasklet;
-import com.fasttime.global.batch.tasklet.UpdateDoneCompetitionTasklet;
-import com.fasttime.global.batch.tasklet.UpdateNewActivityTasklet;
-import com.fasttime.global.batch.tasklet.UpdateNewCompetitionTasklet;
-import com.fasttime.global.batch.tasklet.UpdateResumeViewCountTasklet;
+import com.fasttime.global.batch.tasklet.*;
 import javax.sql.DataSource;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
-import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,50 +29,44 @@ public class BatchConfig {
         factory.setDataSource(dataSource);
         factory.setTransactionManager(transactionManager);
         factory.setDatabaseType("MYSQL");
+        factory.setIsolationLevelForCreate("ISOLATION_SERIALIZABLE");
+        factory.setTablePrefix("BATCH_");
+        factory.setMaxVarCharLength(2500);
+
         factory.afterPropertiesSet();
         return factory.getObject();
     }
 
     @Bean
     public DataFieldMaxValueIncrementer incrementer(DataSource dataSource) {
-        MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer();
-        incrementer.setDataSource(dataSource);
-        incrementer.setIncrementerName("BATCH_JOB_SEQ");
-        incrementer.setColumnName("ID");
+        MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer(dataSource, "BATCH_JOB_SEQ", "ID");
         return incrementer;
     }
 
     @Bean
     public DataFieldMaxValueIncrementer jobExecutionIncrementer(DataSource dataSource) {
-        MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer();
-        incrementer.setDataSource(dataSource);
-        incrementer.setIncrementerName("BATCH_JOB_EXECUTION_SEQ");
-        incrementer.setColumnName("ID");
+        MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer(dataSource, "BATCH_JOB_EXECUTION_SEQ", "ID");
         return incrementer;
     }
 
     @Bean
     public DataFieldMaxValueIncrementer stepExecutionIncrementer(DataSource dataSource) {
-        MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer();
-        incrementer.setDataSource(dataSource);
-        incrementer.setIncrementerName("BATCH_STEP_EXECUTION_SEQ");
-        incrementer.setColumnName("ID");
+        MySQLMaxValueIncrementer incrementer = new MySQLMaxValueIncrementer(dataSource, "BATCH_STEP_EXECUTION_SEQ", "ID");
         return incrementer;
     }
 
-
     @Bean
-    public Job deleteOldReviewsJob(JobRepository jobRepository,
+    public Job deleteOldReviewsJob(JobBuilderFactory jobBuilderFactory,
         @Qualifier("deleteOldReviewsStep") Step deleteOldReviewsStep) {
-        return new JobBuilder("deleteOldReviewsJob", jobRepository)
+        return jobBuilderFactory.get("deleteOldReviewsJob")
             .start(deleteOldReviewsStep)
             .build();
     }
 
     @Bean
-    public Step deleteOldReviewsStep(JobRepository jobRepository,
+    public Step deleteOldReviewsStep(StepBuilderFactory stepBuilderFactory,
         PlatformTransactionManager transactionManager, DeleteOldReviewsTasklet tasklet) {
-        return new StepBuilder("deleteOldReviewsStep", jobRepository)
+        return stepBuilderFactory.get("deleteOldReviewsStep")
             .tasklet(tasklet, transactionManager)
             .build();
     }
@@ -91,23 +77,23 @@ public class BatchConfig {
     }
 
     @Bean
-    public Job updateReferenceStatusJob(JobRepository jobRepository,
+    public Job updateReferenceStatusJob(JobBuilderFactory jobBuilderFactory,
         @Qualifier("updateActivityStatusStep") Step updateActivityStatusStep,
         @Qualifier("updateCompetitionStatusStep") Step updateCompetitionStatusStep) {
-        return new JobBuilder("updateReferenceStatusJob", jobRepository)
+        return jobBuilderFactory.get("updateReferenceStatusJob")
             .start(updateActivityStatusStep)
             .next(updateCompetitionStatusStep)
             .build();
     }
 
     @Bean
-    public Job updateReferenceJob(JobRepository jobRepository,
+    public Job updateReferenceJob(JobBuilderFactory jobBuilderFactory,
         @Qualifier("updateNewActivityStep") Step updateNewActivityStep,
         @Qualifier("updateNewCompetitionStep") Step updateNewCompetitionStep,
         @Qualifier("updateDoneActivityStep") Step updateDoneActivityStep,
         @Qualifier("updateDoneCompetitionStep") Step updateDoneCompetitionStep) {
 
-        return new JobBuilder("updateReferenceJob", jobRepository)
+        return jobBuilderFactory.get("updateReferenceJob")
             .start(updateNewActivityStep)
             .next(updateNewCompetitionStep)
             .next(updateDoneActivityStep)
@@ -116,49 +102,49 @@ public class BatchConfig {
     }
 
     @Bean
-    public Step updateActivityStatusStep(JobRepository jobRepository,
+    public Step updateActivityStatusStep(StepBuilderFactory stepBuilderFactory,
         PlatformTransactionManager transactionManager, UpdateActivityStatusTasklet tasklet) {
-        return new StepBuilder("updateActivityStatusStep", jobRepository)
+        return stepBuilderFactory.get("updateActivityStatusStep")
             .tasklet(tasklet, transactionManager)
             .build();
     }
 
     @Bean
-    public Step updateCompetitionStatusStep(JobRepository jobRepository,
+    public Step updateCompetitionStatusStep(StepBuilderFactory stepBuilderFactory,
         PlatformTransactionManager transactionManager, UpdateCompetitionStatusTasklet tasklet) {
-        return new StepBuilder("updateCompetitionStatusStep", jobRepository)
+        return stepBuilderFactory.get("updateCompetitionStatusStep")
             .tasklet(tasklet, transactionManager)
             .build();
     }
 
     @Bean
-    public Step updateNewActivityStep(JobRepository jobRepository,
+    public Step updateNewActivityStep(StepBuilderFactory stepBuilderFactory,
         PlatformTransactionManager transactionManager, UpdateNewActivityTasklet tasklet) {
-        return new StepBuilder("updateNewActivityStep", jobRepository)
+        return stepBuilderFactory.get("updateNewActivityStep")
             .tasklet(tasklet, transactionManager)
             .build();
     }
 
     @Bean
-    public Step updateNewCompetitionStep(JobRepository jobRepository,
+    public Step updateNewCompetitionStep(StepBuilderFactory stepBuilderFactory,
         PlatformTransactionManager transactionManager, UpdateNewCompetitionTasklet tasklet) {
-        return new StepBuilder("updateNewCompetitionStep", jobRepository)
+        return stepBuilderFactory.get("updateNewCompetitionStep")
             .tasklet(tasklet, transactionManager)
             .build();
     }
 
     @Bean
-    public Step updateDoneActivityStep(JobRepository jobRepository,
+    public Step updateDoneActivityStep(StepBuilderFactory stepBuilderFactory,
         PlatformTransactionManager transactionManager, UpdateDoneActivityTasklet tasklet) {
-        return new StepBuilder("updateDoneActivityStep", jobRepository)
+        return stepBuilderFactory.get("updateDoneActivityStep")
             .tasklet(tasklet, transactionManager)
             .build();
     }
 
     @Bean
-    public Step updateDoneCompetitionStep(JobRepository jobRepository,
+    public Step updateDoneCompetitionStep(StepBuilderFactory stepBuilderFactory,
         PlatformTransactionManager transactionManager, UpdateDoneCompetitionTasklet tasklet) {
-        return new StepBuilder("updateDoneCompetitionStep", jobRepository)
+        return stepBuilderFactory.get("updateDoneCompetitionStep")
             .tasklet(tasklet, transactionManager)
             .build();
     }
@@ -170,35 +156,35 @@ public class BatchConfig {
     }
 
     @Bean
-    public Job deleteCertificationsJob(JobRepository jobRepository,
-        @Qualifier("updateNewActivityStep") Step deleteCertificationsStep) {
-        return new JobBuilder("deleteCertificationsJob", jobRepository)
+    public Job deleteCertificationsJob(JobBuilderFactory jobBuilderFactory,
+        @Qualifier("deleteCertificationsStep") Step deleteCertificationsStep) {
+        return jobBuilderFactory.get("deleteCertificationsJob")
             .start(deleteCertificationsStep)
             .build();
     }
 
     @Bean
-    public Step deleteCertificationsStep(JobRepository jobRepository,
+    public Step deleteCertificationsStep(StepBuilderFactory stepBuilderFactory,
         PlatformTransactionManager transactionManager, DeleteCertificationsTasklet tasklet) {
-        return new StepBuilder("deleteCertificationsStep", jobRepository)
+        return stepBuilderFactory.get("deleteCertificationsStep")
             .tasklet(tasklet, transactionManager)
             .build();
     }
 
     @Bean
-    public Job updateResumeViewCountToDbJob(JobRepository jobRepository,
+    public Job updateResumeViewCountToDbJob(JobBuilderFactory jobBuilderFactory,
         @Qualifier("updateResumeViewCountStep") Step updateResumeViewCountStep) {
-        return new JobBuilder("updateResumeViewCountToDbJob", jobRepository)
+        return jobBuilderFactory.get("updateResumeViewCountToDbJob")
             .start(updateResumeViewCountStep)
             .build();
     }
 
     @Bean
-    public Step updateResumeViewCountStep(JobRepository jobRepository,
+    public Step updateResumeViewCountStep(StepBuilderFactory stepBuilderFactory,
         UpdateResumeViewCountTasklet tasklet, PlatformTransactionManager transactionManager) {
-        return new StepBuilder("updateResumeViewCountStep", jobRepository)
+        return stepBuilderFactory.get("updateResumeViewCountStep")
             .tasklet(tasklet, transactionManager)
-            .allowStartIfComplete(Boolean.TRUE)
+            .allowStartIfComplete(true)
             .build();
     }
 }
