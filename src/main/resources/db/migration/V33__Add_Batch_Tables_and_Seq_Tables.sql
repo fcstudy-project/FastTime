@@ -1,4 +1,4 @@
--- V33__Create_Batch_Tables.sql
+-- V33__Create_Batch_Tables_and_Seq_Tables.sql
 -- Job Instance Table
 CREATE TABLE BATCH_JOB_INSTANCE
 (
@@ -82,7 +82,7 @@ CREATE TABLE BATCH_JOB_EXECUTION_CONTEXT
     FOREIGN KEY (JOB_EXECUTION_ID) REFERENCES BATCH_JOB_EXECUTION (JOB_EXECUTION_ID)
 );
 
--- V36__Create_Batch_Job_Seq_Table.sql
+-- Sequence table for managing job IDs in Spring Batch
 CREATE TABLE BATCH_JOB_SEQ
 (
     ID_NAME VARCHAR(100) NOT NULL,
@@ -91,11 +91,6 @@ CREATE TABLE BATCH_JOB_SEQ
     UNIQUE (ID_NAME)
 );
 
--- V37__Alter_Batch_Job_Seq_Table.sql
-ALTER TABLE BATCH_JOB_SEQ
-    CHANGE ID_VAL ID BIGINT NOT NULL AUTO_INCREMENT;
-
--- V38__Create_Batch_Job_and_Step_Execution_Seq_Tables.sql
 -- Sequence table for managing job execution IDs in Spring Batch
 CREATE TABLE BATCH_JOB_EXECUTION_SEQ
 (
@@ -113,6 +108,7 @@ CREATE TABLE BATCH_STEP_EXECUTION_SEQ
     PRIMARY KEY (ID),
     UNIQUE (ID_NAME)
 );
+
 -- Insert sample data into BATCH_JOB_INSTANCE
 INSERT INTO BATCH_JOB_INSTANCE (JOB_NAME, JOB_KEY, VERSION) VALUES ('sampleJob', 'sampleKey', 1);
 
