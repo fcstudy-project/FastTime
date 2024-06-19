@@ -2,7 +2,15 @@ package com.fasttime.global.batch.config;
 
 import com.fasttime.domain.certification.repository.CertificationRepository;
 import com.fasttime.domain.review.repository.ReviewRepository;
-import com.fasttime.global.batch.tasklet.*;
+import com.fasttime.global.batch.tasklet.DeleteCertificationsTasklet;
+import com.fasttime.global.batch.tasklet.DeleteOldReviewsTasklet;
+import com.fasttime.global.batch.tasklet.UpdateActivityStatusTasklet;
+import com.fasttime.global.batch.tasklet.UpdateCompetitionStatusTasklet;
+import com.fasttime.global.batch.tasklet.UpdateDoneActivityTasklet;
+import com.fasttime.global.batch.tasklet.UpdateDoneCompetitionTasklet;
+import com.fasttime.global.batch.tasklet.UpdateNewActivityTasklet;
+import com.fasttime.global.batch.tasklet.UpdateNewCompetitionTasklet;
+import com.fasttime.global.batch.tasklet.UpdateResumeViewCountTasklet;
 import javax.sql.DataSource;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -79,39 +87,44 @@ public class BatchConfig {
     public Step initStep() throws Exception {
         return new StepBuilder("initStep", jobRepository())
             .tasklet((contribution, chunkContext) -> {
-                // Sample data 삽입
                 JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-                // Check if sample data already exists
                 Long jobInstanceId = null;
                 try {
                     jobInstanceId = jdbcTemplate.queryForObject(
                         "SELECT JOB_INSTANCE_ID FROM BATCH_JOB_INSTANCE WHERE JOB_NAME = ? AND JOB_KEY = ?",
                         Long.class, "sampleJob", "sampleKey");
                 } catch (EmptyResultDataAccessException e) {
-                    // Job instance does not exist
                 }
 
                 if (jobInstanceId == null) {
-                    // Insert new job instance
                     jdbcTemplate.update(
                         "INSERT INTO BATCH_JOB_INSTANCE (JOB_NAME, JOB_KEY, VERSION) VALUES (?, ?, ?)",
                         "sampleJob", "sampleKey", 1);
-                    // Retrieve the newly inserted job instance ID
                     jobInstanceId = jdbcTemplate.queryForObject(
                         "SELECT JOB_INSTANCE_ID FROM BATCH_JOB_INSTANCE WHERE JOB_NAME = ? AND JOB_KEY = ?",
                         Long.class, "sampleJob", "sampleKey");
                 }
 
-                // Insert job execution for the existing or newly created job instance
-                jdbcTemplate.update(
-                    "INSERT INTO BATCH_JOB_EXECUTION (JOB_INSTANCE_ID, VERSION, CREATE_TIME) VALUES (?, ?, NOW())",
-                    jobInstanceId, 1);
+                if (jobInstanceId != null) {
+                    Integer executionCount = jdbcTemplate.queryForObject(
+                        "SELECT COUNT(*) FROM BATCH_JOB_EXECUTION WHERE JOB_INSTANCE_ID = ?",
+                        Integer.class, jobInstanceId);
+
+                    if (executionCount == 0) {
+                        jdbcTemplate.update(
+                            "INSERT INTO BATCH_JOB_EXECUTION (JOB_INSTANCE_ID, VERSION, CREATE_TIME) VALUES (?, ?, NOW())",
+                            jobInstanceId, 1);
+                    }
+                } else {
+                    throw new IllegalStateException("Job instance ID was not found or created.");
+                }
 
                 return RepeatStatus.FINISHED;
             }, transactionManager)
             .build();
     }
+
 
     @Bean
     public Job deleteOldReviewsJob(JobRepository jobRepository,
