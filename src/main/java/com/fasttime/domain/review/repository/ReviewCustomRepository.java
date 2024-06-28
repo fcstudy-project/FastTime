@@ -11,7 +11,7 @@ public interface ReviewCustomRepository {
 
     List<String> findAllBootcamps();
 
-    Page<BootcampReviewSummaryDTO> findBootcampReviewSummaries(Pageable pageable);
+    List<BootcampReviewSummaryDTO> findBootcampReviewSummaries();
 
     int countByBootcamp(String bootcampName);
 
@@ -20,6 +20,4 @@ public interface ReviewCustomRepository {
     Page<Review> findByBootcampName(String bootcampName, Pageable pageable);
 
     void deleteReviewsOlderThan7Days(LocalDateTime cutoffDate);
-
-    Page<Review> findAllReviews(Pageable pageable);
 }

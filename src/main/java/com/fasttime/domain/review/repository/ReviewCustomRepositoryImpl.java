@@ -33,10 +33,10 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
     }
 
     @Override
-    public Page<BootcampReviewSummaryDTO> findBootcampReviewSummaries(Pageable pageable) {
+    public List<BootcampReviewSummaryDTO> findBootcampReviewSummaries() {
         QReview review = QReview.review;
 
-        List<BootcampReviewSummaryDTO> content = queryFactory
+        return queryFactory
             .select(Projections.constructor(
                 BootcampReviewSummaryDTO.class,
                 review.bootCamp.name,
@@ -46,17 +46,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
             .from(review)
             .where(review.deletedAt.isNull())
             .groupBy(review.bootCamp.name)
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
             .fetch();
-
-        long total = queryFactory
-            .select(review.count())
-            .from(review)
-            .where(review.deletedAt.isNull())
-            .fetchOne();
-
-        return new PageImpl<>(content, pageable, total);
     }
 
     @Override
@@ -104,23 +94,5 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
             .delete(review)
             .where(review.deletedAt.isNotNull().and(review.deletedAt.loe(cutoffDate)))
             .execute();
-    }
-
-    @Override
-    public Page<Review> findAllReviews(Pageable pageable) {
-        QReview review = QReview.review;
-        List<Review> content = queryFactory
-            .selectFrom(review)
-            .where(review.deletedAt.isNull())
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
-
-        long total = queryFactory
-            .selectFrom(review)
-            .where(review.deletedAt.isNull())
-            .fetchCount();
-
-        return new PageImpl<>(content, pageable, total);
     }
 }

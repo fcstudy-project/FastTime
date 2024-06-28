@@ -46,7 +46,8 @@ public class ReviewService {
     private final MemberRepository memberRepository;
     private final BootCampRepository bootCampRepository;
 
-    @CacheEvict(value = {"bootcampReviewSummariesCache", "tagGraphCache", "allReviewsCache"}, allEntries = true)
+    @CacheEvict(value = {"bootcampReviewSummariesCache", "tagGraphCache",
+        "allReviewsCache"}, allEntries = true)
     public Review createReview(ReviewRequestDTO requestDTO, Long memberId) {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(MemberNotFoundException::new);
@@ -83,7 +84,8 @@ public class ReviewService {
             .collect(Collectors.toSet());
     }
 
-    @CacheEvict(value = {"bootcampReviewSummariesCache", "tagGraphCache", "allReviewsCache"}, allEntries = true)
+    @CacheEvict(value = {"bootcampReviewSummariesCache", "tagGraphCache",
+        "allReviewsCache"}, allEntries = true)
     public void deleteReview(Long reviewId, Long memberId) {
         Review review = reviewRepository.findById(reviewId)
             .orElseThrow(ReviewNotFoundException::new);
@@ -98,7 +100,8 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
-    @CacheEvict(value = {"bootcampReviewSummariesCache", "tagGraphCache", "allReviewsCache"}, allEntries = true)
+    @CacheEvict(value = {"bootcampReviewSummariesCache", "tagGraphCache",
+        "allReviewsCache"}, allEntries = true)
     public Review updateReview(Long reviewId, ReviewRequestDTO requestDTO, Long memberId) {
         Review review = reviewRepository.findById(reviewId)
             .orElseThrow(ReviewNotFoundException::new);
@@ -175,19 +178,18 @@ public class ReviewService {
     }
 
     @Cacheable(value = "bootcampReviewSummariesCache")
-    public Page<BootcampReviewSummaryDTO> getBootcampReviewSummaries(Pageable pageable) {
+    public List<BootcampReviewSummaryDTO> getBootcampReviewSummaries() {
         List<String> bootcamps = reviewRepository.findAllBootcamps();
         List<BootcampReviewSummaryDTO> summaries = new ArrayList<>();
 
         for (String bootcamp : bootcamps) {
             double averageRating = reviewRepository.findAverageRatingByBootcamp(bootcamp);
             double roundedAverageRating = Math.round(averageRating * 10) / 10.0;
-
-            long totalReviews = reviewRepository.countByBootcamp(bootcamp);
+            int totalReviews = reviewRepository.countByBootcamp(bootcamp);
             summaries.add(
                 new BootcampReviewSummaryDTO(bootcamp, roundedAverageRating, totalReviews));
         }
-        return reviewRepository.findBootcampReviewSummaries(pageable);
+        return summaries;
     }
 
     @Cacheable(value = "tagGraphCache", key = "#bootcamp")
