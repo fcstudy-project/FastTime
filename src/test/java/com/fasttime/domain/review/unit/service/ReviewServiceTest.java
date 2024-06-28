@@ -9,29 +9,30 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.fasttime.domain.certification.entity.BootCamp;
 import com.fasttime.domain.certification.repository.BootCampRepository;
-import com.fasttime.domain.review.dto.response.TagSummaryDTO;
-import com.fasttime.domain.review.exception.BootCampNotFoundException;
-import jakarta.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.HashSet;
 import com.fasttime.domain.member.entity.Member;
 import com.fasttime.domain.member.entity.Role;
 import com.fasttime.domain.member.exception.MemberNotFoundException;
 import com.fasttime.domain.member.repository.MemberRepository;
 import com.fasttime.domain.review.dto.request.ReviewRequestDTO;
+import com.fasttime.domain.review.dto.response.BootcampReviewSummaryDTO;
 import com.fasttime.domain.review.dto.response.ReviewResponseDTO;
+import com.fasttime.domain.review.dto.response.TagSummaryDTO;
 import com.fasttime.domain.review.entity.Review;
+import com.fasttime.domain.review.exception.BootCampNotFoundException;
 import com.fasttime.domain.review.exception.ReviewNotFoundException;
+import com.fasttime.domain.review.exception.UnauthorizedAccessException;
 import com.fasttime.domain.review.repository.ReviewRepository;
 import com.fasttime.domain.review.repository.ReviewTagRepository;
 import com.fasttime.domain.review.service.ReviewService;
-import com.fasttime.domain.review.dto.response.BootcampReviewSummaryDTO;
-import com.fasttime.domain.review.exception.UnauthorizedAccessException;
+import jakarta.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -331,92 +332,94 @@ public class ReviewServiceTest {
         @Test
         @DisplayName("부트캠프별 리뷰 요약 정보를 조회한다.")
         void getBootcampReviewSummaries_willSuccess() {
-            // given
-            int page = 0;
-            int size = 10;
-            Pageable pageable = PageRequest.of(page, size);
-            List<BootcampReviewSummaryDTO> mockSummaries = List.of(
-                new BootcampReviewSummaryDTO("부트캠프1", 4.5, 10L),
-                new BootcampReviewSummaryDTO("부트캠프2", 4.2, 8L)
+            // Given
+            List<String> bootcampNames = List.of("부트캠프1", "부트캠프2");
+            given(reviewRepository.findAllBootcamps()).willReturn(bootcampNames);
+            given(reviewRepository.findAverageRatingByBootcamp("부트캠프1")).willReturn(4.5);
+            given(reviewRepository.findAverageRatingByBootcamp("부트캠프2")).willReturn(4.2);
+            given(reviewRepository.countByBootcamp("부트캠프1")).willReturn(10);
+            given(reviewRepository.countByBootcamp("부트캠프2")).willReturn(8);
+            List<BootcampReviewSummaryDTO> expectedSummaries = List.of(
+                new BootcampReviewSummaryDTO("부트캠프1", 4.5, 10),
+                new BootcampReviewSummaryDTO("부트캠프2", 4.2, 8)
             );
-            Page<BootcampReviewSummaryDTO> mockPage = new PageImpl<>(mockSummaries, pageable,
-                mockSummaries.size());
-            given(reviewRepository.findBootcampReviewSummaries(pageable)).willReturn(mockPage);
 
-            // when
-            Page<BootcampReviewSummaryDTO> result = reviewService.getBootcampReviewSummaries(
-                pageable);
+            // When
+            List<BootcampReviewSummaryDTO> result = reviewService.getBootcampReviewSummaries();
 
-            // then
-            assertThat(result.getContent()).hasSize(mockSummaries.size());
-            assertThat(result.getContent().get(0).bootcamp()).isEqualTo("부트캠프1");
-            assertThat(result.getContent().get(0).averageRating()).isEqualTo(4.5);
-            assertThat(result.getContent().get(0).totalReviews()).isEqualTo(10);
+            // Then
+            assertThat(result).hasSize(expectedSummaries.size());
+            assertThat(result.get(0).bootcamp()).isEqualTo("부트캠프1");
+            assertThat(result.get(0).averageRating()).isEqualTo(4.5);
+            assertThat(result.get(0).totalReviews()).isEqualTo(10);
+            assertThat(result.get(1).bootcamp()).isEqualTo("부트캠프2");
+            assertThat(result.get(1).averageRating()).isEqualTo(4.2);
+            assertThat(result.get(1).totalReviews()).isEqualTo(8);
 
-            // Verify interactions
-            verify(reviewRepository, times(1)).findBootcampReviewSummaries(pageable);
+            verify(reviewRepository).findAllBootcamps();
+            verify(reviewRepository).findAverageRatingByBootcamp("부트캠프1");
+            verify(reviewRepository).findAverageRatingByBootcamp("부트캠프2");
+            verify(reviewRepository).countByBootcamp("부트캠프1");
+            verify(reviewRepository).countByBootcamp("부트캠프2");
         }
 
         @Test
         @DisplayName("부트캠프별 리뷰 요약 정보가 없을 경우 처리한다.")
         void NoData_willHandle() {
             // given
-            int page = 0;
-            int size = 10;
-            Pageable pageable = PageRequest.of(page, size);
-            Page<BootcampReviewSummaryDTO> emptyPage = new PageImpl<>(new ArrayList<>(), pageable,
-                0);
-            given(reviewRepository.findBootcampReviewSummaries(pageable)).willReturn(emptyPage);
+            List<String> emptyBootcamps = new ArrayList<>();
+            given(reviewRepository.findAllBootcamps()).willReturn(emptyBootcamps);
 
             // when
-            Page<BootcampReviewSummaryDTO> result = reviewService.getBootcampReviewSummaries(
-                pageable);
+            List<BootcampReviewSummaryDTO> result = reviewService.getBootcampReviewSummaries();
 
             // then
-            assertThat(result.getContent()).isEmpty();
-            assertThat(result.getTotalElements()).isEqualTo(0);
+            assertThat(result).isEmpty();
 
             // Verify interactions
-            verify(reviewRepository, times(1)).findBootcampReviewSummaries(pageable);
+            verify(reviewRepository, times(1)).findAllBootcamps();
+            verifyNoMoreInteractions(reviewRepository);
+        }
+    }
+
+
+    @Nested
+    @DisplayName("getBootcampTagData()는")
+    class Context_getBootcampTagData {
+
+        @Test
+        @DisplayName("부트캠프별 태그 데이터를 성공적으로 조회한다.")
+        void _willSuccess() {
+            // given
+            String bootcampName = "부트캠프1";
+            given(bootCampRepository.existsByName(bootcampName)).willReturn(true);
+            given(
+                reviewTagRepository.countTagsByBootcampGroupedByTagId(bootcampName)).willReturn(
+                List.of(new Object[]{1L, 5L}, new Object[]{2L, 3L})
+            );
+
+            // when
+            TagSummaryDTO result = reviewService.getBootcampTagData(bootcampName);
+
+            // then
+            assertThat(result.totalTags()).isEqualTo(8);
+            assertThat(result.tagCounts().size()).isEqualTo(2);
+            assertThat(result.tagCounts().get(1L)).isEqualTo(5L);
+            assertThat(result.tagCounts().get(2L)).isEqualTo(3L);
         }
 
-        @Nested
-        @DisplayName("getBootcampTagData()는")
-        class Context_getBootcampTagData {
+        @Test
+        @DisplayName("부트캠프가 존재하지 않을 경우 예외를 발생시킨다.")
+        void NotFound_willFail() {
+            // given
+            String bootcampName = "존재하지 않는 부트캠프";
+            given(bootCampRepository.existsByName(bootcampName)).willReturn(false);
 
-            @Test
-            @DisplayName("부트캠프별 태그 데이터를 성공적으로 조회한다.")
-            void _willSuccess() {
-                // given
-                String bootcampName = "부트캠프1";
-                given(bootCampRepository.existsByName(bootcampName)).willReturn(true); // 부트캠프 존재 확인
-                given(
-                    reviewTagRepository.countTagsByBootcampGroupedByTagId(bootcampName)).willReturn(
-                    List.of(new Object[]{1L, 5L}, new Object[]{2L, 3L})
-                );
-
-                // when
-                TagSummaryDTO result = reviewService.getBootcampTagData(bootcampName);
-
-                // then
-                assertThat(result.totalTags()).isEqualTo(8);
-                assertThat(result.tagCounts().size()).isEqualTo(2);
-                assertThat(result.tagCounts().get(1L)).isEqualTo(5L);
-                assertThat(result.tagCounts().get(2L)).isEqualTo(3L);
-            }
-
-            @Test
-            @DisplayName("부트캠프가 존재하지 않을 경우 예외를 발생시킨다.")
-            void NotFound_willFail() {
-                // given
-                String bootcampName = "존재하지 않는 부트캠프";
-                given(bootCampRepository.existsByName(bootcampName)).willReturn(false);
-
-                // when, then
-                assertThrows(BootCampNotFoundException.class, () -> {
-                    reviewService.getBootcampTagData(bootcampName);
-                });
-            }
+            // when, then
+            assertThrows(BootCampNotFoundException.class, () -> {
+                reviewService.getBootcampTagData(bootcampName);
+            });
         }
     }
 }
+

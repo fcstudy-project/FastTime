@@ -202,17 +202,21 @@ class ReviewControllerTest extends ControllerUnitTestSupporter {
     @Nested
     @DisplayName("getReviews()는")
     class Describe_getReview {
+
         @Test
         @DisplayName("부트캠프 필터링 없이 모든 리뷰를 조회한다.")
         void withoutBootcampFilter_willSuccess() throws Exception {
             // given
             List<ReviewResponseDTO> reviews = Arrays.asList(
-                new ReviewResponseDTO(1L, "닉네임1", "부트캠프1", "리뷰1", Set.of("긍정 태그1"), Set.of("부정 태그1"), 5, "리뷰 내용1"),
-                new ReviewResponseDTO(2L, "닉네임2", "부트캠프2", "리뷰2", Set.of("긍정 태그2"), Set.of("부정 태그2"), 4, "리뷰 내용2")
+                new ReviewResponseDTO(1L, "닉네임1", "부트캠프1", "리뷰1", Set.of("긍정 태그1"),
+                    Set.of("부정 태그1"), 5, "리뷰 내용1"),
+                new ReviewResponseDTO(2L, "닉네임2", "부트캠프2", "리뷰2", Set.of("긍정 태그2"),
+                    Set.of("부정 태그2"), 4, "리뷰 내용2")
             );
             Page<ReviewResponseDTO> reviewPage = new PageImpl<>(reviews);
 
-            when(reviewService.getSortedReviews(isNull(), any(Pageable.class))).thenReturn(reviewPage);
+            when(reviewService.getSortedReviews(isNull(), any(Pageable.class))).thenReturn(
+                reviewPage);
 
             // when, then
             mockMvc.perform(get("/api/v2/reviews"))
@@ -221,7 +225,8 @@ class ReviewControllerTest extends ControllerUnitTestSupporter {
                 .andExpect(jsonPath("$.message").value("리뷰 요청이 완료되었습니다."))
                 .andExpect(jsonPath("$.data.reviews").isArray())
                 .andExpect(jsonPath("$.data.reviews[0].id").value(reviews.get(0).id()))
-                .andExpect(jsonPath("$.data.reviews[0].authorNickname").value(reviews.get(0).authorNickname()))
+                .andExpect(jsonPath("$.data.reviews[0].authorNickname").value(
+                    reviews.get(0).authorNickname()))
                 .andExpect(jsonPath("$.data.reviews[0].bootcamp").value(reviews.get(0).bootcamp()))
                 .andExpect(jsonPath("$.data.reviews[0].title").value(reviews.get(0).title()))
                 .andExpect(jsonPath("$.data.reviews[0].rating").value(reviews.get(0).rating()))
@@ -238,13 +243,16 @@ class ReviewControllerTest extends ControllerUnitTestSupporter {
         void withBootcampFilter_willSuccess() throws Exception {
             // given
             List<ReviewResponseDTO> reviews = Arrays.asList(
-                new ReviewResponseDTO(1L, "닉네임1", "부트캠프1", "리뷰1", Set.of("긍정 태그1"), Set.of("부정 태그1"), 5, "리뷰 내용1"),
-                new ReviewResponseDTO(2L, "닉네임2", "부트캠프1", "리뷰2", Set.of("긍정 태그2"), Set.of("부정 태그2"), 4, "리뷰 내용2")
+                new ReviewResponseDTO(1L, "닉네임1", "부트캠프1", "리뷰1", Set.of("긍정 태그1"),
+                    Set.of("부정 태그1"), 5, "리뷰 내용1"),
+                new ReviewResponseDTO(2L, "닉네임2", "부트캠프1", "리뷰2", Set.of("긍정 태그2"),
+                    Set.of("부정 태그2"), 4, "리뷰 내용2")
             );
             Page<ReviewResponseDTO> reviewPage = new PageImpl<>(reviews);
 
             String bootcampName = "패스트캠퍼스X야놀자 부트캠프";
-            when(reviewService.getSortedReviews(eq(bootcampName), any(Pageable.class))).thenReturn(reviewPage);
+            when(reviewService.getSortedReviews(eq(bootcampName), any(Pageable.class))).thenReturn(
+                reviewPage);
 
             // when, then
             mockMvc.perform(get("/api/v2/reviews")
@@ -253,13 +261,15 @@ class ReviewControllerTest extends ControllerUnitTestSupporter {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.reviews").isArray())
                 .andExpect(jsonPath("$.data.reviews[0].id").value(reviews.get(0).id()))
-                .andExpect(jsonPath("$.data.reviews[0].authorNickname").value(reviews.get(0).authorNickname()))
+                .andExpect(jsonPath("$.data.reviews[0].authorNickname").value(
+                    reviews.get(0).authorNickname()))
                 .andExpect(jsonPath("$.data.reviews[0].bootcamp").value(reviews.get(0).bootcamp()))
                 .andExpect(jsonPath("$.data.reviews[0].title").value(reviews.get(0).title()))
                 .andExpect(jsonPath("$.data.reviews[0].rating").value(reviews.get(0).rating()))
                 .andExpect(jsonPath("$.data.reviews[0].content").value(reviews.get(0).content()))
                 .andExpect(jsonPath("$.data.reviews[1].id").value(reviews.get(1).id()))
-                .andExpect(jsonPath("$.data.reviews[1].authorNickname").value(reviews.get(1).authorNickname()))
+                .andExpect(jsonPath("$.data.reviews[1].authorNickname").value(
+                    reviews.get(1).authorNickname()))
                 .andExpect(jsonPath("$.data.reviews[1].bootcamp").value(reviews.get(1).bootcamp()))
                 .andExpect(jsonPath("$.data.reviews[1].title").value(reviews.get(1).title()))
                 .andExpect(jsonPath("$.data.reviews[1].rating").value(reviews.get(1).rating()))
@@ -269,33 +279,39 @@ class ReviewControllerTest extends ControllerUnitTestSupporter {
                 .andExpect(jsonPath("$.data.currentElements").isNumber())
                 .andExpect(jsonPath("$.data.totalElements").isNumber());
         }
+    }
+
+    @Nested
+    @DisplayName("getBootcampReviewSummaries()는")
+    class Describe_getBootcampReviewSummaries {
 
         @Test
-        @DisplayName("getBootcampReviewSummaries()를 성공한다.")
+        @DisplayName("모든 부트캠프의 리뷰 요약을 성공적으로 조회한다.")
         void bootcampSummary_willSuccess() throws Exception {
             // given
             List<BootcampReviewSummaryDTO> summaries = Arrays.asList(
-                new BootcampReviewSummaryDTO("다른 부트캠프", 3.0, 1l),
-                new BootcampReviewSummaryDTO("부트캠프1", 1.0, 1l));
+                new BootcampReviewSummaryDTO("부트캠프1", 4.5, 10),
+                new BootcampReviewSummaryDTO("부트캠프2", 3.8, 5)
+            );
 
-            Page<BootcampReviewSummaryDTO> pageSummaries = new PageImpl<>(summaries);
-
-            when(reviewService.getBootcampReviewSummaries(any(Pageable.class))).thenReturn(pageSummaries);
+            when(reviewService.getBootcampReviewSummaries()).thenReturn(summaries);
 
             // when, then
             mockMvc.perform(get("/api/v2/reviews/summary"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.reviews").isArray())
-                .andExpect(jsonPath("$.data.reviews[0].bootcamp").value(summaries.get(0).bootcamp()))
-                .andExpect(jsonPath("$.data.reviews[0].averageRating").value(summaries.get(0).averageRating()))
-                .andExpect(jsonPath("$.data.reviews[0].totalReviews").value(summaries.get(0).totalReviews()))
-                .andExpect(jsonPath("$.data.reviews[1].bootcamp").value(summaries.get(1).bootcamp()))
-                .andExpect(jsonPath("$.data.reviews[1].averageRating").value(summaries.get(1).averageRating()))
-                .andExpect(jsonPath("$.data.reviews[1].totalReviews").value(summaries.get(1).totalReviews()))
-                .andExpect(jsonPath("$.data.currentPage").value(1))
-                .andExpect(jsonPath("$.data.totalPages").value(1))
-                .andExpect(jsonPath("$.data.currentElements").value(2))
-                .andExpect(jsonPath("$.data.totalElements").value(2));
+                .andExpect(jsonPath("$.code").value(HttpStatus.OK.value()))
+                .andExpect(jsonPath("$.message").value("리뷰 요청이 완료되었습니다."))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data[0].bootcamp").value(summaries.get(0).bootcamp()))
+                .andExpect(
+                    jsonPath("$.data[0].averageRating").value(summaries.get(0).averageRating()))
+                .andExpect(
+                    jsonPath("$.data[0].totalReviews").value(summaries.get(0).totalReviews()))
+                .andExpect(jsonPath("$.data[1].bootcamp").value(summaries.get(1).bootcamp()))
+                .andExpect(
+                    jsonPath("$.data[1].averageRating").value(summaries.get(1).averageRating()))
+                .andExpect(
+                    jsonPath("$.data[1].totalReviews").value(summaries.get(1).totalReviews()));
         }
 
         @Test

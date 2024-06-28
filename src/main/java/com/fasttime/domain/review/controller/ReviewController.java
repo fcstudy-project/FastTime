@@ -9,6 +9,7 @@ import com.fasttime.global.util.ResponseDTO;
 import com.fasttime.global.util.SecurityUtil;
 import jakarta.validation.Valid;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -81,16 +82,10 @@ public class ReviewController {
     }
 
     @GetMapping("/summary")
-    public ResponseEntity<ResponseDTO<Map<String, Object>>> getBootcampReviewSummaries(
-        @RequestParam(defaultValue = "1") int page) {
-
-        Pageable pageable = PageRequest.of(page - 1, 10);
-        Page<BootcampReviewSummaryDTO> summaries = reviewService.getBootcampReviewSummaries(
-            pageable);
-        Map<String, Object> responseMap = createPaginationResponse(summaries);
+    public ResponseEntity<ResponseDTO<List<BootcampReviewSummaryDTO>>> getBootcampReviewSummaries() {
+        List<BootcampReviewSummaryDTO> summaries = reviewService.getBootcampReviewSummaries();
         return ResponseEntity.ok(
-            ResponseDTO.res(HttpStatus.OK, REVIEW_SUCCESS_MESSAGE, responseMap));
-
+            ResponseDTO.res(HttpStatus.OK, REVIEW_SUCCESS_MESSAGE, summaries));
     }
 
     @GetMapping("/tag-graph")
