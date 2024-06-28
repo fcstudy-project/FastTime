@@ -268,51 +268,25 @@ class ReviewControllerDocsTest extends RestDocsSupport {
     @Test
     void getBootcampReviewSummaries() throws Exception {
         List<BootcampReviewSummaryDTO> summaries = List.of(
-            new BootcampReviewSummaryDTO("야놀자x패스트캠퍼스 부트캠프", 3.0, 7l),
-            new BootcampReviewSummaryDTO("다른 부트캠프", 4.5, 2l)
+            new BootcampReviewSummaryDTO("야놀자x패스트캠퍼스 부트캠프", 3.0, 7),
+            new BootcampReviewSummaryDTO("다른 부트캠프", 4.5, 2)
         );
 
-        int page = 1;
-        int size = 10;
-        Pageable pageable = PageRequest.of(page - 1, size);
-
-        Page<BootcampReviewSummaryDTO> pagedSummaries = new PageImpl<>(summaries, pageable, summaries.size());
-
-        when(reviewService.getBootcampReviewSummaries(pageable)).thenReturn(pagedSummaries);
+        when(reviewService.getBootcampReviewSummaries()).thenReturn(summaries);
 
         mockMvc.perform(get("/api/v2/reviews/summary")
-                .queryParam("page", String.valueOf(page))
-                .queryParam("size", String.valueOf(size))
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andDo(document("reviews-get-summary",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
-                queryParameters(
-                    parameterWithName("page").description("페이지 번호"),
-                    parameterWithName("size").description("페이지당 항목 수")
-                ),
                 responseFields(
                     fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
                     fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                    subsectionWithPath("data").type(JsonFieldType.OBJECT)
-                        .description("응답 데이터"),
-                    subsectionWithPath("data.reviews").type(JsonFieldType.ARRAY)
-                        .description("부트캠프별 리뷰 요약 목록"),
-                    fieldWithPath("data.reviews[].bootcamp").type(JsonFieldType.STRING)
-                        .description("부트캠프 이름"),
-                    fieldWithPath("data.reviews[].averageRating").type(JsonFieldType.NUMBER)
-                        .description("평균 평점"),
-                    fieldWithPath("data.reviews[].totalReviews").type(JsonFieldType.NUMBER)
-                        .description("총 리뷰 수"),
-                    fieldWithPath("data.currentPage").type(JsonFieldType.NUMBER)
-                        .description("현재 페이지"),
-                    fieldWithPath("data.totalPages").type(JsonFieldType.NUMBER)
-                        .description("총 페이지 수"),
-                    fieldWithPath("data.currentElements").type(JsonFieldType.NUMBER)
-                        .description("현재 페이지의 리뷰 요약 수"),
-                    fieldWithPath("data.totalElements").type(JsonFieldType.NUMBER)
-                        .description("전체 리뷰 요약 수")
+                    subsectionWithPath("data").type(JsonFieldType.ARRAY).description("응답 데이터"),
+                    fieldWithPath("data[].bootcamp").type(JsonFieldType.STRING).description("부트캠프 이름"),
+                    fieldWithPath("data[].averageRating").type(JsonFieldType.NUMBER).description("평균 평점"),
+                    fieldWithPath("data[].totalReviews").type(JsonFieldType.NUMBER).description("총 리뷰 수")
                 )
             ));
     }
