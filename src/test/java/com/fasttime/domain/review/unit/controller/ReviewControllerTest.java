@@ -1,12 +1,22 @@
 package com.fasttime.domain.review.unit.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.isNull;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasttime.domain.member.exception.MemberNotFoundException;
 import com.fasttime.domain.review.dto.request.ReviewRequestDTO;
 import com.fasttime.domain.review.dto.response.BootcampReviewSummaryDTO;
+import com.fasttime.domain.review.dto.response.PageDTO;
 import com.fasttime.domain.review.dto.response.ReviewResponseDTO;
 import com.fasttime.domain.review.dto.response.TagSummaryDTO;
 import com.fasttime.domain.review.exception.ReviewAlreadyExistsException;
@@ -18,11 +28,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.springframework.data.domain.Page;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -201,7 +211,7 @@ class ReviewControllerTest extends ControllerUnitTestSupporter {
 
     @Nested
     @DisplayName("getReviews()는")
-    class Describe_getReview {
+    class Describe_getReviews {
 
         @Test
         @DisplayName("부트캠프 필터링 없이 모든 리뷰를 조회한다.")
@@ -213,10 +223,12 @@ class ReviewControllerTest extends ControllerUnitTestSupporter {
                 new ReviewResponseDTO(2L, "닉네임2", "부트캠프2", "리뷰2", Set.of("긍정 태그2"),
                     Set.of("부정 태그2"), 4, "리뷰 내용2")
             );
-            Page<ReviewResponseDTO> reviewPage = new PageImpl<>(reviews);
+            PageImpl<ReviewResponseDTO> reviewPage = new PageImpl<>(reviews, PageRequest.of(0, 6),
+                reviews.size());
+            PageDTO<ReviewResponseDTO> responseDTO = PageDTO.fromPage(reviewPage);
 
             when(reviewService.getSortedReviews(isNull(), any(Pageable.class))).thenReturn(
-                reviewPage);
+                responseDTO);
 
             // when, then
             mockMvc.perform(get("/api/v2/reviews"))
@@ -231,7 +243,6 @@ class ReviewControllerTest extends ControllerUnitTestSupporter {
                 .andExpect(jsonPath("$.data.reviews[0].title").value(reviews.get(0).title()))
                 .andExpect(jsonPath("$.data.reviews[0].rating").value(reviews.get(0).rating()))
                 .andExpect(jsonPath("$.data.reviews[0].content").value(reviews.get(0).content()))
-                // 페이지네이션 정보 검증
                 .andExpect(jsonPath("$.data.currentPage").value(1))
                 .andExpect(jsonPath("$.data.totalPages").value(1))
                 .andExpect(jsonPath("$.data.currentElements").value(2))
@@ -248,17 +259,21 @@ class ReviewControllerTest extends ControllerUnitTestSupporter {
                 new ReviewResponseDTO(2L, "닉네임2", "부트캠프1", "리뷰2", Set.of("긍정 태그2"),
                     Set.of("부정 태그2"), 4, "리뷰 내용2")
             );
-            Page<ReviewResponseDTO> reviewPage = new PageImpl<>(reviews);
+            PageImpl<ReviewResponseDTO> reviewPage = new PageImpl<>(reviews, PageRequest.of(0, 6),
+                reviews.size());
+            PageDTO<ReviewResponseDTO> responseDTO = PageDTO.fromPage(reviewPage);
 
             String bootcampName = "패스트캠퍼스X야놀자 부트캠프";
             when(reviewService.getSortedReviews(eq(bootcampName), any(Pageable.class))).thenReturn(
-                reviewPage);
+                responseDTO);
 
             // when, then
             mockMvc.perform(get("/api/v2/reviews")
                     .param("sortBy", "rating")
                     .param("bootcamp", bootcampName))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(HttpStatus.OK.value()))
+                .andExpect(jsonPath("$.message").value("리뷰 요청이 완료되었습니다."))
                 .andExpect(jsonPath("$.data.reviews").isArray())
                 .andExpect(jsonPath("$.data.reviews[0].id").value(reviews.get(0).id()))
                 .andExpect(jsonPath("$.data.reviews[0].authorNickname").value(
@@ -274,10 +289,10 @@ class ReviewControllerTest extends ControllerUnitTestSupporter {
                 .andExpect(jsonPath("$.data.reviews[1].title").value(reviews.get(1).title()))
                 .andExpect(jsonPath("$.data.reviews[1].rating").value(reviews.get(1).rating()))
                 .andExpect(jsonPath("$.data.reviews[1].content").value(reviews.get(1).content()))
-                .andExpect(jsonPath("$.data.currentPage").isNumber())
-                .andExpect(jsonPath("$.data.totalPages").isNumber())
-                .andExpect(jsonPath("$.data.currentElements").isNumber())
-                .andExpect(jsonPath("$.data.totalElements").isNumber());
+                .andExpect(jsonPath("$.data.currentPage").value(1))
+                .andExpect(jsonPath("$.data.totalPages").value(1))
+                .andExpect(jsonPath("$.data.currentElements").value(2))
+                .andExpect(jsonPath("$.data.totalElements").value(2));
         }
     }
 

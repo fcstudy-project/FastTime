@@ -19,6 +19,7 @@ import com.fasttime.domain.member.exception.MemberNotFoundException;
 import com.fasttime.domain.member.repository.MemberRepository;
 import com.fasttime.domain.review.dto.request.ReviewRequestDTO;
 import com.fasttime.domain.review.dto.response.BootcampReviewSummaryDTO;
+import com.fasttime.domain.review.dto.response.PageDTO;
 import com.fasttime.domain.review.dto.response.ReviewResponseDTO;
 import com.fasttime.domain.review.dto.response.TagSummaryDTO;
 import com.fasttime.domain.review.entity.Review;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -264,12 +266,23 @@ public class ReviewServiceTest {
             Page<Review> mockPage = new PageImpl<>(mockReviews, pageable, mockReviews.size());
             given(reviewRepository.findAll(pageable)).willReturn(mockPage);
 
+            PageDTO<ReviewResponseDTO> expectedResponse = new PageDTO<>(
+                1, 1, mockReviews.size(), mockReviews.size(),
+                mockReviews.stream()
+                    .map(review -> ReviewResponseDTO.of(review, new HashSet<>(), new HashSet<>()))
+                    .collect(Collectors.toList())
+            );
+
             // when
-            Page<ReviewResponseDTO> result = reviewService.getSortedReviews(null, pageable);
+            PageDTO<ReviewResponseDTO> result = reviewService.getSortedReviews(null, pageable);
 
             // then
-            assertThat(result.getContent()).hasSize(mockReviews.size());
-            assertThat(result.getTotalElements()).isEqualTo(mockReviews.size());
+            assertThat(result.getCurrentPage()).isEqualTo(expectedResponse.getCurrentPage());
+            assertThat(result.getTotalPages()).isEqualTo(expectedResponse.getTotalPages());
+            assertThat(result.getCurrentElements()).isEqualTo(
+                expectedResponse.getCurrentElements());
+            assertThat(result.getTotalElements()).isEqualTo(expectedResponse.getTotalElements());
+            assertThat(result.getReviews()).isEqualTo(expectedResponse.getReviews());
             verify(reviewRepository, times(1)).findAll(pageable);
         }
 
@@ -286,21 +299,39 @@ public class ReviewServiceTest {
             given(bootCampRepository.existsByName(bootcampName)).willReturn(true);
             given(reviewRepository.findByBootcampName(bootcampName, pageable)).willReturn(mockPage);
 
+            PageDTO<ReviewResponseDTO> expectedResponse = new PageDTO<>(
+                1, 1, mockReviews.size(), mockReviews.size(),
+                mockReviews.stream()
+                    .map(review -> ReviewResponseDTO.of(review, new HashSet<>(), new HashSet<>()))
+                    .collect(Collectors.toList())
+            );
+
             // when
-            Page<ReviewResponseDTO> result = reviewService.getSortedReviews(bootcampName, pageable);
+            PageDTO<ReviewResponseDTO> result = reviewService.getSortedReviews(bootcampName,
+                pageable);
 
             // then
-            assertThat(result.getContent()).hasSize(mockReviews.size());
-            assertThat(result.getContent().get(0).bootcamp()).isEqualTo(bootcampName);
+            assertThat(result.getCurrentPage()).isEqualTo(expectedResponse.getCurrentPage());
+            assertThat(result.getTotalPages()).isEqualTo(expectedResponse.getTotalPages());
+            assertThat(result.getCurrentElements()).isEqualTo(
+                expectedResponse.getCurrentElements());
+            assertThat(result.getTotalElements()).isEqualTo(expectedResponse.getTotalElements());
+            assertThat(result.getReviews()).isEqualTo(expectedResponse.getReviews());
+            verify(bootCampRepository, times(1)).existsByName(bootcampName);
             verify(reviewRepository, times(1)).findByBootcampName(bootcampName, pageable);
         }
 
         private List<Review> createMockReviews(String bootcampName1, String bootcampName2) {
-            BootCamp bootCamp1 = Mockito.mock(BootCamp.class);
-            BootCamp bootCamp2 = Mockito.mock(BootCamp.class);
-
-            given(bootCamp1.getName()).willReturn(bootcampName1);
-            given(bootCamp2.getName()).willReturn(bootcampName2);
+            BootCamp bootCamp1 = BootCamp.builder()
+                .name(bootcampName1)
+                .build();
+            BootCamp bootCamp2 = BootCamp.builder()
+                .name(bootcampName2)
+                .build();
+            Member member1 = new Member();
+            member1.setNickname("닉네임1");
+            Member member2 = new Member();
+            member2.setNickname("닉네임2");
 
             Review review1 = Review.builder()
                 .id(1L)
@@ -309,7 +340,7 @@ public class ReviewServiceTest {
                 .rating(5)
                 .content("내용 1")
                 .reviewTags(new HashSet<>())
-                .member(member)
+                .member(member1)
                 .build();
             Review review2 = Review.builder()
                 .id(2L)
@@ -318,7 +349,7 @@ public class ReviewServiceTest {
                 .rating(4)
                 .content("내용 2")
                 .reviewTags(new HashSet<>())
-                .member(member)
+                .member(member2)
                 .build();
 
             return List.of(review1, review2);

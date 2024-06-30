@@ -6,6 +6,7 @@ import com.fasttime.domain.member.exception.MemberNotFoundException;
 import com.fasttime.domain.member.repository.MemberRepository;
 import com.fasttime.domain.review.dto.request.ReviewRequestDTO;
 import com.fasttime.domain.review.dto.response.BootcampReviewSummaryDTO;
+import com.fasttime.domain.review.dto.response.PageDTO;
 import com.fasttime.domain.review.dto.response.ReviewResponseDTO;
 import com.fasttime.domain.review.dto.response.TagSummaryDTO;
 import com.fasttime.domain.review.entity.Review;
@@ -143,7 +144,7 @@ public class ReviewService {
     }
 
     @Cacheable(value = "allReviewsCache")
-    public Page<ReviewResponseDTO> getSortedReviews(String bootcamp, Pageable pageable) {
+    public PageDTO<ReviewResponseDTO> getSortedReviews(String bootcamp, Pageable pageable) {
         Page<Review> reviewPage;
         if (bootcamp != null && !bootcamp.isEmpty()) {
             boolean exists = bootCampRepository.existsByName(bootcamp);
@@ -155,7 +156,8 @@ public class ReviewService {
             reviewPage = reviewRepository.findAll(pageable);
         }
 
-        return reviewPage.map(this::convertToReviewResponseDTO);
+        Page<ReviewResponseDTO> responsePage = reviewPage.map(this::convertToReviewResponseDTO);
+        return PageDTO.fromPage(responsePage);
     }
 
     private ReviewResponseDTO convertToReviewResponseDTO(Review review) {

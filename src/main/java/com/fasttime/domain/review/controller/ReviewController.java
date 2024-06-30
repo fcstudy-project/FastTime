@@ -2,17 +2,15 @@ package com.fasttime.domain.review.controller;
 
 import com.fasttime.domain.review.dto.request.ReviewRequestDTO;
 import com.fasttime.domain.review.dto.response.BootcampReviewSummaryDTO;
+import com.fasttime.domain.review.dto.response.PageDTO;
 import com.fasttime.domain.review.dto.response.ReviewResponseDTO;
 import com.fasttime.domain.review.dto.response.TagSummaryDTO;
 import com.fasttime.domain.review.service.ReviewService;
 import com.fasttime.global.util.ResponseDTO;
 import com.fasttime.global.util.SecurityUtil;
 import jakarta.validation.Valid;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -68,17 +66,15 @@ public class ReviewController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseDTO<Map<String, Object>>> getReviews(
+    public ResponseEntity<ResponseDTO<PageDTO<ReviewResponseDTO>>> getReviews(
         @RequestParam(required = false) String bootcamp,
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(required = false, defaultValue = "createdAt") String sortBy) {
 
         Pageable pageable = PageRequest.of(page - 1, 6, Sort.by(sortBy).descending());
-        Page<ReviewResponseDTO> reviews = reviewService.getSortedReviews(bootcamp, pageable);
-        Map<String, Object> responseMap = createPaginationResponse(reviews);
+        PageDTO<ReviewResponseDTO> responseDTO = reviewService.getSortedReviews(bootcamp, pageable);
         return ResponseEntity.ok(
-            ResponseDTO.res(HttpStatus.OK, REVIEW_SUCCESS_MESSAGE, responseMap));
-
+            ResponseDTO.res(HttpStatus.OK, REVIEW_SUCCESS_MESSAGE, responseDTO));
     }
 
     @GetMapping("/summary")
@@ -93,15 +89,5 @@ public class ReviewController {
         @RequestParam String bootcamp) {
         TagSummaryDTO tagData = reviewService.getBootcampTagData(bootcamp);
         return ResponseEntity.ok(ResponseDTO.res(HttpStatus.OK, REVIEW_SUCCESS_MESSAGE, tagData));
-    }
-
-    private Map<String, Object> createPaginationResponse(Page<?> page) {
-        Map<String, Object> responseMap = new LinkedHashMap<>();
-        responseMap.put("currentPage", page.getNumber() + 1);
-        responseMap.put("totalPages", page.getTotalPages());
-        responseMap.put("currentElements", page.getNumberOfElements());
-        responseMap.put("totalElements", page.getTotalElements());
-        responseMap.put("reviews", page.getContent());
-        return responseMap;
     }
 }
