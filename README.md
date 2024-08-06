@@ -68,9 +68,6 @@
     <td align="center">
       <b>Backend</b>
     </td>
-    <td align="center">
-      <b>Backend</b>
-    </td>
   </tr>
   </tr>
     <tr>
@@ -99,11 +96,6 @@
         <img src="https://avatars.githubusercontent.com/u/139187207?v=4" alt="구자현 프로필" />
       </a>
     </td>
-    <td align="center" width="150px">
-      <a href="https://github.com/Kongji82" target="_blank">
-        <img src="https://avatars.githubusercontent.com/u/47727212?v=4" alt="공지혁 프로필" />
-      </a>
-    </td>
   </tr>
   <tr>
     <td align="center">
@@ -129,11 +121,6 @@
     <td align="center">
       <a href="https://github.com/Nine-JH" target="_blank">
         구자현
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/Kongji82" target="_blank">
-        공지혁
       </a>
     </td>
   </tr>
@@ -216,21 +203,18 @@
 
 ### 📰 아키텍처
 
-> ![](src/main/resources/images/architecture.png)
+> ![boocam_architecture](https://github.com/user-attachments/assets/746eda62-464d-48ab-a8f2-508724ca5605)
+
 
 ### 💾 DB 설계
 
 `ERD`
-> ![](src/main/resources/images/erd.png)
+> ![Boocam_erd](https://github.com/user-attachments/assets/ca56a1fb-dfc6-4792-a6cb-25d0cec54bc4)
 
-### 📡 API 설계
-
-[Spring REST Docs](#4-API-문서)를 통해 확인하실 수 있습니다.
 
 ---
 
 ## 4. API 문서
 
 ※ Spring REST Docs로 문서화했습니다.
-- dev: https://api-dev.boocam.net/docs/index.html
-- prod: 🚧준비중🚧
+- https://api-dev.boocam.net/docs/index.html
